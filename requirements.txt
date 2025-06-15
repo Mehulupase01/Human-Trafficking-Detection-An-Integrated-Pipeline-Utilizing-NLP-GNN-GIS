@@ -1,0 +1,8 @@
+requirements.txt
+# streamlit
+# pyrebase
+# firebase-admin
+# requests
+# pandas
+# python-jose
+# fastapi
