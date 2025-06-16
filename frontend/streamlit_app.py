@@ -207,3 +207,25 @@ if "role" in st.session_state and st.session_state["role"] in ["Admin", "Researc
         st.image(chart, use_column_width=True)
     else:
         st.info("Please upload and process a dataset first (Phase 2/3).")
+        
+        
+    from backend.models.gnn_model import build_gnn_data, train_gnn
+
+if "role" in st.session_state and st.session_state["role"] in ["Admin", "Researcher"]:
+    st.subheader("🧠 GNN Node Classification (Victim / Location / Perpetrator)")
+
+    if "uploaded_df" in st.session_state:
+        if st.button("Run GNN Classification"):
+            df = st.session_state["uploaded_df"]
+            structured = run_nlp_pipeline(df)
+            data, encoder = build_gnn_data(structured)
+            model, output = train_gnn(data, num_classes=len(encoder.classes_))
+
+            st.success("GNN trained and nodes classified!")
+
+            predictions = output.argmax(dim=1).numpy()
+            labels = [encoder.inverse_transform([pred])[0] for pred in predictions]
+            node_map = {f"Node {i}": label for i, label in enumerate(labels)}
+            st.json(node_map)
+    else:
+        st.info("Please upload and process a dataset first (Phase 2/3).")

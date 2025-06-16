@@ -1,0 +1,14 @@
+# .dockerignore
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+debug.log
+.env
+.env.*
+.pytest_cache
+node_modules
+.DS_Store
+.idea
+.vscode
