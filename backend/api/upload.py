@@ -18,7 +18,6 @@ def process_upload(uploaded_file):
     except Exception as e:
         return None, f"Upload failed: {str(e)}"
 
-# 3. frontend/streamlit_app.py (append this section after login)
 import pandas as pd
 from backend.api.upload import process_upload
 
