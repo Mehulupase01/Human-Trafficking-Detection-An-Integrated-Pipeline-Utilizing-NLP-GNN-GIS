@@ -1,4 +1,3 @@
-# 2. backend/api/auth.py
 from backend.storage.firebase_config import auth
 
 def signup_user(email, password):

@@ -1,0 +1,33 @@
+/* Dark navy professional theme for Streamlit */
+html, body, [class*="css"]  {
+    background-color: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.stButton>button {
+    background-color: #21262d;
+    color: #e6edf3;
+    border-radius: 5px;
+    border: 1px solid #30363d;
+}
+
+.stDataFrame, .stMarkdown {
+    background-color: #161b22;
+    color: #e6edf3;
+    border-radius: 6px;
+}
+
+/* Header tweaks */
+h1, h2, h3 {
+    color: #58a6ff;
+}
+
+# /frontend/styles/config.toml
+[theme]
+base="dark"
+primaryColor="#58a6ff"
+backgroundColor="#0d1117"
+secondaryBackgroundColor="#161b22"
+textColor="#e6edf3"
+font="sans serif"

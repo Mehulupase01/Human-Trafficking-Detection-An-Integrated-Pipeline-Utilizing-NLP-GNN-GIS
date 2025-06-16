@@ -1,4 +1,3 @@
-# 1. backend/storage/firebase_config.py
 import pyrebase
 
 firebase_config = {

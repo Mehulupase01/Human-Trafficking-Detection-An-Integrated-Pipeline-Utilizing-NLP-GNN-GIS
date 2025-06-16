@@ -1,4 +1,3 @@
-# 3. backend/api/user_roles.py
 user_roles = {
     "admin@example.com": "Admin",
     "researcher@example.com": "Researcher",
