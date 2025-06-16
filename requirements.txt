@@ -1,8 +1,48 @@
-requirements.txt
-# streamlit
-# pyrebase
-# firebase-admin
-# requests
-# pandas
-# python-jose
-# fastapi
+# --- Core Web App ---
+streamlit
+requests
+pandas
+openpyxl
+xlrd
+
+# --- Authentication ---
+pyrebase
+firebase-admin
+python-jose
+
+# --- NLP & Topic Modeling ---
+spacy
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz
+bertopic
+sentence-transformers
+umap-learn
+hdbscan
+
+# --- Ontology & RDF ---
+owlready2
+rdflib
+
+# --- Graphs ---
+networkx
+pyvis
+
+# --- GIS & Mapping ---
+folium
+geopy
+
+# --- Prediction Models ---
+torch
+scikit-learn
+numpy
+
+# --- Evaluation & Visualization ---
+matplotlib
+
+# --- FastAPI Support (optional) ---
+fastapi
+python-dotenv
+email-validator
+
+# --- Database (Optional SQL support) ---
+sqlalchemy
+psycopg2-binary
