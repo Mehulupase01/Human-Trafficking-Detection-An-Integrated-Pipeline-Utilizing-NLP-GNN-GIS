@@ -1,3 +1,4 @@
+from typing import List
 from bertopic import BERTopic
 
 def get_topics(texts: List[str]) -> List[str]:

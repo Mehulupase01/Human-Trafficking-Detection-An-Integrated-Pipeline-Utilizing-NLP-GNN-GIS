@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 from backend.core.schema_check import validate_schema
 

@@ -4,7 +4,7 @@ from typing import List, Dict
 
 nlp = spacy.load("en_core_web_sm")
 
-def extract_entities(text: str) -> Dict[str, List[str]]:
+def extract_entities(text):
     doc = nlp(text)
     people = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
     gpe = [ent.text for ent in doc.ents if ent.label_ == "GPE"]
