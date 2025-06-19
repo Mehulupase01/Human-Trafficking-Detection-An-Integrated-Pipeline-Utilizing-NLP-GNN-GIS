@@ -116,31 +116,40 @@ if "role" in st.session_state:
             st.info("Please upload and process a dataset first (Phase 2/3).")
 
         st.subheader("🌐 Social Network Graph Visualization")
-        if "uploaded_df" in st.session_state:
-            if st.button("Generate & View Network Graph"):
-                df = st.session_state["uploaded_df"]
+
+        dataset_source = st.radio("Select Dataset Source", ["Uploaded Dataset", "Merged Dataset"])
+
+        df = None
+        if dataset_source == "Uploaded Dataset" and "uploaded_df" in st.session_state:
+            df = st.session_state["uploaded_df"]
+        elif dataset_source == "Merged Dataset" and "merged_df" in st.session_state:
+            df = st.session_state["merged_df"]
+
+        if df is not None:
+            show_graph = st.button("Generate & View Network Graph")
+            if show_graph:
                 structured = run_nlp_pipeline(df)
                 graph_path = run_graph_pipeline(structured)
                 st.success("Graph generated successfully!")
                 components.html(open(graph_path, "r", encoding="utf-8").read(), height=600)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
+
 
         st.subheader("🗺️ GIS Map of Trafficking Routes")
-        if "uploaded_df" in st.session_state:
+        if df is not None:
             if st.button("Generate GIS Map"):
-                df = st.session_state["uploaded_df"]
                 structured = run_nlp_pipeline(df)
                 map_path = create_gis_map(structured)
                 st.success("Map generated successfully!")
                 components.html(open(map_path, "r", encoding="utf-8").read(), height=600)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
+
 
         st.subheader("🔮 Predict Next Trafficking Location")
-        if "uploaded_df" in st.session_state:
+        if df is not None:
             if st.button("Run Predictive Model"):
-                df = st.session_state["uploaded_df"]
                 structured = run_nlp_pipeline(df)
                 predictions = run_prediction_pipeline(structured)
                 if isinstance(predictions, str):
@@ -149,11 +158,10 @@ if "role" in st.session_state:
                     st.success("Prediction complete!")
                     st.dataframe(predictions)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
 
         st.subheader("🔍 Query Builder & Filter Interface")
-        if "uploaded_df" in st.session_state:
-            df = st.session_state["uploaded_df"]
+        if df is not None:
             nationality = st.selectbox("Filter by Nationality", options=[""] + sorted(df["Nationality of Victim"].dropna().unique().tolist()))
             gender = st.selectbox("Filter by Gender", options=["", "Male", "Female"])
             year_range = st.slider("Left Home Country (Year Range)", min_value=int(df["Left Home Country Year"].min()), max_value=int(df["Left Home Country Year"].max()), value=(2010, 2020))
@@ -164,11 +172,11 @@ if "role" in st.session_state:
                 st.success(f"{len(filtered_df)} record(s) matched.")
                 st.dataframe(filtered_df)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
+
 
         st.subheader("📊 Dashboard: Summary Metrics & Visualizations")
-        if "uploaded_df" in st.session_state:
-            df = st.session_state["uploaded_df"]
+        if df is not None:
             total, nationality_dist, gender_dist, chart = run_metrics_pipeline(df)
             st.metric("Total Unique Victims", total)
             col1, col2 = st.columns(2)
@@ -181,12 +189,12 @@ if "role" in st.session_state:
             st.markdown("**Histogram: Year Left Home Country**")
             st.image(chart, use_column_width=True)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
+
 
         st.subheader("🧠 GNN Node Classification (Victim / Location / Perpetrator)")
-        if "uploaded_df" in st.session_state:
+        if df is not None:
             if st.button("Run GNN Classification"):
-                df = st.session_state["uploaded_df"]
                 structured = run_nlp_pipeline(df)
                 data, encoder = build_gnn_data(structured)
                 model, output = train_gnn(data, num_classes=len(encoder.classes_))
@@ -196,4 +204,5 @@ if "role" in st.session_state:
                 node_map = {f"Node {i}": label for i, label in enumerate(labels)}
                 st.json(node_map)
         else:
-            st.info("Please upload and process a dataset first (Phase 2/3).")
+            st.info("Please upload or merge a dataset first.")
+

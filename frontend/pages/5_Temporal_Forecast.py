@@ -1,4 +1,3 @@
-# /frontend/pages/6_Temporal_Forecast.py
 import streamlit as st
 import pandas as pd
 from backend.api.time_location_predict import predict_time_location
@@ -10,15 +9,23 @@ if st.session_state.get("role") not in ["Admin", "Researcher"]:
     st.warning("Only Admin and Researcher roles can access this feature.")
     st.stop()
 
-if "uploaded_df" not in st.session_state:
-    st.info("Please upload a dataset first.")
+# Dataset toggle
+dataset_source = st.radio("Select Dataset Source", ["Uploaded Dataset", "Merged Dataset"])
+df = None
+if dataset_source == "Uploaded Dataset" and "uploaded_df" in st.session_state:
+    df = st.session_state["uploaded_df"]
+elif dataset_source == "Merged Dataset" and "merged_df" in st.session_state:
+    df = st.session_state["merged_df"]
+
+if df is None:
+    st.info("Please upload or merge a dataset first.")
     st.stop()
 
 st.markdown("""
 This tool estimates the likely year a victim could be present at various locations, based on patterns in your data.
 """)
 
-predictions = predict_time_location(st.session_state["uploaded_df"])
+predictions = predict_time_location(df)
 
 if isinstance(predictions, str):
     st.error(predictions)

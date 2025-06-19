@@ -9,22 +9,27 @@ if st.session_state.get("role") not in ["Admin", "Researcher", "Viewer"]:
     st.warning("Access denied.")
     st.stop()
 
-# Accept multiple datasets or a merged view
+# Accept merged and individual datasets
+datasets = {}
 if "merged_df" in st.session_state:
-    datasets = {"Merged Dataset": st.session_state["merged_df"]}
-else:
-    datasets = {}
+    datasets["Merged Dataset"] = st.session_state["merged_df"]
 
-# Add individual files (mocked from session — replace with your actual structure if needed)
 for key in st.session_state.keys():
     if key.startswith("dataset_") and isinstance(st.session_state[key], pd.DataFrame):
         datasets[key.replace("dataset_", "")] = st.session_state[key]
+if "uploaded_df" in st.session_state:
+    datasets["Uploaded Dataset"] = st.session_state["uploaded_df"]
 
 if not datasets:
     st.info("Please upload or merge datasets first.")
     st.stop()
 
-selected_sets = st.multiselect("Select Datasets", options=list(datasets.keys()), default=list(datasets.keys())[:1])
+st.subheader("📂 Select Dataset(s) to Analyze")
+selected_sets = st.multiselect(
+    "Choose one or more datasets", 
+    options=list(datasets.keys()), 
+    default=list(datasets.keys())[:1]
+)
 if not selected_sets:
     st.warning("Please select at least one dataset.")
     st.stop()
