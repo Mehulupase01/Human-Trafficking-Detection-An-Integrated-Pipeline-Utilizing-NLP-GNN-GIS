@@ -1,7 +1,7 @@
 import pandas as pd
 
 EXPECTED_COLUMNS = [
-    "Sr. no.", "Unique ID (Victim)", "Interviewer Name", "Date of Interview",
+    "Unique ID", "Interviewer Name", "Date of Interview",
     "Gender of Victim", "Nationality of Victim", "Left Home Country Year",
     "Borders Crossed", "City / Locations Crossed", "Final Location",
     "Name of the Perpetrators involved", "Hierarchy of Perpetrators",
