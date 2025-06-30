@@ -1,5 +1,3 @@
-# /pages/6_GNN_Trafficker_Prediction.py
-
 import streamlit as st
 import pandas as pd
 from backend.models.gnn_trafficker_predict import prepare_gnn_graph, run_gnn_prediction
@@ -11,6 +9,7 @@ if st.session_state.get("role") not in ["Admin", "Researcher"]:
     st.warning("Only Admin and Researcher roles can use this feature.")
     st.stop()
 
+# Dataset source toggle
 dataset_source = st.radio("Select Dataset Source", ["Uploaded Dataset", "Merged Dataset"])
 
 df = None
@@ -27,11 +26,15 @@ st.markdown("""
 This model classifies graph nodes to predict which ones are likely human traffickers based on victim connections.
 """)
 
+# Run GNN
 data = prepare_gnn_graph(df)
 predictions = run_gnn_prediction(data)
 
 # Filter by predicted traffickers
-predicted_traffickers = [node for node, label in predictions.items() if label == 1]
+predicted_traffickers = [
+    node.replace("Trafficker_", "") for node, label in predictions.items()
+    if label == 1 and node.startswith("Trafficker_")
+]
 
 if predicted_traffickers:
     st.success("GNN classified the following nodes as likely traffickers:")
