@@ -1,45 +1,53 @@
-# /backend/api/nlp.py
-
 from backend.nlp.entity_extraction import extract_entities
 from backend.nlp.topic_modeling import get_topics
-import numpy as np
 import re
+import pandas as pd
 
-def normalize_perpetrators(text):
-    if not text or isinstance(text, float) or str(text).lower().strip() in ["no", "none", "not specified", "yes", "yes but", "n/a"]:
+def clean_time_spent(value):
+    """Convert time descriptions to numeric days."""
+    value = str(value).lower().strip()
+    if value in ["", "nan", "none", "not sure", "not specified"]:
         return ""
-    # Replace ' and ' with comma for standardization
-    text = re.sub(r"\s+and\s+", ", ", text.strip())
-    # Remove trailing punctuation
-    text = re.sub(r"[\.|;]+$", "", text)
+
+    value = value.replace("approximately", "").replace("about", "").strip()
+
+    if "month" in value:
+        match = re.search(r"\d+", value)
+        return str(int(match.group()) * 30) if match else ""
+
+    if "day" in value:
+        match = re.search(r"\d+", value)
+        return str(int(match.group())) if match else ""
+
+    if "/" in value:
+        parts = value.split("/")
+        try:
+            return str(round(sum([float(p) for p in parts]) / len(parts)))
+        except:
+            return ""
+
+    match = re.search(r"\d+", value)
+    return str(match.group()) if match else ""
+
+def clean_perpetrators(text):
+    """Convert to comma-separated names, empty if 'No' or invalid."""
+    if pd.isna(text) or str(text).strip().lower() in ["no", "none", "nan"]:
+        return ""
+    text = re.sub(r"\s+and\s+", ", ", str(text).strip(), flags=re.IGNORECASE)
     return text
 
-def normalize_time_spent(text):
-    if not isinstance(text, str) or text.strip().lower() in ["n/a", "not applicable", ""]:
+def clean_hierarchy(value):
+    """Remove 'not applicable' or blank out if no valid data."""
+    if pd.isna(value) or str(value).strip().lower() in ["not applicable", "none", "nan"]:
         return ""
-    text = text.lower().strip()
+    return str(value).strip()
 
-    # Try extracting numbers and convert to rough days
-    if "month" in text:
-        match = re.search(r"(\d+)", text)
-        if match:
-            return int(match.group(1)) * 30
-    elif "week" in text:
-        match = re.search(r"(\d+)", text)
-        if match:
-            return int(match.group(1)) * 7
-    elif "day" in text:
-        match = re.search(r"(\d+)", text)
-        if match:
-            return int(match.group(1))
-        elif "3/4" in text:
-            return 4
-    return ""
-
-def clean_hierarchy(text):
-    if not text or isinstance(text, float) or str(text).strip().lower() in ["not applicable", "not aplicable", "n/a"]:
+def clean_location_list(locations):
+    """Remove 'nan' and deduplicate."""
+    if not isinstance(locations, list):
         return ""
-    return text.strip()
+    clean = [loc for loc in locations if str(loc).lower() != "nan"]
+    return list(set(clean))
 
 def run_nlp_pipeline(df):
     df = df.copy()
@@ -48,7 +56,7 @@ def run_nlp_pipeline(df):
     structured_rows = []
 
     for _, row in df.iterrows():
-        # Build composite narrative for location extraction
+        # Combine text for richer NLP signal
         text = " | ".join([
             str(row.get("City / Locations Crossed", "")),
             str(row.get("Borders Crossed", "")),
@@ -58,7 +66,6 @@ def run_nlp_pipeline(df):
         ])
 
         entities = extract_entities(text)
-        locations = [loc for loc in entities.get("locations", []) if str(loc).lower() != "nan"]
 
         structured_rows.append({
             "Unique ID": row.get("Unique ID", ""),
@@ -70,11 +77,11 @@ def run_nlp_pipeline(df):
             "Borders Crossed": row.get("Borders Crossed", ""),
             "City / Locations Crossed": row.get("City / Locations Crossed", ""),
             "Final Location": row.get("Final Location", ""),
-            "Name of the Perpetrators involved": normalize_perpetrators(row.get("Name of the Perpetrators involved", "")),
+            "Name of the Perpetrators involved": clean_perpetrators(row.get("Name of the Perpetrators involved", "")),
             "Hierarchy of Perpetrators": clean_hierarchy(row.get("Hierarchy of Perpetrators", "")),
             "Human traffickers/ Chief of places": row.get("Human traffickers/ Chief of places", ""),
-            "Time Spent in Location / Cities / Places": normalize_time_spent(row.get("Time Spent in Location / Cities / Places", "")),
-            "Locations (NLP)": ", ".join(locations)
+            "Time Spent in Location / Cities / Places": clean_time_spent(row.get("Time Spent in Location / Cities / Places", "")),
+            "Locations (NLP)": clean_location_list(entities.get("locations", []))
         })
 
     return structured_rows
