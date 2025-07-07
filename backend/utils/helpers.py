@@ -1,8 +1,7 @@
 import os
+from pathlib import Path
 
-def save_html(fig, filename="graph_output.html"):
-    output_dir = "frontend/graphs"
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, filename)
+def save_html(fig, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     fig.write_html(output_path)
     return output_path
