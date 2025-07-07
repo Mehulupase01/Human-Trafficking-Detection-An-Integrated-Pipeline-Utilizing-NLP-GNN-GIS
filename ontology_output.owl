@@ -1,0 +1,5156 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544"
+         xmlns="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544#">
+
+<owl:Ontology rdf:about="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544"/>
+
+<owl:ObjectProperty rdf:about="#passedThrough">
+  <rdfs:domain rdf:resource="#Victim"/>
+  <rdfs:range rdf:resource="#Location"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="#interactedWith">
+  <rdfs:domain rdf:resource="#Victim"/>
+  <rdfs:range rdf:resource="#Perpetrator"/>
+</owl:ObjectProperty>
+
+<owl:Class rdf:about="#Victim">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Location">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Perpetrator">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:NamedIndividual rdf:about="#Victim_1">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats_(Ethiopia)"/>
+  <passedThrough rdf:resource="#Hajer_(Sudan)"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <passedThrough rdf:resource="#Ishlavia_(Libya)"/>
+  <interactedWith rdf:resource="#Walid"/>
+  <interactedWith rdf:resource="#Medhanie"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hajer_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khartoum_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ishlavia_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Walid">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Medhanie">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_nan">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra_(prison"/>
+  <passedThrough rdf:resource="#Libya)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Sousse_(Tunisia)"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1003">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats_(refugee_camp)"/>
+  <interactedWith rdf:resource="#None"/>
+  <interactedWith rdf:resource="#traveled_by_himself._He_didn't_need_help_because_his_workplace_was_near_the_border"/>
+  <passedThrough rdf:resource="#Hajer_(Sudan)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name_mentioned"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#but_not_clear_whether_it_is_a_new_one_or_the_same_that_brought_him_to_Hajer"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#Endurman"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Wedi_Babu_(But_other_traffickers_names_that_are_mentioned_for_this_place_are_Kidane"/>
+  <interactedWith rdf:resource="#Walid"/>
+  <interactedWith rdf:resource="#Walid_Isaac"/>
+  <interactedWith rdf:resource="#Soon)"/>
+  <passedThrough rdf:resource="#Misrata_(Libya)"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <interactedWith rdf:resource="#Misrata_police_(And_maybe_Wedi_Babu"/>
+  <interactedWith rdf:resource="#not_100%_clear)"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <passedThrough rdf:resource="#Most_likely_Sabratha_(not_specified"/>
+  <passedThrough rdf:resource="#but_later_he_mentions_that_he_escaped_from_Sabratha)"/>
+  <interactedWith rdf:resource="#Some_Libyan_man"/>
+  <interactedWith rdf:resource="#none"/>
+  <interactedWith rdf:resource="#escaped_by_himself"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra_(Libya)"/>
+  <passedThrough rdf:resource="#Triq_al_Matar_(other_name_for_Triq_al_Matar)_(Libya)"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats_(refugee_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#None">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#traveled_by_himself._He_didn't_need_help_because_his_workplace_was_near_the_border">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Yes">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_no_name_mentioned">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_clear_whether_it_is_a_new_one_or_the_same_that_brought_him_to_Hajer">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kufrah_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Endurman">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wedi_Babu_(But_other_traffickers_names_that_are_mentioned_for_this_place_are_Kidane">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Walid_Isaac">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Soon)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Misrata_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abdel_Salam">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Misrata_police_(And_maybe_Wedi_Babu">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_100%_clear)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabratha_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Most_likely_Sabratha_(not_specified">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_later_he_mentions_that_he_escaped_from_Sabratha)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Some_Libyan_man">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#none">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#escaped_by_himself">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ghiryan_al_Hamra_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Matar_(other_name_for_Triq_al_Matar)_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Niamey_(Niger)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1015">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Autet_(Eritrea)"/>
+  <passedThrough rdf:resource="#Lig_refugee_camp_(Ethiopia)"/>
+  <passedThrough rdf:resource="#Hitsats"/>
+  <passedThrough rdf:resource="#Hajer"/>
+  <interactedWith rdf:resource="#Teklu_smuggler"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Khartoum_outside_the_city"/>
+  <interactedWith rdf:resource="#Efirem_smuggler"/>
+  <passedThrough rdf:resource="#Bani_walid"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <passedThrough rdf:resource="#sabratha"/>
+  <interactedWith rdf:resource="#Kidane_human_trafficker"/>
+  <interactedWith rdf:resource="#Wadi_Isaac_human_trafficker"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Direction_to_Tripoli"/>
+  <passedThrough rdf:resource="#Triq_al_Sika"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Autet_(Eritrea)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Lig_refugee_camp_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hajer">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Teklu_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khartoum">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khartoum_outside_the_city">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Efirem_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#sabratha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kidane_human_trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wadi_Isaac_human_trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ghiryan_al_Hamra">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Direction_to_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Sika">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Niger">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1016">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#eritrea"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <interactedWith rdf:resource="#John_smuggler"/>
+  <passedThrough rdf:resource="#Triq_al_Sika"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#abu_salim"/>
+  <passedThrough rdf:resource="#Niamey"/>
+  <passedThrough rdf:resource="#transit_centre"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#eritrea">
+  <rdf:type rdf:resource="#Location"/>
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kufrah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#John_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#abu_salim">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Niamey">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#transit_centre">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1034">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Niger"/>
+  <interactedWith rdf:resource="#yes"/>
+  <passedThrough rdf:resource="#Algeria"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Tunisia"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#yes">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Algeria">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1011">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Sawa"/>
+  <passedThrough rdf:resource="#Forto_-_Kassala"/>
+  <interactedWith rdf:resource="#rashaida"/>
+  <passedThrough rdf:resource="#Aswan_-_Sinai"/>
+  <interactedWith rdf:resource="#Traffickers"/>
+  <passedThrough rdf:resource="#Arafat_prison"/>
+  <passedThrough rdf:resource="#Aresh_prison"/>
+  <passedThrough rdf:resource="#Adi_Harush"/>
+  <passedThrough rdf:resource="#Addis_Abeba"/>
+  <passedThrough rdf:resource="#Asosa"/>
+  <passedThrough rdf:resource="#Juba"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Bani_Walid_-_Az_Zawiyah"/>
+  <interactedWith rdf:resource="#Traffickers/kidnappers"/>
+  <passedThrough rdf:resource="#Anjila"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sawa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Forto_-_Kassala">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#rashaida">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aswan_-_Sinai">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Traffickers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Arafat_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aresh_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Adi_Harush">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Addis_Abeba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Asosa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Juba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_-_Az_Zawiyah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Traffickers/kidnappers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Anjila">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1017">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#village_to_Khartoum"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#smuggler_abdel_Salam"/>
+  <passedThrough rdf:resource="#Ash_Shwayrif_(Libya)"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#trafficker_abdel_salam"/>
+  <passedThrough rdf:resource="#Nesma"/>
+  <interactedWith rdf:resource="#trafficker"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Tarhuna"/>
+  <passedThrough rdf:resource="#Qasr_Bin_Ghasheer"/>
+  <passedThrough rdf:resource="#Hamdallaye_transit_centre"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#village_to_Khartoum">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smuggler_abdel_Salam">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ash_Shwayrif_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#trafficker_abdel_salam">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Nesma">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tarhuna">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Qasr_Bin_Ghasheer">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hamdallaye_transit_centre">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1005">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Humdit_(Sudan)"/>
+  <interactedWith rdf:resource="#traveled_by_himself"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Mikele"/>
+  <passedThrough rdf:resource="#Az_Zawiyah_(Libya)"/>
+  <interactedWith rdf:resource="#Kidane"/>
+  <passedThrough rdf:resource="#Triq_al_Matar_(Libya)"/>
+  <interactedWith rdf:resource="#none"/>
+  <interactedWith rdf:resource="#was_put_here_by_Libyan_NAVI"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Humdit_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#traveled_by_himself">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mikele">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kidane">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Matar_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#was_put_here_by_Libyan_NAVI">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1062">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Senegal/Mali/
+Burkina"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <interactedWith rdf:resource="#His_brother_(Italy)_put_him_in_touch_with_the_driver"/>
+  <interactedWith rdf:resource="#so_when_he_arrived_at_Rimbo_station_he_called_his_brother_who_called_the_driver"/>
+  <interactedWith rdf:resource="#came_to_pick_him_up."/>
+  <passedThrough rdf:resource="#Qatrun"/>
+  <passedThrough rdf:resource="#Modjroun"/>
+  <passedThrough rdf:resource="#Sabha"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Senegal/Mali/
+Burkina">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Agadez">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#His_brother_(Italy)_put_him_in_touch_with_the_driver">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#so_when_he_arrived_at_Rimbo_station_he_called_his_brother_who_called_the_driver">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#came_to_pick_him_up.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Qatrun">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Modjroun">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1006">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Rama_(Ethiopia)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name"/>
+  <passedThrough rdf:resource="#Adi_Harush_(Ethiopia)"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <passedThrough rdf:resource="#Addis_Abeba_(Ethiopia)"/>
+  <interactedWith rdf:resource="#not_specified_whether_trafficker_was_involved"/>
+  <passedThrough rdf:resource="#another_town_at_the_border_between_Ethiopia_and_Sudan"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#Dawid"/>
+  <passedThrough rdf:resource="#Malarani_(Libya)"/>
+  <passedThrough rdf:resource="#Ash_Shwayrif_(Libya)"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <interactedWith rdf:resource="#the_libyan_man"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#"the_man_that_protected_us""/>
+  <interactedWith rdf:resource="#maybe_the_libyan_man"/>
+  <interactedWith rdf:resource="#sold_him_to_Saraj"/>
+  <passedThrough rdf:resource="#Triq_al_Sika_(Libya)"/>
+  <interactedWith rdf:resource="#was_caught_by_police"/>
+  <passedThrough rdf:resource="#Triq_al_Matar_(Libya)"/>
+  <passedThrough rdf:resource="#A_hospital_in_Libya"/>
+  <passedThrough rdf:resource="#probably_close_to_Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Al_Gharbi_(UNHCR_office)_(Libya)"/>
+  <passedThrough rdf:resource="#Tajura_(Libya)"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rama_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_no_name">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Adi_Harush_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_specified">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Addis_Abeba_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_specified_whether_trafficker_was_involved">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#another_town_at_the_border_between_Ethiopia_and_Sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dawid">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Malarani_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_libyan_man">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#"the_man_that_protected_us"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#maybe_the_libyan_man">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#sold_him_to_Saraj">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Sika_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#was_caught_by_police">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#A_hospital_in_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#probably_close_to_Triq_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Al_Gharbi_(UNHCR_office)_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tajura_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_4">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#endabaguna_and_Mai_Aini_(Ethiopia)"/>
+  <passedThrough rdf:resource="#ethiopian_camp_to_sudanese_border"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#hamdai_and_Shagarab"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#Weldegernan"/>
+  <interactedWith rdf:resource="#Rezene"/>
+  <interactedWith rdf:resource="#Samuel"/>
+  <interactedWith rdf:resource="#Kiros"/>
+  <interactedWith rdf:resource="#Enok_all_eritreans_smugglers"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <interactedWith rdf:resource="#traffickers_Kirosa"/>
+  <interactedWith rdf:resource="#Cegora"/>
+  <interactedWith rdf:resource="#Kidane"/>
+  <interactedWith rdf:resource="#Walid"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <interactedWith rdf:resource="#Abdela"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#endabaguna_and_Mai_Aini_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#ethiopian_camp_to_sudanese_border">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#hamdai_and_Shagarab">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Weldegernan">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rezene">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Samuel">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kiros">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Enok_all_eritreans_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#traffickers_Kirosa">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Cegora">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abdela">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1007">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hamehajete_(Sudan)"/>
+  <interactedWith rdf:resource="#"I_could_not_pay_money._I_left_by_myself._Alone.""/>
+  <passedThrough rdf:resource="#Shagarab_(Sudan)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name_mentioned"/>
+  <passedThrough rdf:resource="#On_the_road_from_Khartoum_(Sudan)_to_Libya._Has_not_crossed_the_libyan_border"/>
+  <interactedWith rdf:resource="#Aman"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)_(Adabito_prison)"/>
+  <interactedWith rdf:resource="#arrested_by_police"/>
+  <passedThrough rdf:resource="#Asmara_(Eritrea)"/>
+  <passedThrough rdf:resource="#Bure_(Ethiopia)"/>
+  <interactedWith rdf:resource="#no_"i_went_there_alone""/>
+  <passedThrough rdf:resource="#Endabaguna_(Ethiopia)_(refugee_camp)"/>
+  <passedThrough rdf:resource="#Hitsats_(Ethiopia)_(Refugee_camp)"/>
+  <passedThrough rdf:resource="#Sudan_(not_further_specified)"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#Hagos"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)_(other_"store")"/>
+  <interactedWith rdf:resource="#but_unknown_who"/>
+  <passedThrough rdf:resource="#Prison_(Possibly_in_Sabratha)_(Libya)"/>
+  <interactedWith rdf:resource="#at_that_time_a_lot_of_person_come_to_the_prison_to_buy_us."/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra_(Libya)"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hamehajete_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#"I_could_not_pay_money._I_left_by_myself._Alone."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Shagarab_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#none_mentioned">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#On_the_road_from_Khartoum_(Sudan)_to_Libya._Has_not_crossed_the_libyan_border">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aman">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khartoum_(Sudan)_(Adabito_prison)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#arrested_by_police">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Asmara_(Eritrea)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bure_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#no_"i_went_there_alone"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Endabaguna_(Ethiopia)_(refugee_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats_(Ethiopia)_(Refugee_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sudan_(not_further_specified)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hagos">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabratha_(Libya)_(other_"store")">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_unknown_who">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Prison_(Possibly_in_Sabratha)_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#at_that_time_a_lot_of_person_come_to_the_prison_to_buy_us.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_5">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#traffickers:_Kashi"/>
+  <interactedWith rdf:resource="#Diab"/>
+  <interactedWith rdf:resource="#Kidane_trafficker"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <interactedWith rdf:resource="#Enok"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#traffickers:_Kashi">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Diab">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kidane_trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Enok">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1019">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Sawa_(military_service)_and_Gash-Barka_as_waiter"/>
+  <passedThrough rdf:resource="#from_barentu_to_Tokombya_and_to_Auguro_by_bus"/>
+  <passedThrough rdf:resource="#from_Auguro_to_Antore"/>
+  <passedThrough rdf:resource="#Blenay_and_Gergef_by_walking"/>
+  <passedThrough rdf:resource="#from_Gergef_to_Hafir_(sudan)"/>
+  <interactedWith rdf:resource="#rashaida_smugglers_kidnapped_him"/>
+  <interactedWith rdf:resource="#his_friends"/>
+  <passedThrough rdf:resource="#Kassala"/>
+  <passedThrough rdf:resource="#Gerba"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#south_sudan"/>
+  <passedThrough rdf:resource="#Arfa"/>
+  <passedThrough rdf:resource="#near_Kassala"/>
+  <interactedWith rdf:resource="#smugglers_come_on_february"/>
+  <interactedWith rdf:resource="#kidnapped_him"/>
+  <interactedWith rdf:resource="#two_others_eritreans._on_the_cars_there_were_people_kidnapped_from_Shagarab"/>
+  <interactedWith rdf:resource="#eritrea"/>
+  <passedThrough rdf:resource="#Sahara_desert_(libya)"/>
+  <passedThrough rdf:resource="#Almanara"/>
+  <passedThrough rdf:resource="#Brak_Shati"/>
+  <interactedWith rdf:resource="#traffickers"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <interactedWith rdf:resource="#somali_smugglers_came_to_the_prison"/>
+  <interactedWith rdf:resource="#take_some_women"/>
+  <passedThrough rdf:resource="#near_tripoli"/>
+  <passedThrough rdf:resource="#Tarazica_and_then_Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Sabratha_and_then_Zuwarah"/>
+  <passedThrough rdf:resource="#Medenine"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sawa_(military_service)_and_Gash-Barka_as_waiter">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_barentu_to_Tokombya_and_to_Auguro_by_bus">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_Auguro_to_Antore">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Blenay_and_Gergef_by_walking">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_Gergef_to_Hafir_(sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#rashaida_smugglers_kidnapped_him">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#his_friends">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kassala">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gerba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#south_sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Arfa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#near_Kassala">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smugglers_come_on_february">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#kidnapped_him">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#two_others_eritreans._on_the_cars_there_were_people_kidnapped_from_Shagarab">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sahara_desert_(libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Almanara">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Brak_Shati">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#traffickers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabratha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#somali_smugglers_came_to_the_prison">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#take_some_women">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#near_tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tarazica_and_then_Triq_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabratha_and_then_Zuwarah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Medenine">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1063">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Niamey"/>
+  <interactedWith rdf:resource="#yes"/>
+  <interactedWith rdf:resource="#transported_by_a_trafficker_(Lee)
+_in_a_lorry"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <interactedWith rdf:resource="#he_was_received_by_Lee's_brother_(Sow)_
+who_is_also_a_trafficker."/>
+  <passedThrough rdf:resource="#Drobo_(i_guess_it_is_Dirkou)"/>
+  <passedThrough rdf:resource="#Seguidine_(small_village__in_Niger_close_to_the_Libyan_border)"/>
+  <passedThrough rdf:resource="#Troko_(Toko_is_a_small_village_in_Niger)"/>
+  <passedThrough rdf:resource="#Tomo"/>
+  <passedThrough rdf:resource="#Magaza__(can't_find_the_city_but_Magza_in_arabic_means_shop)"/>
+  <passedThrough rdf:resource="#Qatrun_(Libya)"/>
+  <passedThrough rdf:resource="#Sabha_
+(Mahdia_discrit)"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Az_Zawiyah_(tripoli)"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Agadez_(Niger)"/>
+  <passedThrough rdf:resource="#Congo-Brazzaville"/>
+  <passedThrough rdf:resource="#Kinshasa"/>
+  <passedThrough rdf:resource="#Lubumbashi"/>
+  <passedThrough rdf:resource="#Gaya"/>
+  <passedThrough rdf:resource="#Cotonou"/>
+  <passedThrough rdf:resource="#Ingal"/>
+  <passedThrough rdf:resource="#Dine_(not_sure)"/>
+  <passedThrough rdf:resource="#In_Guezzam"/>
+  <passedThrough rdf:resource="#Tamanrasset"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#transported_by_a_trafficker_(Lee)
+_in_a_lorry">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_was_received_by_Lee's_brother_(Sow)_
+who_is_also_a_trafficker.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Drobo_(i_guess_it_is_Dirkou)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Seguidine_(small_village__in_Niger_close_to_the_Libyan_border)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Troko_(Toko_is_a_small_village_in_Niger)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tomo">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Magaza__(can't_find_the_city_but_Magza_in_arabic_means_shop)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Qatrun_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabha_
+(Mahdia_discrit)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah_(tripoli)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Agadez_(Niger)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1012">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <passedThrough rdf:resource="#Dembe_Gedamu"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <passedThrough rdf:resource="#Hajer"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Ash_Shwayrif"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Place_in_the_mountains_(Libya)"/>
+  <passedThrough rdf:resource="#House_(Libya)"/>
+  <passedThrough rdf:resource="#Police_station_(Libya)"/>
+  <interactedWith rdf:resource="#he_left_with_other_to_the_police_station"/>
+  <passedThrough rdf:resource="#Place_of_Red_Cross"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra_prison"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <interactedWith rdf:resource="#Not_clear"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ethiopia">
+  <rdf:type rdf:resource="#Location"/>
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dembe_Gedamu">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ash_Shwayrif">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Place_in_the_mountains_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#House_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Police_station_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_left_with_other_to_the_police_station">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Place_of_Red_Cross">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ghiryan_al_Hamra_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Not_clear">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_2">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats_(Ethiopia)"/>
+  <interactedWith rdf:resource="#None_mentioned"/>
+  <passedThrough rdf:resource="#Hajer_(Sudan)"/>
+  <interactedWith rdf:resource="#Someone_who_is_probably_Eritrean_brought_him_here"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name"/>
+  <passedThrough rdf:resource="#Somewhere_in_Chad"/>
+  <passedThrough rdf:resource="#(not_totally_clear)_place_near_Tarabulus_[Tripoli]_(Libya)"/>
+  <interactedWith rdf:resource="#not_clear"/>
+  <passedThrough rdf:resource="#place_near_Tarabulus_[Tripoli]_(Libya)"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <passedThrough rdf:resource="#Sicily"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <passedThrough rdf:resource="#-"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#None_mentioned">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Someone_who_is_probably_Eritrean_brought_him_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Somewhere_in_Chad">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#(not_totally_clear)_place_near_Tarabulus_[Tripoli]_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_clear">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#place_near_Tarabulus_[Tripoli]_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sicily">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#-">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1004">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Mekele_(Ethiopia)"/>
+  <interactedWith rdf:resource="#The_interviewee_only_mentioned_an_Eritrean_organized_the_journey"/>
+  <passedThrough rdf:resource="#Métemma_(Ethiopia)"/>
+  <passedThrough rdf:resource="#Al_Qadarif_(Sudan)"/>
+  <interactedWith rdf:resource="#Workers_of_government"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#Muhamad_Ali"/>
+  <passedThrough rdf:resource="#Road_to_the_border_of_Libya"/>
+  <passedThrough rdf:resource="#Road_to_Kufrah"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Walid"/>
+  <passedThrough rdf:resource="#Road_to_sea"/>
+  <passedThrough rdf:resource="#Uknown_city"/>
+  <passedThrough rdf:resource="#Mediterranean_sea"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mekele_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#The_interviewee_only_mentioned_an_Eritrean_organized_the_journey">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Métemma_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Al_Qadarif_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Workers_of_government">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Muhamad_Ali">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_the_border_of_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_Kufrah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_sea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uknown_city">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mediterranean_sea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Not_further_specified_than_"Ethiopia""/>
+  <interactedWith rdf:resource="#no_"I_was_self-fleed_from_Eritrea""/>
+  <passedThrough rdf:resource="#Not_further_specified_than_"Sudan""/>
+  <interactedWith rdf:resource="#an_Eritrean"/>
+  <interactedWith rdf:resource="#an_Ethiopian_"smuggler""/>
+  <passedThrough rdf:resource="#Sinai_(not_further_specified"/>
+  <passedThrough rdf:resource="#wanted_to_go_to_Israel)"/>
+  <interactedWith rdf:resource="#Rashaida"/>
+  <passedThrough rdf:resource="#Israel_(not_further_specified)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Libya_(not_further_specified)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Not_further_specified_than_"Ethiopia"">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#no_"I_was_self-fleed_from_Eritrea"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Not_further_specified_than_"Sudan"">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#an_Eritrean">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#an_Ethiopian_"smuggler"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sinai_(not_further_specified">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#wanted_to_go_to_Israel)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rashaida">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Israel_(not_further_specified)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Libya_(not_further_specified)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1020">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Bedhom_prison"/>
+  <passedThrough rdf:resource="#military_service_of_Himbrti"/>
+  <passedThrough rdf:resource="#village_called
+Adi-Teklay"/>
+  <passedThrough rdf:resource="#escaped_to_Asmara_with_friends"/>
+  <passedThrough rdf:resource="#military_service_in_Atgabeto_and_then_in_Afasbet_Adiab."/>
+  <passedThrough rdf:resource="#Tserona"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Libyian_desert"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Tozorbo"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Gadin"/>
+  <passedThrough rdf:resource="#Gurchi"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Jamal"/>
+  <passedThrough rdf:resource="#Tunis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bedhom_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#military_service_of_Himbrti">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#village_called
+Adi-Teklay">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#escaped_to_Asmara_with_friends">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#military_service_in_Atgabeto_and_then_in_Afasbet_Adiab.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tserona">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Libyian_desert">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tozorbo">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gadin">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gurchi">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Jamal">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tunis">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1008">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Alabo_Tesena_(Eritrea)"/>
+  <passedThrough rdf:resource="#Ben_Haleh"/>
+  <passedThrough rdf:resource="#Endabaguna"/>
+  <passedThrough rdf:resource="#Mai_Aini_refugee_camp"/>
+  <passedThrough rdf:resource="#Hajer"/>
+  <interactedWith rdf:resource="#Unnamed_Eritrean"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Aswan"/>
+  <interactedWith rdf:resource="#Abil_(aka_Chakur)"/>
+  <passedThrough rdf:resource="#Cairo"/>
+  <passedThrough rdf:resource="#Tobruk"/>
+  <interactedWith rdf:resource="#Take"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#Walid"/>
+  <passedThrough rdf:resource="#Mediterranean_Sea"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Niamey"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alabo_Tesena_(Eritrea)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ben_Haleh">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Endabaguna">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mai_Aini_refugee_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unnamed_Eritrean">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aswan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abil_(aka_Chakur)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Cairo">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tobruk">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Take">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mediterranean_Sea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1049">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#None_"I_left_on_my_own""/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#Possibly_Abdela_Muhamad"/>
+  <interactedWith rdf:resource="#but_interviewee_can't_remember_clearly_(+they_keep_changing_names_she_said)\"/>
+  <passedThrough rdf:resource="#Brak_Shati_(Libya)"/>
+  <interactedWith rdf:resource="#Each_smuggler_takes_his_own_people"/>
+  <interactedWith rdf:resource="#so_probably_trafficked_by_Abdela_Muhamad_(chief_was_Kalifa)"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Chief:_abdela"/>
+  <interactedWith rdf:resource="#not_sure_if_also_the_trafficker"/>
+  <passedThrough rdf:resource="#A_place_between_Bani_Walid_and_Tripoli"/>
+  <interactedWith rdf:resource="#We_were_also_arrested_by_soldiers_(arrested_on_the_road_from_Bani_Walid_to_Tripoli"/>
+  <interactedWith rdf:resource="#not_sure_if_they_are_traffickers"/>
+  <interactedWith rdf:resource="#but_they_asked_money_to_release_them)"/>
+  <passedThrough rdf:resource="#A_place_from_the_red_cross_(Tunisia)"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#None_"I_left_on_my_own"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Possibly_Abdela_Muhamad">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_interviewee_can't_remember_clearly_(+they_keep_changing_names_she_said)\">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Brak_Shati_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Each_smuggler_takes_his_own_people">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#so_probably_trafficked_by_Abdela_Muhamad_(chief_was_Kalifa)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Chief:_abdela">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_sure_if_also_the_trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#A_place_between_Bani_Walid_and_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#We_were_also_arrested_by_soldiers_(arrested_on_the_road_from_Bani_Walid_to_Tripoli">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_sure_if_they_are_traffickers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_they_asked_money_to_release_them)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#A_place_from_the_red_cross_(Tunisia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Medenine_(Tunisia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1064">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#foyerMalbou_district"/>
+  <interactedWith rdf:resource="#yes"/>
+  <passedThrough rdf:resource="#detention_center"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#he_walked_7km_to_enter_Algeria._But_he_was_captured_and_taken_to_the_camp."/>
+  <passedThrough rdf:resource="#camp"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#foyerMalbou_district">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#detention_center">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_walked_7km_to_enter_Algeria._But_he_was_captured_and_taken_to_the_camp.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1013">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Tesen"/>
+  <passedThrough rdf:resource="#Eritrea"/>
+  <passedThrough rdf:resource="#Hajer"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <passedThrough rdf:resource="#Shagarab"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Sinai"/>
+  <passedThrough rdf:resource="#Egypt"/>
+  <passedThrough rdf:resource="#Border_of_Israel"/>
+  <passedThrough rdf:resource="#Isreal"/>
+  <passedThrough rdf:resource="#Ashkelon"/>
+  <passedThrough rdf:resource="#Kampala"/>
+  <passedThrough rdf:resource="#Uganda"/>
+  <passedThrough rdf:resource="#Juba"/>
+  <passedThrough rdf:resource="#South_Sudan"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Triq_al_Matar_prison"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tesen">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Eritrea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Shagarab">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sinai">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Egypt">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Border_of_Israel">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Isreal">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ashkelon">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kampala">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uganda">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#South_Sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwarah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Matar_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1021">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Asmara"/>
+  <passedThrough rdf:resource="#Hitsats_refugee_camp"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Al_Dabbah"/>
+  <passedThrough rdf:resource="#Sahara_desert"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Tazirbu"/>
+  <passedThrough rdf:resource="#Brak_Shati"/>
+  <interactedWith rdf:resource="#Aman_smuggler"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Ajdabiya"/>
+  <passedThrough rdf:resource="#Benghazi"/>
+  <passedThrough rdf:resource="#Beda_immigration_camp"/>
+  <passedThrough rdf:resource="#Triq_al_Sika_detention_centre"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tripoli_(Medina)"/>
+  <passedThrough rdf:resource="#Ben_Gardane_and_Medenine_refugee_camp"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Asmara">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats_refugee_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Al_Dabbah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sahara_desert">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tazirbu">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aman_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ajdabiya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Benghazi">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Beda_immigration_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Sika_detention_centre">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(Medina)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ben_Gardane_and_Medenine_refugee_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1009">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Bazel_(?)"/>
+  <interactedWith rdf:resource="#Unnamed_Eritrean"/>
+  <interactedWith rdf:resource="#who_has_contact_with_Yemeni_people"/>
+  <passedThrough rdf:resource="#Massawa"/>
+  <passedThrough rdf:resource="#Place(s)_in_Yemen_not_mentioned"/>
+  <passedThrough rdf:resource="#Place(s)_in_Saudi_Arabia_not_mentioned"/>
+  <interactedWith rdf:resource="#I_travelled_with_a_Yemenite_connection_man_till_the_border"/>
+  <interactedWith rdf:resource="#after_the_border_with_a_Saudi_Arabian_connection_man"/>
+  <passedThrough rdf:resource="#Addis_Abeba"/>
+  <interactedWith rdf:resource="#Muhari"/>
+  <passedThrough rdf:resource="#Gundar"/>
+  <passedThrough rdf:resource="#Métemma"/>
+  <passedThrough rdf:resource="#Al_Qadarif"/>
+  <passedThrough rdf:resource="#Wad_Madani"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#Unnamed"/>
+  <passedThrough rdf:resource="#Bani_Walid_(probably_Bani_Walid)"/>
+  <interactedWith rdf:resource="#kidane"/>
+  <passedThrough rdf:resource="#Mediterranean_sea"/>
+  <passedThrough rdf:resource="#Misrata"/>
+  <passedThrough rdf:resource="#Niamey"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bazel_(?)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#who_has_contact_with_Yemeni_people">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Massawa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Place(s)_in_Yemen_not_mentioned">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Place(s)_in_Saudi_Arabia_not_mentioned">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_travelled_with_a_Yemenite_connection_man_till_the_border">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#after_the_border_with_a_Saudi_Arabian_connection_man">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Muhari">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gundar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Métemma">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Al_Qadarif">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wad_Madani">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unnamed">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_(probably_Bani_Walid)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#kidane">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Misrata">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1050">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Gerba_(Ethiopia)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_not_specified_who"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#The_"Arabs"_from_gerba_brought_her_here"/>
+  <interactedWith rdf:resource="#from_there_she_seems_'free'"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#but_interviewee_doesn't_know_the_name._it's_a_Sudanese"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Wedj_Hadjsh"/>
+  <passedThrough rdf:resource="#Tajura_(Libya)"/>
+  <interactedWith rdf:resource="#Got_a_lift_from_someone_on_the_road_that_brought_them_here"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+  <interactedWith rdf:resource="#none"/>
+  <interactedWith rdf:resource="#came_her_by_herseld_(and_boyfriend)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gerba_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_specified_who">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#The_"Arabs"_from_gerba_brought_her_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_there_she_seems_'free'">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_interviewee_doesn't_know_the_name._it's_a_Sudanese">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wedj_Hadjsh">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Got_a_lift_from_someone_on_the_road_that_brought_them_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#came_her_by_herseld_(and_boyfriend)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1014">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Eritrea"/>
+  <passedThrough rdf:resource="#Forto_Sawa"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <passedThrough rdf:resource="#Wad_Sherife"/>
+  <passedThrough rdf:resource="#Shagarab"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Tripoli_(detention_centre_Triq_al_Sika)"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Zintan"/>
+  <passedThrough rdf:resource="#Tripoli_(hotel_in_front_of_Triq_al_Sika)"/>
+  <passedThrough rdf:resource="#Niamey"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Forto_Sawa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wad_Sherife">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(detention_centre_Triq_al_Sika)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zintan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(hotel_in_front_of_Triq_al_Sika)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1022">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Mendefera"/>
+  <passedThrough rdf:resource="#Hatja"/>
+  <interactedWith rdf:resource="#smugglers_at_the_border_to_Sudan"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#smuggler_Salomon"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Bani_Walid_different_place"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Triq_al_Sika"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Bin_Garden"/>
+  <passedThrough rdf:resource="#immigration_centre"/>
+  <passedThrough rdf:resource="#Medenine_refugee_camp"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mendefera">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hatja">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smugglers_at_the_border_to_Sudan">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smuggler_Salomon">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_different_place">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bin_Garden">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#immigration_centre">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Medenine_refugee_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1052">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <passedThrough rdf:resource="#not_further_specified._Living_in_a_private_accomodation."/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_interviewee_cannot_remember_the_name"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#but_not_specified_further"/>
+  <interactedWith rdf:resource="#Same_"smuggler"_as_the_first_line_of_Bani_Walid_"our_smugglers_took_us_back""/>
+  <passedThrough rdf:resource="#Ash_Shwayrif_(Libya)"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_further_specified._Living_in_a_private_accomodation.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_interviewee_cannot_remember_the_name">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_specified_further">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Same_"smuggler"_as_the_first_line_of_Bani_Walid_"our_smugglers_took_us_back"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1051">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#Mikele"/>
+  <passedThrough rdf:resource="#Brak_(Libya)"/>
+  <interactedWith rdf:resource="#Aziz"/>
+  <interactedWith rdf:resource="#Looters_or_Aziz"/>
+  <interactedWith rdf:resource="#not_exactly_clear"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <interactedWith rdf:resource="#probably_Aziz"/>
+  <interactedWith rdf:resource="#but_not_clear"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+  <interactedWith rdf:resource="#unknown"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Brak_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aziz">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Looters_or_Aziz">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_exactly_clear">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#probably_Aziz">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_clear">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1023">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Gurhusernay"/>
+  <passedThrough rdf:resource="#camp_of_Mai-Aini"/>
+  <passedThrough rdf:resource="#Tsorona"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Hamlaite"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Shagarab"/>
+  <passedThrough rdf:resource="#Sinai"/>
+  <passedThrough rdf:resource="#not_details"/>
+  <passedThrough rdf:resource="#Israel_(city_not_reported)"/>
+  <passedThrough rdf:resource="#Kampala_(Uganda)"/>
+  <interactedWith rdf:resource="#hotel_landlord_anad_smuggler"/>
+  <passedThrough rdf:resource="#Juba_and_Khartoum"/>
+  <interactedWith rdf:resource="#smuggler_Mikele"/>
+  <passedThrough rdf:resource="#from_sudan_to_Libya_(not_details)"/>
+  <passedThrough rdf:resource="#Brak_Shati"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <interactedWith rdf:resource="#human_trafficker"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Triq_al_Sika"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Aljimail"/>
+  <passedThrough rdf:resource="#Ben_Gardane"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#Tunis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gurhusernay">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#camp_of_Mai-Aini">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tsorona">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hamlaite">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_details">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Israel_(city_not_reported)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kampala_(Uganda)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#hotel_landlord_anad_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Juba_and_Khartoum">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smuggler_Mikele">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_sudan_to_Libya_(not_details)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#human_trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aljimail">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ben_Gardane">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_13">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats_(Ethiopia)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Hajar_(Sudan)"/>
+  <interactedWith rdf:resource="#Ibrahim"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <passedThrough rdf:resource="#Kufrah_(Libya)"/>
+  <interactedWith rdf:resource="#yes"/>
+  <interactedWith rdf:resource="#but_no_name"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hajar_(Sudan)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ibrahim">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_9">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Somewhere_in_Libya"/>
+  <interactedWith rdf:resource="#Muhamad_Wiski"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <passedThrough rdf:resource="#Qasr_Bin_Ghasheer"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <interactedWith rdf:resource="#not_sure_if_there_is_one"/>
+  <passedThrough rdf:resource="#Az_Zawiyah_al_Nasir"/>
+  <passedThrough rdf:resource="#Tajura_prison"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Somewhere_in_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Muhamad_Wiski">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_sure_if_there_is_one">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah_al_Nasir">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tajura_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_6">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#Smugglers"/>
+  <passedThrough rdf:resource="#Mai_Aini"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <passedThrough rdf:resource="#Place_of_the_smugglers;_close_to_the_border_between_Ethiopia_and_Sudan"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Tarabulus_(Tripoli)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mai_Aini">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Place_of_the_smugglers;_close_to_the_border_between_Ethiopia_and_Sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tarabulus_(Tripoli)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1010">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Adi_Harush"/>
+  <passedThrough rdf:resource="#Road_to_Khartoum"/>
+  <interactedWith rdf:resource="#Goyetom"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Road_to_Bani_Walid"/>
+  <interactedWith rdf:resource="#Samara_(crossing)"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#Wedi_Babu_(chief_of_place)"/>
+  <passedThrough rdf:resource="#Way_to_mediterranean_sea"/>
+  <passedThrough rdf:resource="#Unknown_city_in_the_coast"/>
+  <passedThrough rdf:resource="#Misrata"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <passedThrough rdf:resource="#Ghiryan_al_Hamra"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Niamey"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_Khartoum">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Goyetom">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_Bani_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Samara_(crossing)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wedi_Babu_(chief_of_place)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Way_to_mediterranean_sea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_city_in_the_coast">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Congo-Brazzaville">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kinshasa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Lubumbashi">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gaya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Cotonou">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ingal">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dine_(not_sure)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Guezzam">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tamanrasset">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1024">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#from_Zoba-Debub_to_Ethiopia_border"/>
+  <passedThrough rdf:resource="#Hitsats_camp"/>
+  <passedThrough rdf:resource="#journey_through_Ethiopia_to_Sudan"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Hajar_prison"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <passedThrough rdf:resource="#Tezara"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Abu_Kammash"/>
+  <passedThrough rdf:resource="#Ben_Gardane"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#Tunis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_Zoba-Debub_to_Ethiopia_border">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hitsats_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#journey_through_Ethiopia_to_Sudan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hajar_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tezara">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abu_Kammash">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_10">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Unknown"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <interactedWith rdf:resource="#Wedi_Babu"/>
+  <passedThrough rdf:resource="#Qasr_Bin_Ghasheer_detention_center"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#GDF_(UNHCR_center)"/>
+  <passedThrough rdf:resource="#Kassala"/>
+  <interactedWith rdf:resource="#he_went_by_foot_with_other_2_friends_because_his_town_was_near_the_border_with_Sudan"/>
+  <interactedWith rdf:resource="#He_was_catched_by_traffickers"/>
+  <interactedWith rdf:resource="#brought_to_their_house"/>
+  <passedThrough rdf:resource="#From_Kassala_to_Bin_Walid"/>
+  <interactedWith rdf:resource="#The_traffickers_that_catched_him_"Unfortunately"/>
+  <interactedWith rdf:resource="#they_take_us_to_the_Libyan_traffickers._They_are_putting_us_in_the_smuggler’s_hands._[...]_Unfortunately_yes"/>
+  <interactedWith rdf:resource="#they_sell_us_to_the_smugglers_of_Libya.""/>
+  <passedThrough rdf:resource="#Bin_Gashir"/>
+  <passedThrough rdf:resource="#GDF"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown">
+  <rdf:type rdf:resource="#Location"/>
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Wedi_Babu">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Qasr_Bin_Ghasheer_detention_center">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GDF_(UNHCR_center)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_2007-01-01 00:00:00">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <interactedWith rdf:resource="#Yes;_smuggler"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Sudan"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Yes;_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1042">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Agadez_(Niger)"/>
+  <interactedWith rdf:resource="#Momike_(woman)"/>
+  <passedThrough rdf:resource="#House_of_the_trafficker"/>
+  <passedThrough rdf:resource="#most_likely_also_in_Agadez"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name"/>
+  <passedThrough rdf:resource="#Somewhere_in_the_Sahara_desert_between_Agadez_(Niger)_and_Sabha_(Libya)"/>
+  <interactedWith rdf:resource="#but_not_specified_whether_this_is_the_same_as_the_line_before_or_a_new_one._No_specifications"/>
+  <passedThrough rdf:resource="#Sabha_(Libya)"/>
+  <interactedWith rdf:resource="#Osama"/>
+  <passedThrough rdf:resource="#Brigarage_(Libya?)"/>
+  <interactedWith rdf:resource="#Person_working_with_Osama"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)_/_Medina??"/>
+  <interactedWith rdf:resource="#Ajo"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <interactedWith rdf:resource="#his_wife"/>
+  <interactedWith rdf:resource="#but_did_not_really_seem_to_function_as_traffickers_this_time"/>
+  <passedThrough rdf:resource="#Zuwarah_(Libya)"/>
+  <interactedWith rdf:resource="#Bobby"/>
+  <passedThrough rdf:resource="#Zuwarah_(Libya)_(Jawazat_prison)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Momike_(woman)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#House_of_the_trafficker">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#most_likely_also_in_Agadez">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Somewhere_in_the_Sahara_desert_between_Agadez_(Niger)_and_Sabha_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_specified_whether_this_is_the_same_as_the_line_before_or_a_new_one._No_specifications">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabha_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Osama">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Brigarage_(Libya?)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Person_working_with_Osama">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(Libya)_/_Medina??">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ajo">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#his_wife">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_did_not_really_seem_to_function_as_traffickers_this_time">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwarah_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bobby">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwarah_(Libya)_(Jawazat_prison)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1036">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Debdeb_(Algeria)"/>
+  <passedThrough rdf:resource="#Zintan_(Libya)"/>
+  <passedThrough rdf:resource="#a_prison_in_
+Zuwarah_(Libya)"/>
+  <passedThrough rdf:resource="#a_prison_
+Tripoli_(Libya)"/>
+  <passedThrough rdf:resource="#Ben_Gardane"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1018">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Az_Zawiyah_Prison"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah_Prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1032">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <interactedWith rdf:resource="#not_reported"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_reported">
+  <rdf:type rdf:resource="#Perpetrator"/>
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1030">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Edo_State"/>
+  <passedThrough rdf:resource="#Unknown_place(s)_in_Ivory_coast"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Sahara_desert"/>
+  <passedThrough rdf:resource="#Qatrun"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <interactedWith rdf:resource="#abdela"/>
+  <passedThrough rdf:resource="#Zliten_-_in_a_camp_people_call_"ghetto""/>
+  <interactedWith rdf:resource="#Kabama"/>
+  <interactedWith rdf:resource="#unnamed_arab_man_1"/>
+  <passedThrough rdf:resource="#Garaboli"/>
+  <interactedWith rdf:resource="#abdela_(same_as_before)"/>
+  <passedThrough rdf:resource="#Zliten"/>
+  <passedThrough rdf:resource="#Khoms_(Arab_man's_camp)"/>
+  <interactedWith rdf:resource="#Unnamed_Arab_man_2"/>
+  <passedThrough rdf:resource="#Mediterranean_sea"/>
+  <passedThrough rdf:resource="#Khoms_(detention_center)"/>
+  <interactedWith rdf:resource="#Unnamed_Libyan_guards"/>
+  <passedThrough rdf:resource="#Khoms_(Asma_Boys'_building)"/>
+  <interactedWith rdf:resource="#Asma_Boys"/>
+  <passedThrough rdf:resource="#Khoms"/>
+  <interactedWith rdf:resource="#John"/>
+  <interactedWith rdf:resource="#Rasta"/>
+  <passedThrough rdf:resource="#Road_to_Tunisia"/>
+  <passedThrough rdf:resource="#Border_Libya/Tunisia"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#Djerba"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Edo_State">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_place(s)_in_Ivory_coast">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#abdela">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zliten_-_in_a_camp_people_call_"ghetto"">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kabama">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#unnamed_arab_man_1">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Garaboli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#abdela_(same_as_before)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zliten">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khoms_(Arab_man's_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unnamed_Arab_man_2">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khoms_(detention_center)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unnamed_Libyan_guards">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khoms_(Asma_Boys'_building)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Asma_Boys">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khoms">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#John">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rasta">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Road_to_Tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Border_Libya/Tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Djerba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zarzis">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#unknown">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1043">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Niamey/desert"/>
+  <interactedWith rdf:resource="#none"/>
+  <interactedWith rdf:resource="#arranged_it_himself"/>
+  <passedThrough rdf:resource="#Qatrun_(Libya)"/>
+  <interactedWith rdf:resource="#Alassane"/>
+  <passedThrough rdf:resource="#Tripoli_(in_a_place_called_Medina)"/>
+  <interactedWith rdf:resource="#yes"/>
+  <interactedWith rdf:resource="#but_not_specified_who"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <interactedWith rdf:resource="#Houssen"/>
+  <passedThrough rdf:resource="#Al-Baladsir_(Tripoli)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Az_Zawiyah_(not_clear)"/>
+  <interactedWith rdf:resource="#Tawilah_and/or_Muhamad_(a_bit_confusing)"/>
+  <passedThrough rdf:resource="#Zarzis_(Tunisia)"/>
+  <passedThrough rdf:resource="#Medenine_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Niamey/desert">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#arranged_it_himself">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alassane">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(in_a_place_called_Medina)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Houssen">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Al-Baladsir_(Tripoli)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah_(not_clear)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tawilah_and/or_Muhamad_(a_bit_confusing)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zarzis_(Tunisia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Debdeb_(Algeria)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zintan_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#a_prison_in_
+Zuwarah_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#a_prison_
+Tripoli_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_8">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Mietr"/>
+  <passedThrough rdf:resource="#Eritrea"/>
+  <passedThrough rdf:resource="#Gahtelay"/>
+  <passedThrough rdf:resource="#Asmara"/>
+  <passedThrough rdf:resource="#Golij"/>
+  <passedThrough rdf:resource="#Gashbarka"/>
+  <interactedWith rdf:resource="#Not_clear"/>
+  <interactedWith rdf:resource="#states_a_friend_helped_him_to_get_to_the_border_of_Sudan._Yes"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Omdurman"/>
+  <passedThrough rdf:resource="#Banghazi"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Tarabulus"/>
+  <passedThrough rdf:resource="#Calais"/>
+  <passedThrough rdf:resource="#France"/>
+  <passedThrough rdf:resource="#Nantes"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mietr">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gahtelay">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Golij">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gashbarka">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#states_a_friend_helped_him_to_get_to_the_border_of_Sudan._Yes">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Omdurman">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Banghazi">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tarabulus">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Calais">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#France">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Nantes">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1045">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#detained_in_a_prison_in_Libya_(THERE_ARE_NO_EVIDENCE_OF_IMPRISONMENT_IN_HIS_NARRATIVE._NO_DETAILS_HAVE_BEEN_RELEASED._PARTICIPANT_NOTED_THE_DETENTION_ONLY_IN_THE_SUMMARY.)"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#END_OF_SUMMARY"/>
+  <passedThrough rdf:resource="#Kan_Kan"/>
+  <passedThrough rdf:resource="#Segiri"/>
+  <passedThrough rdf:resource="#Gao"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Bordj_(mali)"/>
+  <passedThrough rdf:resource="#Adrar_(Algeria)"/>
+  <passedThrough rdf:resource="#Alger"/>
+  <passedThrough rdf:resource="#Deb_Deb_(_border_with_Libya)"/>
+  <passedThrough rdf:resource="#Gadamis"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Zintan"/>
+  <passedThrough rdf:resource="#tripoli"/>
+  <passedThrough rdf:resource="#2nd_place"/>
+  <passedThrough rdf:resource="#Zanzour"/>
+  <passedThrough rdf:resource="#Boucha"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Mediterranean_Sea"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#detained_in_a_prison_in_Libya_(THERE_ARE_NO_EVIDENCE_OF_IMPRISONMENT_IN_HIS_NARRATIVE._NO_DETAILS_HAVE_BEEN_RELEASED._PARTICIPANT_NOTED_THE_DETENTION_ONLY_IN_THE_SUMMARY.)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#END_OF_SUMMARY">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kan_Kan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Segiri">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gao">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bordj_(mali)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Adrar_(Algeria)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alger">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Deb_Deb_(_border_with_Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gadamis">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#2nd_place">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zanzour">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Boucha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1054">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Dogatti_(Ethiopia)"/>
+  <passedThrough rdf:resource="#Hajar_(Sudan)"/>
+  <interactedWith rdf:resource="#Akila"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#the_interiors"/>
+  <interactedWith rdf:resource="#Tadese"/>
+  <interactedWith rdf:resource="#someone_else"/>
+  <passedThrough rdf:resource="#Brak_Shati_(Libya)"/>
+  <interactedWith rdf:resource="#Aziz"/>
+  <passedThrough rdf:resource="#Ash_Shwayrif_(Libya)"/>
+  <interactedWith rdf:resource="#some_smuggler_caught_him"/>
+  <interactedWith rdf:resource="#they_brought_him_to_Ash-Swarif"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)_(hospital)"/>
+  <interactedWith rdf:resource="#Unknown"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dogatti_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Akila">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_interiors">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tadese">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#someone_else">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#some_smuggler_caught_him">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_brought_him_to_Ash-Swarif">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(Libya)_(hospital)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1046">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Unclear"/>
+  <passedThrough rdf:resource="#I_slept_at_the_border_between_Senegal_and_Mali"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <passedThrough rdf:resource="#Bamako_(Mali)"/>
+  <passedThrough rdf:resource="#Dori_(Burkina_Faso)"/>
+  <passedThrough rdf:resource="#Niamey_(Niger)"/>
+  <passedThrough rdf:resource="#Dirkou_(Niger)"/>
+  <passedThrough rdf:resource="#AwBari_(Libya)"/>
+  <passedThrough rdf:resource="#Sahba_(Libya)"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <passedThrough rdf:resource="#Ansara_prison_(Ansar_al-Shari'a?)"/>
+  <passedThrough rdf:resource="#Buslim"/>
+  <passedThrough rdf:resource="#Az_Zawiyah/_Mitiga_prison?"/>
+  <passedThrough rdf:resource="#Checkpoint_Tunisian_border_(Ra's_Ajdir)"/>
+  <passedThrough rdf:resource="#Somewhere_between_the_checkpoint_of_the_Tunisian_border_and_Zuwarah"/>
+  <passedThrough rdf:resource="#Zuwarah_(Libya)"/>
+  <passedThrough rdf:resource="#Zarzis_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unclear">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_slept_at_the_border_between_Senegal_and_Mali">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bamako_(Mali)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dori_(Burkina_Faso)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dirkou_(Niger)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AwBari_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sahba_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ansara_prison_(Ansar_al-Shari'a?)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Buslim">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az_Zawiyah/_Mitiga_prison?">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Checkpoint_Tunisian_border_(Ra's_Ajdir)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Somewhere_between_the_checkpoint_of_the_Tunisian_border_and_Zuwarah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ghiryan_al_Hamra_(prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1041">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Congo_Brazaville"/>
+  <interactedWith rdf:resource="#2_smuggler_from_
+Cameroon"/>
+  <interactedWith rdf:resource="#Congo"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Campo"/>
+  <passedThrough rdf:resource="#Medenine"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Congo_Brazaville">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#2_smuggler_from_
+Cameroon">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Congo">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Campo">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_2011-01-01 00:00:00">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#Smuggler"/>
+  <passedThrough rdf:resource="#endabaguna"/>
+  <passedThrough rdf:resource="#Ethiopia"/>
+  <passedThrough rdf:resource="#Adi_Harush"/>
+  <passedThrough rdf:resource="#Addis_Abeba"/>
+  <passedThrough rdf:resource="#Umm_al_Aranib"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Ash_Shwayrif"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Tarabulus_(Tripoli)"/>
+  <passedThrough rdf:resource="#Sikka"/>
+  <passedThrough rdf:resource="#Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Tajura"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#endabaguna">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Umm_al_Aranib">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sikka">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tajura">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_2012-01-01 00:00:00">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Garabulli_[Casterverde]"/>
+  <passedThrough rdf:resource="#Tariq_al_Matar"/>
+  <interactedWith rdf:resource="#Not_mentioned"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Garabulli_[Casterverde]">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tariq_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Not_mentioned">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1055">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Triq_al_Matar_(Libya)"/>
+  <interactedWith rdf:resource="#none_mentioned"/>
+  <passedThrough rdf:resource="#Tripoli_(Libya)"/>
+  <passedThrough rdf:resource="#Zuwarah_(Libya)"/>
+  <interactedWith rdf:resource="#Rufat_("This_guy_is_okay_for_the_Eritreans_living_in_the_whole_house"/>
+  <interactedWith rdf:resource="#they_bring_foods"/>
+  <interactedWith rdf:resource="#they_bring_everything"/>
+  <interactedWith rdf:resource="#also_they_suffering_to_go_to_the_sea"/>
+  <interactedWith rdf:resource="#they_make_a_boat"/>
+  <interactedWith rdf:resource="#then_after_that_I_finished_with_the_benzine.")"/>
+  <passedThrough rdf:resource="#Sfax_(Tunisia)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rufat_("This_guy_is_okay_for_the_Eritreans_living_in_the_whole_house">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_bring_foods">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_bring_everything">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#also_they_suffering_to_go_to_the_sea">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_make_a_boat">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#then_after_that_I_finished_with_the_benzine.")">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sfax_(Tunisia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1039">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Gao"/>
+  <passedThrough rdf:resource="#In_Khalil"/>
+  <passedThrough rdf:resource="#Bordj_Badji_Mokhtar"/>
+  <passedThrough rdf:resource="#Alger"/>
+  <passedThrough rdf:resource="#Oran"/>
+  <passedThrough rdf:resource="#Ouergla_(Algeria)"/>
+  <passedThrough rdf:resource="#Debdeb"/>
+  <interactedWith rdf:resource="#Senegalease_smuggler
+(working_in_Algeria)"/>
+  <passedThrough rdf:resource="#Zintan"/>
+  <passedThrough rdf:resource="#an_unfinished_house_in_Az_Zawiyah"/>
+  <interactedWith rdf:resource="#Guinean_smuggler"/>
+  <passedThrough rdf:resource="#the_prison_of_Az_Zawiyah"/>
+  <passedThrough rdf:resource="#on_the_desert_of_"Bouissa""/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Khalil">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bordj_Badji_Mokhtar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Oran">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ouergla_(Algeria)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Debdeb">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Senegalease_smuggler
+(working_in_Algeria)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#an_unfinished_house_in_Az_Zawiyah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Guinean_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_prison_of_Az_Zawiyah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#on_the_desert_of_"Bouissa"">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1079">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Ras_Jdir"/>
+  <interactedWith rdf:resource="#mekki_Houidheg"/>
+  <passedThrough rdf:resource="#Misrata"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <interactedWith rdf:resource="#Ammou"/>
+  <passedThrough rdf:resource="#Aljamail"/>
+  <interactedWith rdf:resource="#Hafedh_Thon"/>
+  <passedThrough rdf:resource="#Dahman"/>
+  <interactedWith rdf:resource="#Aboulou"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ras_Jdir">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#mekki_Houidheg">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ammou">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aljamail">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hafedh_Thon">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dahman">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Aboulou">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1059">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#This_line_is_about_Libya_in_general"/>
+  <passedThrough rdf:resource="#the_lines_below_are_specified_per_location"/>
+  <passedThrough rdf:resource="#however"/>
+  <passedThrough rdf:resource="#not_in_chronological_order"/>
+  <passedThrough rdf:resource="#Tobruk_(Egypt)"/>
+  <interactedWith rdf:resource="#yes"/>
+  <interactedWith rdf:resource="#but_not_further_specified"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <interactedWith rdf:resource="#Tinaat"/>
+  <passedThrough rdf:resource="#Somewhere_in_Sudan_or_Libya"/>
+  <interactedWith rdf:resource="#Abdel_Salam"/>
+  <passedThrough rdf:resource="#Sahara"/>
+  <interactedWith rdf:resource="#Chadian_soldiers"/>
+  <interactedWith rdf:resource="#Aziz"/>
+  <interactedWith rdf:resource="#Kidane_at_least"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#abdela"/>
+  <passedThrough rdf:resource="#Qasr_Bin_Ghasheer"/>
+  <interactedWith rdf:resource="#not_specified"/>
+  <passedThrough rdf:resource="#Abu_Salim"/>
+  <passedThrough rdf:resource="#Tripoli/_Triq_al_Matar"/>
+  <passedThrough rdf:resource="#Zuwarah/_Mediterranean_sea"/>
+  <interactedWith rdf:resource="#Rufat"/>
+  <passedThrough rdf:resource="#Sfax_(Tunisia)"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <interactedWith rdf:resource="#but_no_name_mentioned._"When_I_left_Tunisia"/>
+  <interactedWith rdf:resource="#I_already_had_a_contact_in_Zuwarah""/>
+  <passedThrough rdf:resource="#The_streets_of_Malta"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#This_line_is_about_Libya_in_general">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_lines_below_are_specified_per_location">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#however">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#not_in_chronological_order">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tobruk_(Egypt)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_not_further_specified">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tinaat">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Somewhere_in_Sudan_or_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sahara">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Chadian_soldiers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kidane_at_least">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abu_Salim">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli/_Triq_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwarah/_Mediterranean_sea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rufat">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_no_name_mentioned._"When_I_left_Tunisia">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_already_had_a_contact_in_Zuwarah"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#The_streets_of_Malta">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1026">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <interactedWith rdf:resource="#Muhamad_Zuwarah"/>
+  <interactedWith rdf:resource="#El_Amo"/>
+  <interactedWith rdf:resource="#Muhamad_Az_Zawiyah_(mentioned_in_Medenine"/>
+  <interactedWith rdf:resource="#but_active_in_Libya)"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+  <passedThrough rdf:resource="#Tunis"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Muhamad_Zuwarah">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#El_Amo">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Muhamad_Az_Zawiyah_(mentioned_in_Medenine">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_active_in_Libya)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1048">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Conakry"/>
+  <passedThrough rdf:resource="#Bamako"/>
+  <interactedWith rdf:resource="#too_many_smugglers_in_Bamako"/>
+  <passedThrough rdf:resource="#Sévaré"/>
+  <passedThrough rdf:resource="#Gao"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Kidal"/>
+  <passedThrough rdf:resource="#desert"/>
+  <interactedWith rdf:resource="#traffickers"/>
+  <passedThrough rdf:resource="#Talanta"/>
+  <passedThrough rdf:resource="#Kalil"/>
+  <passedThrough rdf:resource="#Bordj"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#Adrar"/>
+  <passedThrough rdf:resource="#road_to_Algier"/>
+  <passedThrough rdf:resource="#Oran"/>
+  <passedThrough rdf:resource="#between_Maghnia_and_Ouzda"/>
+  <interactedWith rdf:resource="#Those_who_lead_people_across_are_guides._They_will_take_50_euros_per_person._They_will_go_in_front"/>
+  <interactedWith rdf:resource="#you_stay_behind._You_go_slowly"/>
+  <interactedWith rdf:resource="#slowly."/>
+  <interactedWith rdf:resource="#before_that_you_can_go_back_to_Morocco_without_the_Moroccan_police_looking_for_you._Now_it's_not_possible."/>
+  <passedThrough rdf:resource="#Oujda"/>
+  <passedThrough rdf:resource="#Casablanca"/>
+  <passedThrough rdf:resource="#Melilla"/>
+  <passedThrough rdf:resource="#Ceuta"/>
+  <passedThrough rdf:resource="#Deb_Deb"/>
+  <passedThrough rdf:resource="#Gadamis"/>
+  <interactedWith rdf:resource="#smugglers._more_than_20_passages_to_go_to_libya"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Sabasherin"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Tajura_(appointed_in_the_discours_about_libyan_centres)"/>
+  <passedThrough rdf:resource="#Mamoura"/>
+  <passedThrough rdf:resource="#talking_about_prison"/>
+  <passedThrough rdf:resource="#tripoli_quartier:_Goutchan_(When_you_pass_Grigarash"/>
+  <passedThrough rdf:resource="#you_reach_Goutchan._The_area_itself_is_called_Chougoudourdoush.)"/>
+  <interactedWith rdf:resource="#smuggler_of_Zuwarah"/>
+  <passedThrough rdf:resource="#Mahdia_(tunisia"/>
+  <passedThrough rdf:resource="#after_landed_in_Malta)"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+  <passedThrough rdf:resource="#Eudla_(near_Zarzis)_he_tried_to_cross_the_sea_from_Eudla"/>
+  <interactedWith rdf:resource="#referring_to_smugglers_in_libya:_"Before_that"/>
+  <interactedWith rdf:resource="#everyone_worked_on_his_or_her_own_account._For_example"/>
+  <interactedWith rdf:resource="#I'm_a_militia"/>
+  <interactedWith rdf:resource="#I_have_four_guns"/>
+  <interactedWith rdf:resource="#I_have_friends"/>
+  <interactedWith rdf:resource="#I_take_my_little_one"/>
+  <interactedWith rdf:resource="#I_go_to_sea._I_wait_for_the_immigrants"/>
+  <interactedWith rdf:resource="#when_they_come_I_catch_them"/>
+  <interactedWith rdf:resource="#I_take_them_to_my_house"/>
+  <interactedWith rdf:resource="#I_sequestrate_them"/>
+  <interactedWith rdf:resource="#then_they_send_the_money_I_release_them._That's_how_the_Osama"/>
+  <interactedWith rdf:resource="#the_Muhamad_Sabratha._There_are_a_lot_of_smugglers._There's_even_a_man_everyone_knows._They_call_him_Lefiraon.""/>
+  <interactedWith rdf:resource="#talkimg_about_the_Amo_smugglers:_"Very"/>
+  <interactedWith rdf:resource="#very_dangerous._They_are_not_afraid_of_death._They_are_always_ready_to_die._Not_only_do_they_have_explosive_belts"/>
+  <interactedWith rdf:resource="#they_are_not_afraid._When_they_leave_first"/>
+  <interactedWith rdf:resource="#there_are_people_they_put_on_explosive_belts._When_they_find_that_you_are_going_to_take_them"/>
+  <interactedWith rdf:resource="#they_will_explode._They_are_not_afraid_of_people_dying._They_are_crazy._They_get_drunk._They_take_beer"/>
+  <interactedWith rdf:resource="#drugs"/>
+  <interactedWith rdf:resource="#coke._Now_they'll_shoot_anybody._Even_on_the_day_of_boarding_if_you_don't_watch_out_you're_going_to_die._Because_when_they_say_to_go_that_way"/>
+  <interactedWith rdf:resource="#you_don't_come"/>
+  <interactedWith rdf:resource="#they'll_shoot_you.""/>
+  <interactedWith rdf:resource="#referring_about_smugglers_in_libya:_"A_smuggler"/>
+  <interactedWith rdf:resource="#if_he_is_in_the_midst_of_people_like_that"/>
+  <interactedWith rdf:resource="#is_like_an_ordinary_citizen._But_he_showed_his_wickedness_at_the_water's_edge._Where_the_immigrants_are;_where_his_guards_are._But_otherwise"/>
+  <interactedWith rdf:resource="#they_come_to_Tunisia_every_time._It's_when_he_imprisons_people_there"/>
+  <interactedWith rdf:resource="#he_comes_here"/>
+  <interactedWith rdf:resource="#he_takes_his_money"/>
+  <interactedWith rdf:resource="#he_returns._You_see_them_here"/>
+  <interactedWith rdf:resource="#they_are_calm._But_in_Libya"/>
+  <interactedWith rdf:resource="#they_are_not_calm.""/>
+  <passedThrough rdf:resource="#Zarzis_but_talking_about_Tajura"/>
+  <interactedWith rdf:resource="#talking_about_smugglers"/>
+  <interactedWith rdf:resource="#imprisonment"/>
+  <interactedWith rdf:resource="#payment_in_Tajura:_"_Is_it_advantageous_for_the_militia_to_have_a_lot_of_migrants_in_prison_because_they_are_free_workers?_
+Yes._It's_advantageous_for_the_militiamen_because_they_also_sell_you_as_a_slave._Or_you_yourself_pay_to_get_out._Example:_if_they_have_1000_migrants._Maybe_more_than_500_will_go_out_through_the_militia._They_will_give_500_euros"/>
+  <interactedWith rdf:resource="#800_euros_it_depends._To_get_you_out."/>
+  <passedThrough rdf:resource="#Zarzis_but_talking_about_Gerian_prison"/>
+  <interactedWith rdf:resource="#he_took_a_taxi_to_Zuwarah"/>
+  <interactedWith rdf:resource="#then:_"At_the_moment_it_is_very_difficult_to_win_a_boat._But_the_smugglers"/>
+  <interactedWith rdf:resource="#they_will_find_a_way._They_don't_care_if_the_borders_are_closed!_But_still"/>
+  <interactedWith rdf:resource="#it's_not_easy."/>
+  <interactedWith rdf:resource="#Here"/>
+  <interactedWith rdf:resource="#when_you_arrive"/>
+  <interactedWith rdf:resource="#you_will_see_that_they_are_the_ones_who_come_to_see_us;_the_smugglers"/>
+  <interactedWith rdf:resource="#or_you_ask_your_friends_if_they_have_a_contact.""/>
+  <interactedWith rdf:resource="#We_were_just_the_two_of_us_to_cross_the_border"/>
+  <interactedWith rdf:resource="#we_didn't_have_a_guide."/>
+  <passedThrough rdf:resource="#Malta"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Conakry">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bamako">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#too_many_smugglers_in_Bamako">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sévaré">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kidal">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#desert">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Talanta">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kalil">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bordj">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Adrar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#road_to_Algier">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#between_Maghnia_and_Ouzda">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Those_who_lead_people_across_are_guides._They_will_take_50_euros_per_person._They_will_go_in_front">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#you_stay_behind._You_go_slowly">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#slowly.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#before_that_you_can_go_back_to_Morocco_without_the_Moroccan_police_looking_for_you._Now_it's_not_possible.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Oujda">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Casablanca">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Melilla">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ceuta">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Deb_Deb">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smugglers._more_than_20_passages_to_go_to_libya">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sabasherin">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tajura_(appointed_in_the_discours_about_libyan_centres)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mamoura">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#tripoli_quartier:_Goutchan_(When_you_pass_Grigarash">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#you_reach_Goutchan._The_area_itself_is_called_Chougoudourdoush.)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#smuggler_of_Zuwarah">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mahdia_(tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#after_landed_in_Malta)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Eudla_(near_Zarzis)_he_tried_to_cross_the_sea_from_Eudla">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#referring_to_smugglers_in_libya:_"Before_that">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#everyone_worked_on_his_or_her_own_account._For_example">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I'm_a_militia">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_have_four_guns">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_have_friends">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_take_my_little_one">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_go_to_sea._I_wait_for_the_immigrants">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#when_they_come_I_catch_them">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_take_them_to_my_house">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_sequestrate_them">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#then_they_send_the_money_I_release_them._That's_how_the_Osama">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_Muhamad_Sabratha._There_are_a_lot_of_smugglers._There's_even_a_man_everyone_knows._They_call_him_Lefiraon."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talkimg_about_the_Amo_smugglers:_"Very">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#very_dangerous._They_are_not_afraid_of_death._They_are_always_ready_to_die._Not_only_do_they_have_explosive_belts">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_are_not_afraid._When_they_leave_first">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#there_are_people_they_put_on_explosive_belts._When_they_find_that_you_are_going_to_take_them">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_will_explode._They_are_not_afraid_of_people_dying._They_are_crazy._They_get_drunk._They_take_beer">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#drugs">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#coke._Now_they'll_shoot_anybody._Even_on_the_day_of_boarding_if_you_don't_watch_out_you're_going_to_die._Because_when_they_say_to_go_that_way">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#you_don't_come">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they'll_shoot_you."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#referring_about_smugglers_in_libya:_"A_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#if_he_is_in_the_midst_of_people_like_that">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#is_like_an_ordinary_citizen._But_he_showed_his_wickedness_at_the_water's_edge._Where_the_immigrants_are;_where_his_guards_are._But_otherwise">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_come_to_Tunisia_every_time._It's_when_he_imprisons_people_there">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_comes_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_takes_his_money">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_returns._You_see_them_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_are_calm._But_in_Libya">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_are_not_calm."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zarzis_but_talking_about_Tajura">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#imprisonment">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#payment_in_Tajura:_"_Is_it_advantageous_for_the_militia_to_have_a_lot_of_migrants_in_prison_because_they_are_free_workers?_
+Yes._It's_advantageous_for_the_militiamen_because_they_also_sell_you_as_a_slave._Or_you_yourself_pay_to_get_out._Example:_if_they_have_1000_migrants._Maybe_more_than_500_will_go_out_through_the_militia._They_will_give_500_euros">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#800_euros_it_depends._To_get_you_out.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zarzis_but_talking_about_Gerian_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_took_a_taxi_to_Zuwarah">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#then:_"At_the_moment_it_is_very_difficult_to_win_a_boat._But_the_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_will_find_a_way._They_don't_care_if_the_borders_are_closed!_But_still">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#it's_not_easy.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#when_you_arrive">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#you_will_see_that_they_are_the_ones_who_come_to_see_us;_the_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#or_you_ask_your_friends_if_they_have_a_contact."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#We_were_just_the_two_of_us_to_cross_the_border">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#we_didn't_have_a_guide.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Malta">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1065">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#district_called_Yopougon"/>
+  <passedThrough rdf:resource="#a_prison_in_Agadez"/>
+  <passedThrough rdf:resource="#Rimbo_station"/>
+  <passedThrough rdf:resource="#clandestine_restaurant
+_for_migrants"/>
+  <passedThrough rdf:resource="#Rasta_dormitory__in
+_Tamanrasset"/>
+  <interactedWith rdf:resource="#Smuggler"/>
+  <passedThrough rdf:resource="#Assamaka_(Agadez)"/>
+  <passedThrough rdf:resource="#Arlit_(hspital)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#district_called_Yopougon">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#a_prison_in_Agadez">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rimbo_station">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#clandestine_restaurant
+_for_migrants">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rasta_dormitory__in
+_Tamanrasset">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Assamaka_(Agadez)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Arlit_(hspital)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1053">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Tunis_but_talking_about_LIbya"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#libya"/>
+  <passedThrough rdf:resource="#tunisia"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tunis_but_talking_about_LIbya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1057">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Sehba"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <passedThrough rdf:resource="#Misrata"/>
+  <passedThrough rdf:resource="#talking_about_libya"/>
+  <passedThrough rdf:resource="#libya"/>
+  <passedThrough rdf:resource="#Tajura"/>
+  <passedThrough rdf:resource="#Zuwarah"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#tripoli"/>
+  <passedThrough rdf:resource="#tunis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sehba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#tunis">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_9002">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Khoms_al_Gamis"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Tajura"/>
+  <passedThrough rdf:resource="#dentention_centre_in_Tripoli"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Misrata"/>
+  <passedThrough rdf:resource="#Homs"/>
+  <passedThrough rdf:resource="#Syria"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Khoms_al_Gamis">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#dentention_centre_in_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Homs">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Syria">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1066">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Dirkou"/>
+  <passedThrough rdf:resource="#el_Gatroun"/>
+  <passedThrough rdf:resource="#Az_Zawiyah"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Mourzouk"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dirkou">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#el_Gatroun">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mourzouk">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1038">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#not_reported"/>
+  <interactedWith rdf:resource="#traffickers"/>
+  <passedThrough rdf:resource="#Zuwarah_and_Tripoli"/>
+  <passedThrough rdf:resource="#on_a_boat_starting_from_libya"/>
+  <passedThrough rdf:resource="#libya/tunisia"/>
+  <passedThrough rdf:resource="#Zarzis"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwarah_and_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#on_a_boat_starting_from_libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#libya/tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1001">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Ténéré"/>
+  <passedThrough rdf:resource="#Dilma_(desert)_and_Agadez(Niger)"/>
+  <interactedWith rdf:resource="#talking_about_other_smugglers:_"Now_there_are_a_few_now"/>
+  <interactedWith rdf:resource="#but_before"/>
+  <interactedWith rdf:resource="#almost_half_of_the_city_is_coxeurs"/>
+  <interactedWith rdf:resource="#smugglers"/>
+  <interactedWith rdf:resource="#I_don't_know"/>
+  <interactedWith rdf:resource="#they_live_under_migration._But_now_there_are_a_few_of_them._Some_of_them_are_in_prison._When_they_finished_with_the_prison"/>
+  <interactedWith rdf:resource="#some_of_them_fled._They_went_to_Algeria"/>
+  <interactedWith rdf:resource="#to_Nigeria._Some_are_there_with_desperate_families._There_are"/>
+  <interactedWith rdf:resource="#there_are_lots"/>
+  <interactedWith rdf:resource="#lots_of_things"/>
+  <interactedWith rdf:resource="#eh?""/>
+  <passedThrough rdf:resource="#Agadez._massif_Air"/>
+  <passedThrough rdf:resource="#Tchigidine"/>
+  <passedThrough rdf:resource="#cities_quoted_by_ex-smuggler"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ténéré">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Dilma_(desert)_and_Agadez(Niger)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_other_smugglers:_"Now_there_are_a_few_now">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_before">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#almost_half_of_the_city_is_coxeurs">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_don't_know">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_live_under_migration._But_now_there_are_a_few_of_them._Some_of_them_are_in_prison._When_they_finished_with_the_prison">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#some_of_them_fled._They_went_to_Algeria">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#to_Nigeria._Some_are_there_with_desperate_families._There_are">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#there_are_lots">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#lots_of_things">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#eh?"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Agadez._massif_Air">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tchigidine">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#cities_quoted_by_ex-smuggler">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1070">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Kumba"/>
+  <passedThrough rdf:resource="#Cameroon"/>
+  <interactedWith rdf:resource="#Smuggler"/>
+  <passedThrough rdf:resource="#Tamanrasset"/>
+  <passedThrough rdf:resource="#Algeria"/>
+  <passedThrough rdf:resource="#Algiers"/>
+  <passedThrough rdf:resource="#Oujda"/>
+  <passedThrough rdf:resource="#Morocco"/>
+  <passedThrough rdf:resource="#Telem5"/>
+  <passedThrough rdf:resource="#Assamakka"/>
+  <passedThrough rdf:resource="#Niger"/>
+  <passedThrough rdf:resource="#Arlit"/>
+  <passedThrough rdf:resource="#Agadez"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kumba">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Cameroon">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Algiers">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Morocco">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Telem5">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Assamakka">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Arlit">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1028">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Water_(Aden_Gulf)"/>
+  <passedThrough rdf:resource="#Camp_in_unknown_place_in_Yemen"/>
+  <interactedWith rdf:resource="#Unknown_smuggler"/>
+  <passedThrough rdf:resource="#Sahara_desert"/>
+  <interactedWith rdf:resource="#Unknown_smuggler(s)"/>
+  <passedThrough rdf:resource="#Kufrah"/>
+  <interactedWith rdf:resource="#Aziz"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#Hagi"/>
+  <interactedWith rdf:resource="#Kais"/>
+  <passedThrough rdf:resource="#Garaboli"/>
+  <interactedWith rdf:resource="#Unknown_smugglers"/>
+  <passedThrough rdf:resource="#Tajura"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#Zaouia"/>
+  <interactedWith rdf:resource="#Marmoud"/>
+  <passedThrough rdf:resource="#Malta"/>
+  <passedThrough rdf:resource="#Garabuli"/>
+  <passedThrough rdf:resource="#Are_you_still_in_Garaboli?_I'm_still_in_garaboli."/>
+  <passedThrough rdf:resource="#Abou_Salim"/>
+  <passedThrough rdf:resource="#Bani_Walid_and_Tripoli"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Water_(Aden_Gulf)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Camp_in_unknown_place_in_Yemen">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_smuggler(s)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hagi">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kais">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1078">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Gatrone"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Kao"/>
+  <passedThrough rdf:resource="#Niamey"/>
+  <passedThrough rdf:resource="#Madama_and_Sigidim"/>
+  <passedThrough rdf:resource="#Gatrone_and_Tripoli"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#tripoli"/>
+  <passedThrough rdf:resource="#cities_quoted"/>
+  <interactedWith rdf:resource="#he_is_referring_to_other_smugglers"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gatrone">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kao">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Madama_and_Sigidim">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gatrone_and_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#cities_quoted">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_is_referring_to_other_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1067">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Kano"/>
+  <passedThrough rdf:resource="#Tamanrasset"/>
+  <passedThrough rdf:resource="#Algeria/_Niger_(desert)"/>
+  <passedThrough rdf:resource="#Agadez_(OIM's_camp)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kano">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Algeria/_Niger_(desert)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Agadez_(OIM's_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1071">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Mali"/>
+  <passedThrough rdf:resource="#Bamako"/>
+  <passedThrough rdf:resource="#Burkina_Faso"/>
+  <passedThrough rdf:resource="#Ouagadougou"/>
+  <passedThrough rdf:resource="#Niger"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <interactedWith rdf:resource="#Smuggler"/>
+  <passedThrough rdf:resource="#Dirkou"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Bahi"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <interactedWith rdf:resource="#He_left_on_his_own"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mali">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Burkina_Faso">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ouagadougou">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bahi">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#He_left_on_his_own">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1029">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#maybe_other_places_in_Libya"/>
+  <interactedWith rdf:resource="#Unknown_smuggler(s)"/>
+  <passedThrough rdf:resource="#Garaboli"/>
+  <passedThrough rdf:resource="#Tajura"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Medenine"/>
+  <passedThrough rdf:resource="#maybe_other_places_in_Tunisia"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#maybe_other_places_in_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#maybe_other_places_in_Tunisia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1080">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#not_reported"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <interactedWith rdf:resource="#he_became_a_smuggler"/>
+  <passedThrough rdf:resource="#Tabelot"/>
+  <passedThrough rdf:resource="#to_Madama"/>
+  <passedThrough rdf:resource="#Madama"/>
+  <passedThrough rdf:resource="#Sabha"/>
+  <passedThrough rdf:resource="#Arlit"/>
+  <passedThrough rdf:resource="#Tchintabaraden"/>
+  <passedThrough rdf:resource="#In_Guezzam"/>
+  <passedThrough rdf:resource="#Tamanrasset"/>
+  <passedThrough rdf:resource="#Gatrone"/>
+  <passedThrough rdf:resource="#Bani_Walid_and_Sabha"/>
+  <interactedWith rdf:resource="#talking_about_a_smuggler:_Falke"/>
+  <interactedWith rdf:resource="#from_Gambia"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <interactedWith rdf:resource="#talking_about_a_gambian_called_Sanko:_"_There_are_many_immigrants_who_have_made_Libya"/>
+  <interactedWith rdf:resource="#who_know_it._Everybody_knows_him"/>
+  <interactedWith rdf:resource="#he's_a_Gambian._We_even_caught_his_family_in_Gambia"/>
+  <interactedWith rdf:resource="#the_President_himself"/>
+  <interactedWith rdf:resource="#because_of_what_he_does_to_people_in_Libya._His_family_was_arrested_in_Gambia_because_of_him"/>
+  <interactedWith rdf:resource="#because_he_was_doing_revenge._He_leaves_nothing!_It's_revenge"/>
+  <interactedWith rdf:resource="#because_what_they_did_to_him_is_the_revenge_he_is_doing._Because_when_we_had_caught_his_parents"/>
+  <interactedWith rdf:resource="#he_said"/>
+  <interactedWith rdf:resource="#"If_you_want"/>
+  <interactedWith rdf:resource="#you_can_kill_my_parents"/>
+  <interactedWith rdf:resource="#but_me_too"/>
+  <interactedWith rdf:resource="#all_Gambians_who_are_here"/>
+  <interactedWith rdf:resource="#it's_over_with_them"._That's_why_many_Gambians_have_stopped_venturing_towards_Tripoli._It's_because_of_Sanko._""/>
+  <interactedWith rdf:resource="#talking_about_traffickers:_"The_people_who_started_first_were_the_Cameroonians"/>
+  <interactedWith rdf:resource="#the_Blacks._They_are_the_ones_who_started_selling_people_at_Sabha_level._It's_the_Cameroonians_who_started_that"/>
+  <interactedWith rdf:resource="#until_the_Libyans"/>
+  <interactedWith rdf:resource="#the_gentleman_called_Aligetto"/>
+  <interactedWith rdf:resource="#he's_the_one_who_has_a_big_credit_house_there._Aligetto_is_an_Arab"/>
+  <interactedWith rdf:resource="#but_it's_the_Blacks_who_started_it"/>
+  <interactedWith rdf:resource="#it's_us_who_started_it!_It_was_us_blacks_who_showed_the_Arabs_how_to_make_money._Without_lying"/>
+  <interactedWith rdf:resource="#we_did_it_ourselves._""/>
+  <interactedWith rdf:resource="#talking_about_nationalities_of_traffickers:_"_It_was_the_Cameroonians_who_started_it._Then_the_Arabs_learned._There_are_certain_nationalities;_Ghanaians"/>
+  <interactedWith rdf:resource="#Nigerians"/>
+  <interactedWith rdf:resource="#all_started._But_it_is_the_Libyans_who_are_the_leaders._""/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_became_a_smuggler">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tabelot">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#to_Madama">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Madama">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tchintabaraden">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_and_Sabha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_a_smuggler:_Falke">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#from_Gambia">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_a_gambian_called_Sanko:_"_There_are_many_immigrants_who_have_made_Libya">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#who_know_it._Everybody_knows_him">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he's_a_Gambian._We_even_caught_his_family_in_Gambia">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_President_himself">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#because_of_what_he_does_to_people_in_Libya._His_family_was_arrested_in_Gambia_because_of_him">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#because_he_was_doing_revenge._He_leaves_nothing!_It's_revenge">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#because_what_they_did_to_him_is_the_revenge_he_is_doing._Because_when_we_had_caught_his_parents">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_said">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#"If_you_want">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#you_can_kill_my_parents">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_me_too">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#all_Gambians_who_are_here">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#it's_over_with_them"._That's_why_many_Gambians_have_stopped_venturing_towards_Tripoli._It's_because_of_Sanko._"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_traffickers:_"The_people_who_started_first_were_the_Cameroonians">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_Blacks._They_are_the_ones_who_started_selling_people_at_Sabha_level._It's_the_Cameroonians_who_started_that">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#until_the_Libyans">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_gentleman_called_Aligetto">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he's_the_one_who_has_a_big_credit_house_there._Aligetto_is_an_Arab">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#but_it's_the_Blacks_who_started_it">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#it's_us_who_started_it!_It_was_us_blacks_who_showed_the_Arabs_how_to_make_money._Without_lying">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#we_did_it_ourselves._"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#talking_about_nationalities_of_traffickers:_"_It_was_the_Cameroonians_who_started_it._Then_the_Arabs_learned._There_are_certain_nationalities;_Ghanaians">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Nigerians">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#all_started._But_it_is_the_Libyans_who_are_the_leaders._"">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1075">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Niger"/>
+  <passedThrough rdf:resource="#Agadez"/>
+  <passedThrough rdf:resource="#Libya"/>
+  <passedThrough rdf:resource="#Gatrone"/>
+  <passedThrough rdf:resource="#Morzouk"/>
+  <passedThrough rdf:resource="#Unknown_prison"/>
+  <passedThrough rdf:resource="#House_of_Nigerian_stranger_in_Morzouk"/>
+  <passedThrough rdf:resource="#Sabha"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Morzouk">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Unknown_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#House_of_Nigerian_stranger_in_Morzouk">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1069">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Bamako_(Mali)"/>
+  <passedThrough rdf:resource="#Gao_(Mali):_"foyer_=_Hostel"/>
+  <interactedWith rdf:resource="#yes"/>
+  <passedThrough rdf:resource="#al-Khalīl:_the_desert"/>
+  <passedThrough rdf:resource="#Bordj_Badji_Mokhtar_(Algeria):_Hostel"/>
+  <passedThrough rdf:resource="#Adrar_:_hostel"/>
+  <passedThrough rdf:resource="#Alger_:_construction_site"/>
+  <passedThrough rdf:resource="#Oujda_(Marocco)"/>
+  <passedThrough rdf:resource="#Alger"/>
+  <passedThrough rdf:resource="#Debdeb_(Algeria)_:_hostel"/>
+  <passedThrough rdf:resource="#Ghadames_(Libya)"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya):_detention_center"/>
+  <passedThrough rdf:resource="#Tripoli_(hostel)"/>
+  <passedThrough rdf:resource="#Garaboli_(Libya)"/>
+  <passedThrough rdf:resource="#Tripoli_(Triq_al-matar)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gao_(Mali):_"foyer_=_Hostel">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#al-Khalīl:_the_desert">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bordj_Badji_Mokhtar_(Algeria):_Hostel">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Adrar_:_hostel">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alger_:_construction_site">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Oujda_(Marocco)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Debdeb_(Algeria)_:_hostel">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ghadames_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_(Libya):_detention_center">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(hostel)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Garaboli_(Libya)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_(Triq_al-matar)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_15">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Maidad_(Eritrea"/>
+  <passedThrough rdf:resource="#her_village)"/>
+  <passedThrough rdf:resource="#Rhama_(Ethiopia)"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Humera_(Ethiopia)"/>
+  <passedThrough rdf:resource="#Hajer_(Sudan)"/>
+  <passedThrough rdf:resource="#Khartoum_(Sudan)"/>
+  <passedThrough rdf:resource="#Bani_Walid_(Libya)"/>
+  <passedThrough rdf:resource="#Sabratha_(Libya)"/>
+  <passedThrough rdf:resource="#Trabulus_(Tripoli"/>
+  <passedThrough rdf:resource="#Libya)"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Maidad_(Eritrea">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#her_village)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rhama_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Humera_(Ethiopia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Trabulus_(Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1060">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Tunis"/>
+  <interactedWith rdf:resource="#Trafficker"/>
+  <passedThrough rdf:resource="#Ben_Guerdan"/>
+  <passedThrough rdf:resource="#Zwara_(detetnion_center)"/>
+  <passedThrough rdf:resource="#Zwara_(the_participant_does_not_mention_where_exactly_but_mentions_that_he_was_transported_there_with_his_wife_where_she_gave_birth"/>
+  <passedThrough rdf:resource="#Mednine:_Tunisian_Red_Crescent)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Trafficker">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Ben_Guerdan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zwara_(detetnion_center)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zwara_(the_participant_does_not_mention_where_exactly_but_mentions_that_he_was_transported_there_with_his_wife_where_she_gave_birth">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mednine:_Tunisian_Red_Crescent)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sousse_(Tunisia)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1027">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#And_after_that"/>
+  <passedThrough rdf:resource="#I_fled_from_there_and_I_went_to_Ethiopia_to_stay_for_a_temporary_time."/>
+  <passedThrough rdf:resource="#and_I_travelled_to_find_a_smuggler_in_Libya._I_travelled_from_Ethiopia_the_same_day."/>
+  <passedThrough rdf:resource="#Before_I_came_to_Libya"/>
+  <passedThrough rdf:resource="#I_passed_through_the_Sahara_Desert_with_a_lot_of_Somali_and_Eritreans._But_the_majority_of_them_were_Eritreans_people"/>
+  <interactedWith rdf:resource="#Our_smuggler_gave_us_a_guard"/>
+  <interactedWith rdf:resource="#some_militia"/>
+  <interactedWith rdf:resource="#a_board_guard._We_had_board_guards_which_were_black_Libyans"/>
+  <interactedWith rdf:resource="#Chadian._They_were_travelling_with_us._They_have_a_lot_of_big_machine_guns_on_their_Land_Cruiser._They_have_guns_AK47"/>
+  <interactedWith rdf:resource="#bombs"/>
+  <interactedWith rdf:resource="#everything_they_have."/>
+  <passedThrough rdf:resource="#In_Brak_al-Shati."/>
+  <interactedWith rdf:resource="#Marmoud_Abdel_Salam"/>
+  <interactedWith rdf:resource="#the_owner"/>
+  <interactedWith rdf:resource="#Afarki"/>
+  <interactedWith rdf:resource="#Aziz"/>
+  <passedThrough rdf:resource="#And_after_that_he_took_us_to_the_sea_to_Tripoli."/>
+  <interactedWith rdf:resource="#Robian"/>
+  <passedThrough rdf:resource="#After_we_left_that_place"/>
+  <passedThrough rdf:resource="#the_story_now"/>
+  <passedThrough rdf:resource="#we_are_talking_about_Garaboli_now._We_reached_Garaboli"/>
+  <passedThrough rdf:resource="#we_travelled_from_there._After_we_travelled"/>
+  <passedThrough rdf:resource="#the_smuggler_pushed_us_from_there_…"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Garaboli._We_stayed_in_Bani_Walid_for_three_months._After_three_months"/>
+  <passedThrough rdf:resource="#they_took_us_to_Garaboli"/>
+  <passedThrough rdf:resource="#in_the_town._We_stayed_there_again_another_two_months._They_took_us_to_the_beach_where_people_are_travelling_by_taking_the_boat._Including_in_totally_three_months._So"/>
+  <passedThrough rdf:resource="#in_Garaboli"/>
+  <passedThrough rdf:resource="#when_we_are_including_twenty_days_from_different_places._So"/>
+  <passedThrough rdf:resource="#it_takes_almost_three_months."/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Tajoura"/>
+  <interactedWith rdf:resource="#Even_the_smugglers._There_are_a_lot_of_smugglers."/>
+  <passedThrough rdf:resource="#Tripoli_to_Bani_Walid"/>
+  <passedThrough rdf:resource="#after_Tripoli_I_stayed_there_I_went_to_CDC_which_is_an_office_of_UNHCR_CDC."/>
+  <passedThrough rdf:resource="#Tunisia"/>
+  <passedThrough rdf:resource="#I_came_to_Az-Zawiyah_and_after_Zuwara."/>
+  <passedThrough rdf:resource="#Zuwara"/>
+  <passedThrough rdf:resource="#Az-Zawiyah"/>
+  <interactedWith rdf:resource="#El_Amo"/>
+  <passedThrough rdf:resource="#I_was_in_Brak_Shati."/>
+  <interactedWith rdf:resource="#It_is_Marmoud_Abdel_Salam"/>
+  <passedThrough rdf:resource="#Brak_Shati"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#And_after_that">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_fled_from_there_and_I_went_to_Ethiopia_to_stay_for_a_temporary_time.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#and_I_travelled_to_find_a_smuggler_in_Libya._I_travelled_from_Ethiopia_the_same_day.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Before_I_came_to_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_passed_through_the_Sahara_Desert_with_a_lot_of_Somali_and_Eritreans._But_the_majority_of_them_were_Eritreans_people">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Our_smuggler_gave_us_a_guard">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#some_militia">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#a_board_guard._We_had_board_guards_which_were_black_Libyans">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Chadian._They_were_travelling_with_us._They_have_a_lot_of_big_machine_guns_on_their_Land_Cruiser._They_have_guns_AK47">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#bombs">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#everything_they_have.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Brak_al-Shati.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Marmoud_Abdel_Salam">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_owner">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Afarki">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#And_after_that_he_took_us_to_the_sea_to_Tripoli.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Robian">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#After_we_left_that_place">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_story_now">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#we_are_talking_about_Garaboli_now._We_reached_Garaboli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#we_travelled_from_there._After_we_travelled">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#the_smuggler_pushed_us_from_there_…">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Garaboli._We_stayed_in_Bani_Walid_for_three_months._After_three_months">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_took_us_to_Garaboli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#in_the_town._We_stayed_there_again_another_two_months._They_took_us_to_the_beach_where_people_are_travelling_by_taking_the_boat._Including_in_totally_three_months._So">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#in_Garaboli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#when_we_are_including_twenty_days_from_different_places._So">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#it_takes_almost_three_months.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tajoura">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Even_the_smugglers._There_are_a_lot_of_smugglers.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_to_Bani_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#after_Tripoli_I_stayed_there_I_went_to_CDC_which_is_an_office_of_UNHCR_CDC.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_came_to_Az-Zawiyah_and_after_Zuwara.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zuwara">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Az-Zawiyah">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#I_was_in_Brak_Shati.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#It_is_Marmoud_Abdel_Salam">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zaouia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Marmoud">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Garabuli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Are_you_still_in_Garaboli?_I'm_still_in_garaboli.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abou_Salim">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bani_Walid_and_Tripoli">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3002">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#Information_about_"the_human_traffickers"/>
+  <interactedWith rdf:resource="#kidnappers_of_organized_crime_groups_that_stretch_from_Eritrea_to_countries_of_East"/>
+  <interactedWith rdf:resource="#North_Africa"/>
+  <interactedWith rdf:resource="#Europe"/>
+  <interactedWith rdf:resource="#their_links_with_the_government_officials"/>
+  <interactedWith rdf:resource="#government_institutions_of_Eritrea"/>
+  <interactedWith rdf:resource="#Sudan.""/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Information_about_"the_human_traffickers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#kidnappers_of_organized_crime_groups_that_stretch_from_Eritrea_to_countries_of_East">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#North_Africa">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Europe">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#their_links_with_the_government_officials">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#government_institutions_of_Eritrea">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sudan."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_1056">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#From_al-Koufrah_to_Bani_Walid"/>
+  <passedThrough rdf:resource="#In_Bani_Walid"/>
+  <passedThrough rdf:resource="#From_Bani_Walid_to_Sabratha"/>
+  <passedThrough rdf:resource="#In_Brak_Shati"/>
+  <passedThrough rdf:resource="#In_Janzour_prison"/>
+  <passedThrough rdf:resource="#Triq_Al-Sikka"/>
+  <passedThrough rdf:resource="#Seba_(Triq_al-Matar)"/>
+  <passedThrough rdf:resource="#Zuwara"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_al-Koufrah_to_Bani_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Bani_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Bani_Walid_to_Sabratha">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Brak_Shati">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#In_Janzour_prison">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_Al-Sikka">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Seba_(Triq_al-Matar)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_14">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hayer"/>
+  <interactedWith rdf:resource="#Mohamed_Musgi"/>
+  <interactedWith rdf:resource="#Abderazak"/>
+  <interactedWith rdf:resource="#Jabr(o)"/>
+  <passedThrough rdf:resource="#Shegerab_camp."/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Umdurman"/>
+  <passedThrough rdf:resource="#Kufra"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Triq_al_Sikka"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hayer">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mohamed_Musgi">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Abderazak">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Jabr(o)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Shegerab_camp.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Umdurman">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Kufra">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Triq_al_Sikka">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3003">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#sawa"/>
+  <passedThrough rdf:resource="#Cairo"/>
+  <passedThrough rdf:resource="#Tripoli"/>
+  <passedThrough rdf:resource="#Tariq_al_Matar"/>
+  <passedThrough rdf:resource="#Bani_Walid"/>
+  <passedThrough rdf:resource="#Zawia"/>
+  <passedThrough rdf:resource="#Gharyan"/>
+  <passedThrough rdf:resource="#Zintan"/>
+  <passedThrough rdf:resource="#Teric_Al_sika"/>
+  <passedThrough rdf:resource="#Tripoli_Gathering_and_Departure_Facility_(GDF"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#sawa">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3004">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#kesela"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#kesela">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3005">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#shegerab_camp"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#shegerab_camp">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3006">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#halfa_village_(_not_far_from_the_camp)"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#halfa_village_(_not_far_from_the_camp)">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_3007">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zawia">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Gharyan">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Teric_Al_sika">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Tripoli_Gathering_and_Departure_Facility_(GDF">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_16">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#From_Suwa_(Eritrea)_to_Kassala_(Sudan)._In_Kassala_there_is_UNHCR."/>
+  <interactedWith rdf:resource="#No_smugglers"/>
+  <interactedWith rdf:resource="#he_says_"I_was_escaping_from_Sawa._From_the_training_camp_with_some_friends._Sawa_is_something_like_to_twentyfour_hours_nearby_foot_to_Sudan."_He_escaped_with_4_other_friends._They_had_a_map."/>
+  <passedThrough rdf:resource="#Shagarab"/>
+  <passedThrough rdf:resource="#From_Shagarab_to_Khartoum"/>
+  <interactedWith rdf:resource="#smuggler"/>
+  <passedThrough rdf:resource="#From_Khartoum_he_was_taken_to_Umdurman_and_then_to_Libya"/>
+  <interactedWith rdf:resource="#Sudanese_smuggler_(Abdo)"/>
+  <passedThrough rdf:resource="#Shwayrif"/>
+  <passedThrough rdf:resource="#Sabratha"/>
+  <passedThrough rdf:resource="#Zawiya"/>
+  <passedThrough rdf:resource="#Sikka"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Suwa_(Eritrea)_to_Kassala_(Sudan)._In_Kassala_there_is_UNHCR.">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#No_smugglers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_says_"I_was_escaping_from_Sawa._From_the_training_camp_with_some_friends._Sawa_is_something_like_to_twentyfour_hours_nearby_foot_to_Sudan."_He_escaped_with_4_other_friends._They_had_a_map.">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Shagarab_to_Khartoum">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Khartoum_he_was_taken_to_Umdurman_and_then_to_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sudanese_smuggler_(Abdo)">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Shwayrif">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Zawiya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_went_by_foot_with_other_2_friends_because_his_town_was_near_the_border_with_Sudan">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#He_was_catched_by_traffickers">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#brought_to_their_house">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Kassala_to_Bin_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#The_traffickers_that_catched_him_"Unfortunately">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_take_us_to_the_Libyan_traffickers._They_are_putting_us_in_the_smuggler’s_hands._[...]_Unfortunately_yes">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#they_sell_us_to_the_smugglers_of_Libya."">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bin_Gashir">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GDF">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_17">
+  <rdf:type rdf:resource="#Victim"/>
+  <interactedWith rdf:resource="#he_walked"/>
+  <passedThrough rdf:resource="#Hamdait"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <interactedWith rdf:resource="#he_walked_because_there_is_a_joint_point_of_Eritrea"/>
+  <interactedWith rdf:resource="#Ethiopia"/>
+  <interactedWith rdf:resource="#Sudan_borders"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <interactedWith rdf:resource="#yes"/>
+  <passedThrough rdf:resource="#From_Sudan_to_Libya"/>
+  <passedThrough rdf:resource="#Kufra"/>
+  <passedThrough rdf:resource="#Bin_Walid"/>
+  <passedThrough rdf:resource="#Shara_al_Matar"/>
+  <passedThrough rdf:resource="#Niger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_walked">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Hamdait">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#he_walked_because_there_is_a_joint_point_of_Eritrea">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Sudan_borders">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#From_Sudan_to_Libya">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Bin_Walid">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Shara_al_Matar">
+  <rdf:type rdf:resource="#Location"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Victim_18">
+  <rdf:type rdf:resource="#Victim"/>
+  <passedThrough rdf:resource="#Hitsats_refugee_camp"/>
+  <interactedWith rdf:resource="#she_walked"/>
+  <passedThrough rdf:resource="#Hayer"/>
+  <passedThrough rdf:resource="#Sudan"/>
+  <interactedWith rdf:resource="#Yes"/>
+  <passedThrough rdf:resource="#Khartoum"/>
+  <passedThrough rdf:resource="#Kufra"/>
+  <interactedWith rdf:resource="#same_as_0017"/>
+  <passedThrough rdf:resource="#Bin_Walid"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#she_walked">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#same_as_0017">
+  <rdf:type rdf:resource="#Perpetrator"/>
+</owl:NamedIndividual>
+
+
+</rdf:RDF>
