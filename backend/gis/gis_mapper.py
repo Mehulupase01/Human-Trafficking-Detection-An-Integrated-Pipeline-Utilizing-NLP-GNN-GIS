@@ -16,7 +16,7 @@ def get_coordinates(location):
 def generate_map(data, output_file="gis_map.html"):
     m = folium.Map(location=[0.1, 37.0], zoom_start=2)
     for entry in data:
-        victim_id = entry['Victim ID']
+        victim_id = entry['Unique ID']
         locations = entry['Locations']
         coords_list = []
         for loc in locations:

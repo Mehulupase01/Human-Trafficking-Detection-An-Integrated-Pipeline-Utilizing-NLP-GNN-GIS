@@ -183,7 +183,7 @@ if "role" in st.session_state:
             with col2:
                 st.markdown("**Gender Distribution**")
                 st.json(gen_dist)
-            st.image(chart, use_column_width=True)
+            st.image(chart, use_container_width=True)
 
             st.subheader("🧠 GNN Node Classification (Victim / Location / Perpetrator)")
             if st.button("Run GNN Classification"):

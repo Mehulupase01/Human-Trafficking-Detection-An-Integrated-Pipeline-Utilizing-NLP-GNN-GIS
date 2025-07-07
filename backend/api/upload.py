@@ -31,6 +31,8 @@ def process_upload(uploaded_file):
             df = pd.read_csv(uploaded_file)
         elif uploaded_file.name.endswith(".xlsx"):
             df = pd.read_excel(uploaded_file)
+        if "Unique ID" in df.columns:
+            df["Unique ID"] = df["Unique ID"].astype(str)
         else:
             return None, "❌ Unsupported file format. Upload .csv or .xlsx only."
 
