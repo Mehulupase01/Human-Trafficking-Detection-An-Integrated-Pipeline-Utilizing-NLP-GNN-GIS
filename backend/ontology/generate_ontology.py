@@ -19,7 +19,7 @@ def build_ontology(data, ontology_name="TraffickingOntology"):
             range = [Perpetrator]
 
         for row in data:
-            v = Victim(f"Victim_{row['Victim ID']}")
+            v = Victim(f"Victim_{row['Unique ID']}")
             for loc in row["Locations"]:
                 l = Location(loc.replace(" ", "_"))
                 v.passedThrough.append(l)

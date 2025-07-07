@@ -2,11 +2,12 @@ from dotenv import load_dotenv
 load_dotenv()
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import streamlit as st
 import pandas as pd
 import base64
 import streamlit.components.v1 as components
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Auth
 from backend.api.auth import login_user, signup_user
@@ -22,6 +23,7 @@ from backend.api.predict import run_prediction_pipeline
 from backend.api.query import apply_filters
 from backend.api.metrics import run_metrics_pipeline
 from backend.models.gnn_model import build_gnn_data, train_gnn
+from backend.api.ontology import create_and_export_rdf
 
 st.set_page_config(page_title="Trafficking Analytics App", layout="centered")
 st.title("🚨 Human Trafficking Analytics Platform")
@@ -111,7 +113,7 @@ if "role" in st.session_state:
             if df is not None:
                 st.success("Upload successful. Running NLP pipeline...")
                 st.session_state["uploaded_df"] = df
-                structured = run_nlp_pipeline(df)
+                structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
                 st.session_state["structured_data"] = structured
                 st.success("NLP extraction complete.")
                 st.dataframe(pd.DataFrame(structured).head())
@@ -130,6 +132,17 @@ if "role" in st.session_state:
 
     # ALL POST-NLP MODULES (shared data source toggle)
     if role in ["Admin", "Researcher"]:
+        st.subheader("🧬 Ontology Generation & RDF Export")
+        if st.button("Generate & Export Ontology RDF File"):
+            structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
+            rdf_path = create_and_export_rdf(structured)
+            if rdf_path:
+                with open(rdf_path, "rb") as f:
+                    st.download_button("📥 Download RDF Ontology", f, file_name="ontology_export.owl")
+                st.success("Ontology successfully generated and exported.")
+            else:
+                st.error("Failed to generate ontology.")
+
         st.subheader("🌐 Social Network Graph Visualization")
         dataset_source = st.radio("Select Dataset Source", ["Uploaded Dataset", "Merged Dataset"])
         df = None
@@ -140,21 +153,21 @@ if "role" in st.session_state:
 
         if df is not None:
             if st.button("Generate & View Network Graph"):
-                structured = run_nlp_pipeline(df)
+                structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
                 path = run_graph_pipeline(structured)
                 st.success("Graph generated.")
                 components.html(open(path, "r", encoding="utf-8").read(), height=600)
 
             st.subheader("🗺️ GIS Map of Trafficking Routes")
             if st.button("Generate GIS Map"):
-                structured = run_nlp_pipeline(df)
+                structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
                 map_path = create_gis_map(structured)
                 st.success("Map created.")
                 components.html(open(map_path, "r", encoding="utf-8").read(), height=600)
 
             st.subheader("🔮 Predict Next Trafficking Location")
             if st.button("Run Predictive Model"):
-                structured = run_nlp_pipeline(df)
+                structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
                 preds = run_prediction_pipeline(structured)
                 st.success("Prediction complete.")
                 st.dataframe(preds)
@@ -187,7 +200,7 @@ if "role" in st.session_state:
 
             st.subheader("🧠 GNN Node Classification (Victim / Location / Perpetrator)")
             if st.button("Run GNN Classification"):
-                structured = run_nlp_pipeline(df)
+                structured = st.session_state.get("structured_data", run_nlp_pipeline(df))
                 data, encoder = build_gnn_data(structured)
                 model, out = train_gnn(data, num_classes=len(encoder.classes_))
                 preds = out.argmax(dim=1).numpy()
