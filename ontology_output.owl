@@ -3,10 +3,10 @@
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:owl="http://www.w3.org/2002/07/owl#"
-         xml:base="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544"
-         xmlns="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544#">
+         xml:base="http://example.org/TraffickingOntology#990861e4-1d59-4476-8480-3432a60bffb0"
+         xmlns="http://example.org/TraffickingOntology#990861e4-1d59-4476-8480-3432a60bffb0#">
 
-<owl:Ontology rdf:about="http://example.org/TraffickingOntology#2915bde0-eb11-4289-b3b8-013d3858f544"/>
+<owl:Ontology rdf:about="http://example.org/TraffickingOntology#990861e4-1d59-4476-8480-3432a60bffb0"/>
 
 <owl:ObjectProperty rdf:about="#passedThrough">
   <rdfs:domain rdf:resource="#Victim"/>
