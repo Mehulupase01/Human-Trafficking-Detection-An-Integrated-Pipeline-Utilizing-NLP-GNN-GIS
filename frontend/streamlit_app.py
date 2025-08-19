@@ -188,13 +188,14 @@ with st.sidebar:
         ("pages/0_Upload_Standardize.py", "📤 Upload & Standardize"),  # ⟵ add this line
         ("pages/1_Merge_Datasets.py", "🧩 Merge Datasets"),
         ("pages/3_Query_Insights.py", "🔎 Query & Insights"),
-        ("pages/4_Hierarchy_Viewer.py", "🕸️ Network Graphs"),
+        ("pages/4_Network_Graphs.py", "🕸️ Network Graphs"),
         ("pages/5_Temporal_Forecast.py", "⏱️ Temporal Forecast (ETA)"),
         ("pages/6_GNN_Trafficker_Prediction.py", "🔮 Predictive Analytics"),
         ("pages/8_Map_GIS_Visualizer.py", "🗺️ GIS Map & Spatio-Temporal"),
         ("pages/13_Ontology_TTL_Merge.py", "🧩 Ontology (TTL) + Merge"),
         ("pages/14_Summary_Dashboard.py", "📊 Summary Dashboard"),
         ("pages/15_Automated_Evaluations.py", "🧪 Automated Evaluations"),
+        ("pages/16_User_Guide.py", "📘 User Guide"),
     ]
 
     if hasattr(st, "page_link"):

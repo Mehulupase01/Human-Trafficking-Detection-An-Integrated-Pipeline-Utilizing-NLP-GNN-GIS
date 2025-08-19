@@ -2,122 +2,105 @@
 from __future__ import annotations
 from typing import Dict, List, Tuple
 from collections import defaultdict, Counter
-import math
-
 import pandas as pd
-
-COL_SID = "Serialized ID"
-COL_LOC = "Location"
-COL_PERPS = "Perpetrators (NLP)"
-COL_CHIEFS = "Chiefs (NLP)"  # (kept for future extension)
-
 
 class LinkPredictor:
     """
-    Heuristic link prediction for Victim → Perpetrator edges.
-    Score is a weighted sum of:
-      - Location Jaccard between victim's locations and perpetrator's locations
-      - Co-victim overlap ratio (victim shares locations with other victims tied to the perpetrator)
-      - Popularity (log-degree) of perpetrator
-
-    All signals are min-max normalized per victim for comparability, then combined.
+    Baseline link scorer:
+      1) Per victim V, gather all perps that co-occur with V's locations; score by frequency.
+      2) Backoff to globally frequent perps at V's last location.
+      3) Backoff to global top perps.
     """
 
-    def __init__(self, w_jaccard: float = 0.5, w_covictim: float = 0.3, w_popularity: float = 0.2):
-        self.w_j = w_jaccard
-        self.w_c = w_covictim
-        self.w_p = w_popularity
-        # Indexes
-        self.victim_locs: Dict[str, set[str]] = defaultdict(set)
-        self.perp_locs: Dict[str, set[str]] = defaultdict(set)
-        self.perp_victims: Dict[str, set[str]] = defaultdict(set)
-        self.victim_known_perps: Dict[str, set[str]] = defaultdict(set)
-        self.perp_popularity: Counter = Counter()
-        self.all_perps: set[str] = set()
+    def __init__(self):
+        self.perp_global = Counter()             # perp -> count
+        self.perp_by_loc = defaultdict(Counter)  # loc -> perp -> count
+        self.locs_by_victim = defaultdict(list)  # victim -> [locs in order]
+        self.vocab_perps = set()
+        self.fitted = False
 
-    def fit(self, df: pd.DataFrame):
-        # Victim locations
-        for sid, grp in df.groupby(COL_SID):
-            locs = set(grp[COL_LOC].dropna().astype(str).tolist())
-            self.victim_locs[str(sid)] |= locs
+    @staticmethod
+    def _first_token(x):
+        if isinstance(x, list) and x:
+            return str(x[0]).strip()
+        if pd.isna(x) or x is None:
+            return None
+        return str(x).strip() or None
 
-        # Perp occurrence per row -> perpetrator-locations and perpetrator-victims
-        if COL_PERPS not in df.columns:
+    def fit(self, df: pd.DataFrame) -> None:
+        if df is None or df.empty or "Serialized ID" not in df.columns:
+            self.fitted = True
             return
-        for _, row in df.iterrows():
-            sid = str(row[COL_SID])
-            loc = str(row[COL_LOC]) if pd.notna(row[COL_LOC]) else None
-            perps = row[COL_PERPS] if isinstance(row[COL_PERPS], list) else []
-            for p in perps:
-                p = str(p).strip()
-                if not p:
+
+        d = df.copy()
+        # step location (primary)
+        if "Locations (NLP)" in d.columns:
+            d["_loc"] = d["Locations (NLP)"].apply(self._first_token)
+        else:
+            d["_loc"] = None
+        if d["_loc"].isna().any() and "Location" in d.columns:
+            mask = d["_loc"].isna()
+            d.loc[mask, "_loc"] = d.loc[mask, "Location"].apply(self._first_token)
+
+        # route order
+        if "Route_Order" in d.columns:
+            d["Route_Order"] = pd.to_numeric(d["Route_Order"], errors="coerce")
+            d = d.sort_values(["Serialized ID", "Route_Order"], kind="stable")
+
+        # collect perps and stats
+        for vid, g in d.groupby("Serialized ID"):
+            # victim's ordered unique locs
+            last = None
+            v_locs = []
+            for loc in g["_loc"].tolist():
+                if not isinstance(loc, str) or not loc:
                     continue
-                self.all_perps.add(p)
-                self.perp_victims[p].add(sid)
-                self.perp_popularity[p] += 1
-                if loc:
-                    self.perp_locs[p].add(loc)
-                self.victim_known_perps[sid].add(p)
+                if loc == last:
+                    continue
+                v_locs.append(loc); last = loc
+            self.locs_by_victim[str(vid)] = v_locs
 
-    def _minmax(self, values: Dict[str, float]) -> Dict[str, float]:
-        if not values:
-            return {}
-        vmin = min(values.values())
-        vmax = max(values.values())
-        if vmax == vmin:
-            return {k: 0.0 for k in values.keys()}
-        return {k: (v - vmin) / (vmax - vmin) for k, v in values.items()}
+            # perps per row (list) → attach to that row's loc
+            if "Perpetrators (NLP)" in g.columns:
+                for _, row in g.iterrows():
+                    loc = row["_loc"]
+                    perps = row["Perpetrators (NLP)"]
+                    if not isinstance(perps, list) or not loc:
+                        continue
+                    for p in perps:
+                        if not p:
+                            continue
+                        p = str(p).strip()
+                        self.vocab_perps.add(p)
+                        self.perp_global[p] += 1
+                        self.perp_by_loc[loc][p] += 1
 
-    def predict_for_victim(self, victim_sid: str, top_k: int = 3) -> List[Tuple[str, float]]:
-        sid = str(victim_sid)
-        victim_lset = self.victim_locs.get(sid, set())
-        known = self.victim_known_perps.get(sid, set())
+        self.fitted = True
 
-        # Candidates: all perps not already known
-        candidates = [p for p in self.all_perps if p not in known]
-        if not candidates:
+    def predict_for_victim(self, victim_sid: str, top_k: int = 5) -> List[Tuple[str, float]]:
+        if not self.fitted or not self.vocab_perps:
             return []
 
-        # Jaccard on locations
-        jaccard = {}
-        for p in candidates:
-            plocs = self.perp_locs.get(p, set())
-            inter = len(victim_lset & plocs)
-            union = len(victim_lset | plocs) or 1
-            jaccard[p] = inter / union
+        v = str(victim_sid)
+        v_locs = self.locs_by_victim.get(v, [])
+        scores = Counter()
 
-        # Co-victim overlap: fraction of perpetrator's victims who share any location with this victim
-        cov = {}
-        for p in candidates:
-            pvics = self.perp_victims.get(p, set())
-            if not pvics:
-                cov[p] = 0.0
-                continue
-            share = 0
-            for other_v in pvics:
-                if other_v == sid:
-                    continue
-                if self.victim_locs.get(other_v, set()) & victim_lset:
-                    share += 1
-            cov[p] = share / max(len(pvics) - (1 if sid in pvics else 0), 1)
+        # 1) perps seen at this victim's locations
+        for loc in v_locs:
+            scores.update(self.perp_by_loc.get(loc, {}))
 
-        # Popularity (log-degree)
-        pop = {}
-        for p in candidates:
-            pop[p] = math.log1p(self.perp_popularity.get(p, 0))
+        # 2) if nothing, try last location
+        if not scores and v_locs:
+            last = v_locs[-1]
+            scores.update(self.perp_by_loc.get(last, {}))
 
-        # Normalize each signal per victim
-        jn = self._minmax(jaccard)
-        cn = self._minmax(cov)
-        pn = self._minmax(pop)
+        # 3) if still nothing, use global popularity
+        if not scores:
+            scores.update(self.perp_global)
 
-        # Weighted sum
-        scores = {p: (self.w_j * jn.get(p, 0.0) + self.w_c * cn.get(p, 0.0) + self.w_p * pn.get(p, 0.0)) for p in candidates}
+        if not scores:
+            return []
 
-        # Normalize final scores to sum=1
         total = sum(scores.values())
-        if total > 0:
-            scores = {p: s / total for p, s in scores.items()}
-
-        ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:max(1, top_k)]
-        return [(p, float(s)) for p, s in ranked]
+        ranked = [(p, cnt / total) for p, cnt in scores.most_common(top_k)]
+        return ranked

@@ -1,34 +1,78 @@
-# /frontend/pages/11_Admin_File_Manager.py
-
-import streamlit as st
+# frontend/pages/11_Admin_File_Manager.py
+from __future__ import annotations
+import io
 import pandas as pd
-from datetime import datetime
+import streamlit as st
 
-st.set_page_config(page_title="🗂️ Admin File Manager", layout="wide")
-st.title("🗂️ Admin File Manager")
+from backend.core import dataset_registry as registry
+from backend.api.graph_queries import concat_processed_frames
 
-# Role restriction
-if st.session_state.get("role") != "Admin":
-    st.warning("Access denied: This page is only for Admins.")
+st.set_page_config(page_title="Admin File Manager", page_icon="🗃️", layout="wide")
+st.title("🗃️ Admin File Manager")
+
+st.caption("Quick overview & download helpers for datasets saved in the registry.")
+
+processed = registry.list_datasets(kind="processed")
+merged = registry.list_datasets(kind="merged")
+
+if not (processed or merged):
+    st.info("No uploaded files found.")
     st.stop()
 
-# Initialize upload history if not already present
-if "upload_history" not in st.session_state:
-    st.session_state.upload_history = []
+tab1, tab2 = st.tabs(["Processed", "Merged"])
 
-# Display current uploads
-if st.session_state.upload_history:
-    st.markdown("### 📄 Uploaded Datasets")
-    df = pd.DataFrame(st.session_state.upload_history)
-    st.dataframe(df)
+def _download_df_bytes(df: pd.DataFrame) -> bytes:
+    return df.to_csv(index=False).encode("utf-8")
 
-    selected_files = st.multiselect("Select files to delete", df["file_name"].tolist())
+with tab1:
+    if not processed:
+        st.caption("— none —")
+    else:
+        # pick and preview
+        choice = st.selectbox(
+            "Pick a processed dataset",
+            options=processed,
+            format_func=lambda d: f"{d.get('name')} • {d.get('id')}",
+        )
+        if choice:
+            try:
+                df = concat_processed_frames([choice["id"]])
+            except Exception:
+                df = None
+            if df is None or df.empty:
+                st.warning("Could not load or empty.")
+            else:
+                st.dataframe(df.head(200), use_container_width=True, height=360)
+                st.download_button(
+                    "⬇️ Download full CSV",
+                    data=_download_df_bytes(df),
+                    file_name=f"{choice.get('name','processed')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                )
 
-    if st.button("Delete Selected Files"):
-        st.session_state.upload_history = [
-            log for log in st.session_state.upload_history if log["file_name"] not in selected_files
-        ]
-        st.success(f"Deleted {len(selected_files)} file(s).")
-        st.experimental_rerun()
-else:
-    st.info("No uploaded files found.")
+with tab2:
+    if not merged:
+        st.caption("— none —")
+    else:
+        choice = st.selectbox(
+            "Pick a merged dataset",
+            options=merged,
+            format_func=lambda d: f"{d.get('name')} • {d.get('id')}",
+        )
+        if choice:
+            try:
+                df = concat_processed_frames([choice["id"]])
+            except Exception:
+                df = None
+            if df is None or df.empty:
+                st.warning("Could not load or empty.")
+            else:
+                st.dataframe(df.head(200), use_container_width=True, height=360)
+                st.download_button(
+                    "⬇️ Download full CSV",
+                    data=_download_df_bytes(df),
+                    file_name=f"{choice.get('name','merged')}.csv",
+                    mime="text/csv",
+                    use_container_width=True,
+                )
