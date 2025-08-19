@@ -1,99 +1,98 @@
-import os
+# backend/api/graph.py
+# Backwards-compatible graph API that delegates to graph_build,
+# plus helpers to export HTML (pyvis) and static PNG (matplotlib).
+
+from __future__ import annotations
+from typing import Dict, Iterable, Optional, Tuple
+import io
+
+import pandas as pd
 import networkx as nx
-import plotly.graph_objects as go
-from backend.utils.helpers import save_html
 
-def run_graph_pipeline(structured_data):
-    G = nx.DiGraph()
+from backend.api.graph_build import build_network_from_processed
 
-    for record in structured_data:
-        victim = record.get("Unique ID", "")
-        locations = record.get("City / Locations Crossed", "")
-        traffickers = record.get("Name of the Perpetrators involved", "")
-        chiefs = record.get("Human traffickers/ Chief of places", "")
+NTYPE_COLOR = {
+    "Victim":       "#90CAF9",
+    "Location":     "#A5D6A7",
+    "Perpetrator":  "#FFAB91",
+    "Chief":        "#CE93D8",
+}
 
-        G.add_node(victim, type="victim")
+def build_graph(df: pd.DataFrame) -> nx.Graph:
+    """Legacy name that other pages may import."""
+    return build_network_from_processed(df)
 
-        for loc in str(locations).split(","):
-            loc = loc.strip()
-            if loc:
-                G.add_node(loc, type="location")
-                G.add_edge(victim, loc)
+def _color_for(node_data: Dict[str, str]) -> str:
+    t = node_data.get("ntype", "")
+    return NTYPE_COLOR.get(t, "#CFD8DC")
 
-        for t in str(traffickers).split(","):
-            t = t.strip()
-            if t:
-                G.add_node(t, type="trafficker")
-                G.add_edge(t, victim)
+def export_png(G: nx.Graph, width: int = 1400, height: int = 900) -> bytes:
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(width/100, height/100), dpi=100)
 
-        for c in str(chiefs).split(","):
-            c = c.strip()
-            if c:
-                G.add_node(c, type="chief")
-                G.add_edge(c, victim)
+    # spring layout by component (for nicer separation)
+    if G.number_of_nodes() == 0:
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches="tight", facecolor="white"); buf.seek(0)
+        return buf.read()
 
-    pos = nx.spring_layout(G, seed=42)
+    pos = nx.spring_layout(G, k=0.7/(len(G)**0.5 + 1), seed=42)
 
-    node_x, node_y, node_color, node_text = [], [], [], []
+    # Colors/sizes
+    node_colors = [_color_for(G.nodes[n]) for n in G.nodes()]
+    node_sizes = []
+    for n in G.nodes():
+        t = G.nodes[n].get("ntype", "")
+        node_sizes.append(160 if t == "Location" else 120 if t == "Victim" else 90)
 
-    type_colors = {
-        "victim": "red",
-        "location": "blue",
-        "trafficker": "green",
-        "chief": "purple"
+    nx.draw_networkx_edges(G, pos, alpha=0.25, width=1.0)
+    nx.draw_networkx_nodes(G, pos, node_color=node_colors, node_size=node_sizes, linewidths=0.5, edgecolors="#455A64")
+    # small labels for locations & perps; suppress for large graphs
+    if len(G) <= 300:
+        labels = {n: n.split(":",1)[1] if ":" in n else n for n in G.nodes()}
+        nx.draw_networkx_labels(G, pos, labels=labels, font_size=7)
+
+    # Legend
+    import matplotlib.patches as mpatches
+    patches = [mpatches.Patch(color=c, label=k) for k, c in NTYPE_COLOR.items()]
+    plt.legend(handles=patches, loc="lower right", fontsize=8, frameon=True)
+    plt.axis("off")
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", bbox_inches="tight", facecolor="white")
+    buf.seek(0)
+    return buf.read()
+
+def export_pyvis_html(G: nx.Graph, height: str = "720px") -> str:
+    from pyvis.network import Network
+    net = Network(height=height, width="100%", bgcolor="#111319", font_color="#ECEFF1", directed=False)
+    net.toggle_physics(True)
+    net.set_options("""
+    const options = {
+      physics: { stabilization: true, barnesHut: { gravitationalConstant: -6000, springLength: 120 } },
+      interaction: { hover: true, multiselect: true, navigationButtons: true }
     }
-
-    for node in G.nodes():
-        x, y = pos[node]
-        node_x.append(x)
-        node_y.append(y)
-        ntype = G.nodes[node].get("type", "unknown")
-        node_color.append(type_colors.get(ntype, "gray"))
-        node_text.append(f"{node} ({ntype})")
-
-    edge_x, edge_y = [], []
-    for src, dst in G.edges():
-        x0, y0 = pos[src]
-        x1, y1 = pos[dst]
-        edge_x += [x0, x1, None]
-        edge_y += [y0, y1, None]
-
-    edge_trace = go.Scatter(
-        x=edge_x, y=edge_y,
-        line=dict(width=0.5, color="#888"),
-        hoverinfo="none",
-        mode="lines"
-    )
-
-    node_trace = go.Scatter(
-        x=node_x, y=node_y,
-        mode="markers+text",
-        text=[n if G.nodes[n]["type"] == "victim" else "" for n in G.nodes()],
-        hovertext=node_text,
-        hoverinfo="text",
-        marker=dict(
-            color=node_color,
-            size=10,
-            line_width=1
-        ),
-        textposition="bottom center",
-        textfont=dict(size=8)
-    )
-
-    fig = go.Figure(data=[edge_trace, node_trace],
-    layout=go.Layout(
-        title=dict(
-            text="Victim-Trafficker-Location Graph",
-            font=dict(size=16)
-        ),
-        showlegend=False,
-        hovermode="closest",
-        margin=dict(b=20, l=5, r=5, t=40),
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)
-         )
-        )
-
-    output_path = "frontend/graphs/graph_output.html"
-    save_html(fig, output_path)
-    return output_path
+    """)
+    # Add nodes
+    for n, data in G.nodes(data=True):
+        ntype = data.get("ntype", "Node")
+        label = n.split(":",1)[1] if ":" in n else n
+        color = NTYPE_COLOR.get(ntype, "#CFD8DC")
+        size = 18 if ntype=="Location" else 14 if ntype=="Victim" else 12
+        net.add_node(n, label=label, color=color, size=size, title=f"{ntype}: {label}")
+    # Add edges (style by etype)
+    for u, v, data in G.edges(data=True):
+        et = data.get("etype", "")
+        dashes = True if et in {"route"} else False
+        width = 2 if et in {"route"} else 1
+        net.add_edge(u, v, title=et or "link", width=width, dashes=dashes, color="#90A4AE")
+    # Legend (fixed-position corner)
+    legend_nodes = [
+        ("legend_v", "Victim", NTYPE_COLOR["Victim"]),
+        ("legend_l", "Location", NTYPE_COLOR["Location"]),
+        ("legend_p", "Perpetrator", NTYPE_COLOR["Perpetrator"]),
+        ("legend_c", "Chief", NTYPE_COLOR["Chief"]),
+    ]
+    for nid, label, color in legend_nodes:
+        net.add_node(nid, label=label, color=color, shape="box", physics=False, x=-800, y=-400)
+    return net.generate_html()

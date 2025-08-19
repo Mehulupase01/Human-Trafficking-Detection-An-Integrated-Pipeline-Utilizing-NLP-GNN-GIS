@@ -46,3 +46,22 @@ email-validator
 # --- Database (Optional SQL support) ---
 sqlalchemy
 psycopg2-binary
+
+# core
+pandas>=1.5
+numpy>=1.24
+pyarrow>=14.0
+
+# app / viz
+streamlit>=1.34
+altair>=5.0
+folium>=0.17
+branca>=0.7
+
+# graphs / ml
+networkx>=3.2
+rapidfuzz>=3.5
+rdflib>=6.3
+
+# testing
+pytest>=8.1

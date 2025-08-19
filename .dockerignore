@@ -1,14 +1,13 @@
-# .dockerignore
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-debug.log
+*.log
 .env
-.env.*
-.pytest_cache
-node_modules
-.DS_Store
-.idea
-.vscode
+.venv
+.venv*/
+.vscode/
+.idea/
+data/
+tests/__pycache__/
+**/.pytest_cache/

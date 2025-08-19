@@ -1,0 +1,20 @@
+{
+  "merged_id": "ds_1755553858837",
+  "summary": {
+    "sources": [
+      "ds_1755553425371",
+      "ds_1755552061555"
+    ],
+    "rows_before": 2616,
+    "rows_after": 1308,
+    "unique_victims": 89,
+    "conflict_rows": 0,
+    "strategy": "priority",
+    "priority_sources": [
+      "ds_1755553425371",
+      "ds_1755552061555"
+    ],
+    "manual_decisions_count": 0
+  },
+  "conflicts_preview": []
+}
