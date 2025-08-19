@@ -1,53 +1,5 @@
 {
   "datasets": {
-    "ds_1755552061555": {
-      "id": "ds_1755552061555",
-      "name": "test-1",
-      "kind": "processed",
-      "path": "data\\datasets\\ds_1755552061555.parquet",
-      "format": "parquet",
-      "owner": null,
-      "source": "upload",
-      "created_at": "2025-08-18 23:21:01",
-      "content_hash": "34170fb6f02fde30a6162bbb605e455598bea5b0be1774af2374dd285ca98df2"
-    },
-    "ds_1755553425371": {
-      "id": "ds_1755553425371",
-      "name": "test-1",
-      "kind": "processed",
-      "path": "data\\datasets\\ds_1755553425371.parquet",
-      "format": "parquet",
-      "owner": null,
-      "source": "upload",
-      "created_at": "2025-08-18 23:43:45",
-      "content_hash": "6faebc5ae3bde139e2ec968357611b912c25fdfbc4e5c66131657986076f444d"
-    },
-    "ds_1755553858837": {
-      "id": "ds_1755553858837",
-      "name": "Merged dataset-1",
-      "kind": "merged",
-      "path": "data\\datasets\\ds_1755553858837.parquet",
-      "format": "parquet",
-      "owner": null,
-      "source": "ds_1755553425371,ds_1755552061555",
-      "created_at": "2025-08-18 23:50:58",
-      "summary": {
-        "sources": [
-          "ds_1755553425371",
-          "ds_1755552061555"
-        ],
-        "rows_before": 2616,
-        "rows_after": 1308,
-        "unique_victims": 89,
-        "conflict_rows": 0,
-        "strategy": "priority",
-        "priority_sources": [
-          "ds_1755553425371",
-          "ds_1755552061555"
-        ],
-        "manual_decisions_count": 0
-      }
-    },
     "js_1755553858859": {
       "id": "js_1755553858859",
       "name": "Merge report for ds_1755553858837",
@@ -58,15 +10,15 @@
       "source": "ds_1755553425371,ds_1755552061555",
       "created_at": "2025-08-18 23:50:58"
     },
-    "ds_1755565618734": {
-      "id": "ds_1755565618734",
-      "name": "test-2",
+    "ds_1755608479530": {
+      "id": "ds_1755608479530",
+      "name": "Test-dataset-1",
       "kind": "processed",
-      "path": "data\\datasets\\ds_1755565618734.parquet",
+      "path": "data\\datasets\\ds_1755608479530.parquet",
       "format": "parquet",
       "owner": null,
       "source": "upload",
-      "created_at": "2025-08-19 03:06:58",
+      "created_at": "2025-08-19 15:01:19",
       "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
     }
   }
