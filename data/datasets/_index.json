@@ -10,15 +10,59 @@
       "source": "ds_1755553425371,ds_1755552061555",
       "created_at": "2025-08-18 23:50:58"
     },
-    "ds_1755608479530": {
-      "id": "ds_1755608479530",
-      "name": "Test-dataset-1",
+    "ds_1755613696932": {
+      "id": "ds_1755613696932",
+      "name": "GeoNames cities5000.zip (ingested)",
+      "kind": "gazetteer",
+      "path": "data\\datasets\\ds_1755613696932.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": null,
+      "created_at": "2025-08-19 16:28:17",
+      "rows": 65528
+    },
+    "ds_1755645542602": {
+      "id": "ds_1755645542602",
+      "name": "GeoNames cities15000.zip (ingested)",
+      "kind": "gazetteer",
+      "path": "data\\datasets\\ds_1755645542602.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": null,
+      "created_at": "2025-08-20 01:19:02",
+      "rows": 32290
+    },
+    "ds_1755645546884": {
+      "id": "ds_1755645546884",
+      "name": "Custom geonames-all-cities-with-a-population-1000.csv (ingested)",
+      "kind": "gazetteer",
+      "path": "data\\datasets\\ds_1755645546884.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": null,
+      "created_at": "2025-08-20 01:19:07",
+      "rows": 147043
+    },
+    "ds_1755645606588": {
+      "id": "ds_1755645606588",
+      "name": "GeoNames cities15000.zip (ingested)",
+      "kind": "gazetteer",
+      "path": "data\\datasets\\ds_1755645606588.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": null,
+      "created_at": "2025-08-20 01:20:06",
+      "rows": 32290
+    },
+    "ds_1755648470227": {
+      "id": "ds_1755648470227",
+      "name": "Test-1",
       "kind": "processed",
-      "path": "data\\datasets\\ds_1755608479530.parquet",
+      "path": "data\\datasets\\ds_1755648470227.parquet",
       "format": "parquet",
       "owner": null,
       "source": "upload",
-      "created_at": "2025-08-19 15:01:19",
+      "created_at": "2025-08-20 02:07:50",
       "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
     }
   }

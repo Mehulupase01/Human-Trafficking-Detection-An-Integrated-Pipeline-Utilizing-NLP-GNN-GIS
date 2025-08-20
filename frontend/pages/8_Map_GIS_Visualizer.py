@@ -1,51 +1,83 @@
 # frontend/pages/8_Map_GIS_Visualizer.py
-import base64
-import json
+from __future__ import annotations
 
 import folium
 import pandas as pd
 import streamlit as st
 from folium.plugins import Fullscreen, HeatMap, MarkerCluster, TimestampedGeoJson
 from streamlit.components.v1 import html as st_html
-
 from branca.element import Figure, JavascriptLink, MacroElement, Template, Element
 
 from backend.core import dataset_registry as registry
 from backend.api.graph_queries import concat_processed_frames
 from backend.api.gis_data import compute_location_stats, build_timestamped_geojson
-from backend.geo.geo_utils import save_geo_lookup_csv, list_geo_lookups, resolve_locations_to_coords
+
+# Fuzzy resolver + diagnostics
+from backend.geo.geo_utils import resolve_locations_to_coords, match_report
+
+# Robust gazetteer ingesters (fixes float.strip / tokenizing errors)
+from backend.gis.gis_mapper import (
+    ingest_geonames_zip as robust_ingest_zip,
+    ingest_custom_gazetteer_csv as robust_ingest_csv,
+)
+
+# List/set active gazetteers; optional TXT/TSV ingester
 from backend.geo.gazetteer import (
     list_gazetteers,
-    ingest_geonames_zip,
     ingest_geonames_tsv,
-    ingest_custom_csv,
     set_active_gazetteer,
     get_active_gazetteer_id,
 )
 
-st.set_page_config(page_title="GIS Map & Spatio-Temporal Visualizer", page_icon="🗺️", layout="wide")
+# Explicit lookup helpers — import if available; else provide safe fallbacks
+try:
+    from backend.geo.geo_utils import save_geo_lookup_csv, list_geo_lookups  # type: ignore
+except Exception:  # pragma: no cover
+    def list_geo_lookups():
+        """Fallback: pull any saved geo lookups from the registry."""
+        return registry.find_datasets(kind="geo_lookup")
+
+    def save_geo_lookup_csv(name: str, df: pd.DataFrame, owner: str | None = None):
+        """Fallback: save a minimal (location,lat,lon) CSV into the registry as kind=geo_lookup."""
+        cols = {c.lower(): c for c in df.columns}
+        need = ["location", "lat", "lon"]
+        missing = [c for c in need if c not in cols]
+        if missing:
+            raise ValueError("Geo lookup CSV must have columns: location, lat, lon")
+        slim = pd.DataFrame({
+            "location": df[cols["location"]].astype(str),
+            "lat": pd.to_numeric(df[cols["lat"]], errors="coerce"),
+            "lon": pd.to_numeric(df[cols["lon"]], errors="coerce"),
+        }).dropna()
+        return registry.save_df(name=name, df=slim, kind="geo_lookup", owner=owner)
+
+st.set_page_config(page_title="GIS Map & Spatio-Temporal Visualizer",
+                   page_icon="🗺️", layout="wide")
 st.title("🗺️ GIS Map & Spatio-Temporal Visualizer")
 
-st.markdown("""
+st.markdown(
+    """
 **Now powered by an offline Gazetteer** 🚀  
 Upload **GeoNames** (zip/txt) or a **custom CSV** (`name,lat,lon[,country,admin1,population]`).  
 The app resolves locations automatically across any dataset — no fixed lists.
-""")
+"""
+)
 
-# ---------------- Gazetteer Manager ----------------
+# ───────────────────────── Gazetteer Manager ─────────────────────────
 with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
     left, mid, right = st.columns([2, 2, 3])
 
     with left:
-        st.markdown("**Upload GeoNames** (`allCountries.zip`, `cities1000.zip`, or an inner `.txt`):")
+        st.markdown("**Upload GeoNames** (`allCountries.zip`, `cities1000.zip`, `cities15000.zip`, etc., or an inner `.txt`):")
         gz_zip = st.file_uploader("GeoNames ZIP", type=["zip"], key="gz_zip")
         min_pop = st.number_input("Min population filter (optional)", min_value=0, value=0, step=1000)
+
         if gz_zip is not None and st.button("Ingest ZIP"):
             try:
-                gid = ingest_geonames_zip(
+                gid = robust_ingest_zip(
                     gz_zip,
-                    name=f"GeoNames {gz_zip.name}",
                     min_population=int(min_pop),
+                    title=f"GeoNames {gz_zip.name}",
                 )
                 set_active_gazetteer(gid)
                 st.success(f"Ingested and set active: {gid}")
@@ -71,7 +103,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
         custom = st.file_uploader("Custom Gazetteer CSV", type=["csv"], key="gz_csv")
         if custom is not None and st.button("Ingest Custom CSV"):
             try:
-                gid = ingest_custom_csv(custom, name=f"Custom {custom.name}")
+                gid = robust_ingest_csv(custom, title=f"Custom {custom.name}")
                 set_active_gazetteer(gid)
                 st.success(f"Ingested and set active: {gid}")
             except Exception as e:
@@ -101,16 +133,18 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
 
 st.divider()
 
-st.markdown("""
+st.markdown(
+    """
 **Map features**
 - Dark basemap, zoom/pan, fullscreen
 - Markers sized by **victim count**, with popups listing **Victims**, **Traffickers**, **Chiefs**, and **incoming/outgoing** counts
 - **Animated trajectories** (time axis) and **heatmap / clustering** layers
 - **In-browser PNG/PDF export** (Leaflet EasyPrint)
 - **Overlay saved predictions & ETA runs**
-""")
+"""
+)
 
-# ---------------- Dataset selection ----------------
+# ───────────────────────── Data sources ─────────────────────────
 st.subheader("1) Data sources")
 processed = registry.list_datasets(kind="processed")
 merged = registry.list_datasets(kind="merged")
@@ -127,10 +161,9 @@ selected = st.multiselect("Select dataset(s) to visualize:", options=queryable, 
 if not selected:
     st.warning("Select at least one dataset.")
     st.stop()
-
 src_ids = [e["id"] for e in selected]
 
-# Prediction overlay selection (optional)
+# ── Prediction overlay (optional)
 st.subheader("Prediction overlay (optional)")
 pred_runs = registry.find_datasets(kind="prediction_run")
 pred_options = []
@@ -145,17 +178,17 @@ for pr in pred_runs:
         continue
 
 if pred_options:
-    pred_dict = dict(pred_options)
+    pred_lookup = {pid: label for (label, pid) in pred_options}
     sel_pred_ids = st.multiselect(
         "Select prediction runs to overlay:",
-        options=[p[1] for p in pred_options],
-        format_func=lambda pid: pred_dict.get(pid, pid),
+        options=list(pred_lookup.keys()),
+        format_func=lambda pid: pred_lookup.get(pid, pid),
     )
 else:
     sel_pred_ids = []
     st.caption("No saved prediction runs found yet.")
 
-# NEW: ETA overlay selection (optional)
+# ── ETA overlay (optional)
 st.subheader("ETA overlay (optional)")
 eta_runs = registry.find_datasets(kind="eta_run")
 eta_options = []
@@ -170,17 +203,17 @@ for er in eta_runs:
         continue
 
 if eta_options:
-    eta_dict = dict(eta_options)
+    eta_lookup = {pid: label for (label, pid) in eta_options}
     sel_eta_ids = st.multiselect(
         "Select ETA runs to overlay:",
-        options=[e[1] for e in eta_options],
-        format_func=lambda pid: eta_dict.get(pid, pid),
+        options=list(eta_lookup.keys()),
+        format_func=lambda pid: eta_lookup.get(pid, pid),
     )
 else:
     sel_eta_ids = []
     st.caption("No saved ETA runs found yet.")
 
-# ---------------- Geo lookup upload ----------------
+# ───────────────────────── Explicit geo lookup (optional) ─────────────────────────
 with st.expander("📍 (Optional) Upload an explicit Location → Lat/Lon mapping", expanded=False):
     st.markdown("Upload a CSV with columns: **location, lat, lon** (these override gazetteer matches).")
     up = st.file_uploader("Upload geo lookup CSV", type=["csv"])
@@ -198,7 +231,7 @@ with st.expander("📍 (Optional) Upload an explicit Location → Lat/Lon mappin
 
 st.divider()
 
-# ---------------- Map options ----------------
+# ───────────────────────── Map options ─────────────────────────
 st.subheader("2) Map options")
 c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
 with c1:
@@ -212,10 +245,14 @@ with c4:
 
 st.caption("Use the **Export map** button (top-left) for PNG/PDF, or the **Download map (HTML)** button below.")
 
-# ---------------- Build data ----------------
+# ───────────────────────── Build data ─────────────────────────
 with st.spinner("Loading & aggregating data..."):
     df = concat_processed_frames(src_ids)
     nodes_df, edges_df, loc_to_victims = compute_location_stats(df)
+
+# quick feedback about resolution quality
+rep = match_report(nodes_df["location"].tolist()) if not nodes_df.empty else {"total": 0, "matched": 0, "unmatched": 0}
+st.caption(f"Resolved locations: {rep['matched']} / {rep['total']} (unmatched: {rep['unmatched']}).")
 
 if nodes_df.empty:
     st.warning("No mappable locations found. Upload a gazetteer (GeoNames/custom) above, or an explicit lookup CSV.")
@@ -227,17 +264,21 @@ min_lon, max_lon = nodes_df["lon"].min(), nodes_df["lon"].max()
 center_lat = (min_lat + max_lat) / 2.0
 center_lon = (min_lon + max_lon) / 2.0
 
-# Build base map (dark theme)
+# Base map
 fig = Figure(width="100%", height="720px")
-m = folium.Map(location=[center_lat, center_lon], zoom_start=5, tiles="CartoDB dark_matter", control_scale=True)
+m = folium.Map(location=[center_lat, center_lon],
+               zoom_start=5,
+               tiles="CartoDB dark_matter",
+               control_scale=True)
 fig.add_child(m)
 
 # Fullscreen
 Fullscreen().add_to(m)
 
-# Leaflet EasyPrint (PNG/PDF) via CDN
+# Leaflet EasyPrint (PNG/PDF)
 fig.header.add_child(JavascriptLink("https://unpkg.com/leaflet-easyprint@2.1.9/dist/bundle.js"))
-easyprint_btn = Element("""
+easyprint_btn = Element(
+    """
 <script>
 function addEasyPrint(map){
   L.easyPrint({
@@ -249,17 +290,20 @@ function addEasyPrint(map){
   }).addTo(map);
 }
 </script>
-""")
+"""
+)
 fig.header.add_child(easyprint_btn)
 run_after = MacroElement()
-run_after._template = Template("""
+run_after._template = Template(
+    """
 {% macro script(this, kwargs) %}
 addEasyPrint({{this._parent.get_name()}});
 {% endmacro %}
-""")
+"""
+)
 m.add_child(run_after)
 
-# Marker layer (either clustered or plain feature group)
+# Cluster or simple layer
 if use_cluster:
     cluster = MarkerCluster(name="Markers").add_to(m)
 else:
@@ -272,10 +316,9 @@ max_c = int(nodes_df["count"].max())
 def scale_radius(cnt: int) -> int:
     if max_c == min_c:
         return 8
-    # 8..28 px range
     return int(8 + 20 * ((cnt - min_c) / max(1, (max_c - min_c))))
 
-# Add markers with rich popups
+# Markers
 for _, row in nodes_df.iterrows():
     loc = row["location"]
     lat = float(row["lat"])
@@ -310,12 +353,12 @@ for _, row in nodes_df.iterrows():
     marker.add_child(folium.Popup(popup_html, max_width=420))
     marker.add_to(cluster)
 
-# Heatmap layer (optional)
+# Heatmap
 if show_heatmap:
     heat_pts = [[float(r["lat"]), float(r["lon"]), float(r["count"])] for _, r in nodes_df.iterrows()]
     HeatMap(heat_pts, name="Heatmap", min_opacity=0.3, radius=25, blur=18, max_zoom=8).add_to(m)
 
-# Animated trajectories layer (TimestampedGeoJson)
+# Animated trajectories
 if animate:
     with st.spinner("Building animated trajectories..."):
         tj = build_timestamped_geojson(df, default_days_per_hop=int(default_days), base_date="2020-01-01")
@@ -337,7 +380,7 @@ if animate:
     else:
         st.info("No trajectory segments to animate (insufficient geocodes).")
 
-# Overlay predictions (optional)
+# Overlay predictions
 if sel_pred_ids:
     pred_group = folium.FeatureGroup(name="Predicted Paths", show=True).add_to(m)
     for pid in sel_pred_ids:
@@ -349,17 +392,15 @@ if sel_pred_ids:
         seq = [d.get("location") for d in payload.get("predicted_next_locations", []) if isinstance(d, dict)]
         if not victim or not seq:
             continue
-        # Get last known location for victim from df
         sub = df[df["Serialized ID"] == victim].sort_values("Route_Order", kind="stable")
         if sub.empty:
             continue
         last_loc = str(sub.iloc[-1]["Location"])
         full_path = [last_loc] + [s for s in seq if isinstance(s, str) and s.strip()]
-        coords_map = {}
         try:
             coords_map = resolve_locations_to_coords(full_path)
         except Exception:
-            pass
+            coords_map = {}
         for a, b in zip(full_path, full_path[1:]):
             if a not in coords_map or b not in coords_map:
                 continue
@@ -374,7 +415,7 @@ if sel_pred_ids:
                 tooltip=f"Predicted: {victim} • {a} → {b}",
             ).add_to(pred_group)
 
-# NEW: Overlay ETA runs (optional)
+# Overlay ETA runs
 if sel_eta_ids:
     eta_group = folium.FeatureGroup(name="ETA Paths", show=True).add_to(m)
     for eid in sel_eta_ids:
@@ -386,17 +427,15 @@ if sel_eta_ids:
         detail = payload.get("steps_detail", [])
         if not victim or not detail:
             continue
-        # Last known location for this victim
         sub = df[df["Serialized ID"] == victim].sort_values("Route_Order", kind="stable")
         if sub.empty:
             continue
         last_loc = str(sub.iloc[-1]["Location"])
         seq = [last_loc] + [d.get("to") for d in detail if isinstance(d, dict) and d.get("to")]
-        coords_map = {}
         try:
             coords_map = resolve_locations_to_coords(seq)
         except Exception:
-            pass
+            coords_map = {}
         for (a, b), step in zip(zip(seq, seq[1:]), detail):
             if a not in coords_map or b not in coords_map:
                 continue
@@ -413,16 +452,14 @@ if sel_eta_ids:
                 tooltip=f"ETA: {victim} • {a} → {b} ≈ {days}d (~{weeks}w)",
             ).add_to(eta_group)
 
-# Layer control
+# Controls & bounds
 folium.LayerControl(collapsed=False).add_to(m)
-
-# Fit bounds
 try:
     m.fit_bounds([[min_lat, min_lon], [max_lat, max_lon]])
 except Exception:
     pass
 
-# Render and show
+# Render
 html = m.get_root().render()
 st_html(html, height=760, scrolling=True)
 

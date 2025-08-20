@@ -1,81 +1,264 @@
 # backend/geo/geo_utils.py
 from __future__ import annotations
-from typing import Dict, Iterable, Tuple, Optional, List
+import re
+import unicodedata
+from functools import lru_cache
+from typing import Dict, Iterable, List, Optional, Tuple
 
+import numpy as np
 import pandas as pd
-from rapidfuzz import fuzz
 
 from backend.core import dataset_registry as registry
-from backend.geo.gazetteer import resolve_with_gazetteer
 
-# Highest priority: user-uploaded explicit mapping tables
-def list_geo_lookups() -> List[dict]:
-    return registry.find_datasets(kind="geo_lookup")
+# Optional: RapidFuzz gives much better fuzzy scores if available.
+try:
+    from rapidfuzz import fuzz  # type: ignore
+    _HAVE_RF = True
+except Exception:
+    import difflib
+    _HAVE_RF = False
 
-def save_geo_lookup_csv(name: str, df: pd.DataFrame, owner: Optional[str] = None) -> str:
-    required = {"location", "lat", "lon"}
-    if not required.issubset({c.lower() for c in df.columns}):
-        raise ValueError("Geo CSV must contain columns: location, lat, lon")
-    cols = {c.lower(): c for c in df.columns}
-    out = df.rename(columns={cols["location"]: "location", cols["lat"]: "lat", cols["lon"]: "lon"})
-    return registry.save_df(name=name or "Geo Lookup", df=out, kind="geo_lookup", owner=owner)
+# Optional: country name → ISO2 mapping
+try:
+    import pycountry  # type: ignore
+    _HAVE_PYCOUNTRY = True
+except Exception:
+    _HAVE_PYCOUNTRY = False
 
-def _collect_user_geo_maps() -> Dict[str, Tuple[float, float]]:
-    out: Dict[str, Tuple[float, float]] = {}
-    for entry in list_geo_lookups():
+# ------------------------------------------------------------------
+# Normalization helpers
+# ------------------------------------------------------------------
+
+_STOPWORDS = {
+    "city", "province", "governorate", "state", "region", "prefecture",
+    "district", "wilaya", "municipality", "town", "village", "county",
+    "of", "the"
+}
+
+def _strip_accents(s: str) -> str:
+    return "".join(ch for ch in unicodedata.normalize("NFKD", s) if not unicodedata.combining(ch))
+
+def _norm_tokenize(s: str) -> List[str]:
+    s = _strip_accents(s.lower())
+    s = re.sub(r"[^\w\s,/-]+", " ", s)      # drop punctuation
+    s = re.sub(r"\s+", " ", s).strip()
+    toks = [t for t in s.split(" ") if t and t not in _STOPWORDS]
+    return toks
+
+def _norm_key(s: str) -> str:
+    return " ".join(_norm_tokenize(s))
+
+# ------------------------------------------------------------------
+# Gazetteer / explicit lookup loading
+# ------------------------------------------------------------------
+
+@lru_cache(maxsize=1)
+def _active_gaz_df() -> pd.DataFrame:
+    """Load active gazetteer as (name,lat,lon,country,admin,population) with normalized keys."""
+    from backend.geo.gazetteer import get_active_gazetteer_id  # lazy import
+    gid = get_active_gazetteer_id()
+    if not gid:
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+    try:
+        df = registry.load_df(gid)
+    except Exception:
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+
+    keep = [c for c in ["name","lat","lon","country","admin","population"] if c in df.columns]
+    if not keep:
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+
+    df = df[keep].copy()
+    df["name"] = df["name"].astype(str)
+    df["norm"] = df["name"].map(_norm_key)
+    df["country"] = df.get("country", pd.Series("", index=df.index)).fillna("").astype(str)
+    df["norm_cty"] = np.where(
+        df["country"] != "",
+        (df["norm"] + " " + df["country"].str.lower()),
+        df["norm"]
+    )
+    return df
+
+@lru_cache(maxsize=1)
+def _explicit_lookup_tables() -> List[pd.DataFrame]:
+    """Load explicit user CSV lookups (location,lat,lon). Newest first."""
+    from backend.geo.geo_utils import list_geo_lookups  # defined elsewhere in this module/package
+    try:
+        items = list_geo_lookups()
+    except Exception:
+        items = []
+    out: List[pd.DataFrame] = []
+    for it in items:
         try:
-            df = registry.load_df(entry["id"])
-            if not {"location", "lat", "lon"}.issubset(set(df.columns)):
+            df = registry.load_df(it["id"])
+            cols = {c.lower(): c for c in df.columns}
+            if not {"location","lat","lon"}.issubset(set(cols.keys())):
                 continue
-            for _, row in df.iterrows():
-                loc = str(row["location"]).strip()
-                try:
-                    lat = float(row["lat"]); lon = float(row["lon"])
-                except Exception:
-                    continue
-                if loc:
-                    out[loc] = (lat, lon)
+            d2 = pd.DataFrame({
+                "location": df[cols["location"]].astype(str),
+                "lat": pd.to_numeric(df[cols["lat"]], errors="coerce"),
+                "lon": pd.to_numeric(df[cols["lon"]], errors="coerce"),
+            }).dropna()
+            d2["norm"] = d2["location"].map(_norm_key)
+            out.append(d2)
         except Exception:
             continue
     return out
 
-# tiny emergency fallback (will rarely be used if a gazetteer is ingested)
-_DEFAULT_SEED = {
-    "Tripoli": (32.8872, 13.1913),
-    "Khartoum": (15.5007, 32.5599),
-    "Asmara": (15.3229, 38.9251),
-    "Addis Ababa": (8.9806, 38.7578),
-    "Cairo": (30.0444, 31.2357),
-    "Agadez": (16.9733, 7.9911),
-    "Tunis": (36.8065, 10.1815),
-}
+# ------------------------------------------------------------------
+# Country helpers
+# ------------------------------------------------------------------
+
+@lru_cache(maxsize=1_000)
+def _country_from_text(norm_text: str) -> Optional[str]:
+    """Try to detect a country ISO2 code in normalized text."""
+    toks = norm_text.split()
+    # ISO2 token, e.g., 'ly', 'sd'
+    for t in toks:
+        if len(t) == 2 and t.isalpha():
+            return t.upper()
+
+    if _HAVE_PYCOUNTRY:
+        try:
+            # try whole string
+            c = pycountry.countries.get(name=norm_text.title())
+            if c and getattr(c, "alpha_2", None):
+                return c.alpha_2
+        except Exception:
+            pass
+        # try every token as a country name
+        for t in toks:
+            try:
+                c = pycountry.countries.get(name=t.title())
+                if c and getattr(c, "alpha_2", None):
+                    return c.alpha_2
+            except Exception:
+                continue
+        # common extras like 'libyan', 'sudanese' won't match; that's fine
+    return None
+
+def _best_city_in_country(iso2: str) -> Optional[Tuple[float, float]]:
+    """Fallback centroid: pick most populous gazetteer entry for country."""
+    g = _active_gaz_df()
+    if g.empty: 
+        return None
+    sub = g[(g["country"].str.upper() == iso2.upper())]
+    if sub.empty:
+        return None
+    # prefer entries with population; fall back to any
+    if "population" in sub.columns:
+        sub = sub.sort_values("population", ascending=False, na_position="last")
+    r = sub.iloc[0]
+    try:
+        return float(r["lat"]), float(r["lon"])
+    except Exception:
+        return None
+
+# ------------------------------------------------------------------
+# Fuzzy matching
+# ------------------------------------------------------------------
+
+def _score(a: str, b: str) -> float:
+    if _HAVE_RF:
+        # token_set_ratio is robust to swapped/extra words
+        return float(fuzz.token_set_ratio(a, b))
+    else:
+        return 100.0 * difflib.SequenceMatcher(None, a, b).ratio()
+
+def _best_match(query_norm: str, cand_norms: pd.Series, min_score: float) -> Optional[int]:
+    best_idx = None
+    best = -1.0
+    for idx, val in cand_norms.items():
+        sc = _score(query_norm, val)
+        if sc > best:
+            best, best_idx = sc, idx
+    return best_idx if best >= min_score else None
+
+# ------------------------------------------------------------------
+# Single-string resolution (cached)
+# ------------------------------------------------------------------
+
+@lru_cache(maxsize=8192)
+def _resolve_one(raw_location: str) -> Optional[Tuple[float, float]]:
+    """Resolve one raw string to (lat, lon):
+       1) explicit CSV exact (normalized)
+       2) exact gazetteer match
+       3) country-aware fuzzy (name + country)
+       4) fuzzy on name alone
+       5) country-only fallback → most populous city as centroid
+    """
+    if not raw_location or not str(raw_location).strip():
+        return None
+    q_norm = _norm_key(str(raw_location))
+    if not q_norm:
+        return None
+
+    # 1) explicit lookup CSVs (priority)
+    for tbl in _explicit_lookup_tables():
+        hit = tbl.loc[tbl["norm"] == q_norm]
+        if not hit.empty:
+            r = hit.iloc[0]
+            return float(r["lat"]), float(r["lon"])
+
+    gaz = _active_gaz_df()
+    if gaz.empty:
+        return None
+
+    # 2) exact in gazetteer (normalized)
+    exact = gaz.loc[gaz["norm"] == q_norm]
+    if not exact.empty:
+        r = exact.iloc[0]
+        return float(r["lat"]), float(r["lon"])
+
+    # Try to detect a country code from the text (helps both 3 and 5)
+    iso2 = _country_from_text(q_norm)
+
+    # 3) country-aware fuzzy: prefer matches in that country
+    if iso2 is not None:
+        # filter gazetteer to the country
+        sub = gaz[gaz["country"].str.upper() == iso2.upper()]
+        if not sub.empty:
+            idx = _best_match(q_norm, sub["norm_cty"], min_score=84.0)
+            if idx is not None:
+                r = sub.loc[idx]
+                return float(r["lat"]), float(r["lon"])
+
+    # 4) general fuzzy on name only
+    idx = _best_match(q_norm, gaz["norm"], min_score=90.0)
+    if idx is not None:
+        r = gaz.loc[idx]
+        return float(r["lat"]), float(r["lon"])
+
+    # 5) if the string is likely a country (or we extracted an ISO2), pick a centroid
+    if iso2 is not None:
+        centroid = _best_city_in_country(iso2)
+        if centroid is not None:
+            return centroid
+
+    return None
+
+# ------------------------------------------------------------------
+# Public API
+# ------------------------------------------------------------------
 
 def resolve_locations_to_coords(locations: Iterable[str]) -> Dict[str, Tuple[float, float]]:
-    """
-    Resolve using:
-      1) User lookup tables
-      2) Active Gazetteer (GeoNames/custom) with fuzzy & alias matching
-      3) Tiny seed (last resort)
-    """
-    # dedupe inputs
-    uniq = [str(x).strip() for x in set(locations) if isinstance(x, str) and str(x).strip()]
+    """Resolve an iterable of strings to (lat,lon). Uses cache for speed."""
     out: Dict[str, Tuple[float, float]] = {}
-
-    # 1) user tables
-    u = _collect_user_geo_maps()
-    for loc in uniq:
-        if loc in u:
-            out[loc] = u[loc]
-
-    # 2) gazetteer for unresolved
-    unresolved = [loc for loc in uniq if loc not in out]
-    if unresolved:
-        g_res = resolve_with_gazetteer(unresolved, score_cutoff=88)
-        out.update(g_res)
-
-    # 3) tiny seed for anything still unresolved
-    for loc in unresolved:
-        if loc not in out and loc in _DEFAULT_SEED:
-            out[loc] = _DEFAULT_SEED[loc]
-
+    for s in locations:
+        try:
+            pt = _resolve_one(str(s))
+            if pt is not None:
+                out[str(s)] = pt
+        except Exception:
+            continue
     return out
+
+def match_report(locations: Iterable[str]) -> Dict[str, int]:
+    """Return {'total', 'matched', 'unmatched'} for quick diagnostics."""
+    total = 0
+    hit = 0
+    for s in locations:
+        total += 1
+        if _resolve_one(str(s)) is not None:
+            hit += 1
+    return {"total": total, "matched": hit, "unmatched": total - hit}
