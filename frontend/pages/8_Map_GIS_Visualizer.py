@@ -12,8 +12,13 @@ from backend.core import dataset_registry as registry
 from backend.api.graph_queries import concat_processed_frames
 from backend.api.gis_data import compute_location_stats, build_timestamped_geojson
 
-# Fuzzy resolver + diagnostics
-from backend.geo.geo_utils import resolve_locations_to_coords, match_report
+# Fuzzy resolver + diagnostics (with safe fallback for match_report)
+from backend.geo.geo_utils import resolve_locations_to_coords
+try:
+    from backend.geo.geo_utils import match_report  # type: ignore
+except Exception:  # pragma: no cover
+    def match_report(_locations):
+        return {"total": len(_locations or []), "matched": 0, "unmatched": len(_locations or [])}
 
 # Robust gazetteer ingesters (fixes float.strip / tokenizing errors)
 from backend.gis.gis_mapper import (
@@ -34,11 +39,9 @@ try:
     from backend.geo.geo_utils import save_geo_lookup_csv, list_geo_lookups  # type: ignore
 except Exception:  # pragma: no cover
     def list_geo_lookups():
-        """Fallback: pull any saved geo lookups from the registry."""
         return registry.find_datasets(kind="geo_lookup")
 
     def save_geo_lookup_csv(name: str, df: pd.DataFrame, owner: str | None = None):
-        """Fallback: save a minimal (location,lat,lon) CSV into the registry as kind=geo_lookup."""
         cols = {c.lower(): c for c in df.columns}
         need = ["location", "lat", "lon"]
         missing = [c for c in need if c not in cols]
@@ -50,6 +53,9 @@ except Exception:  # pragma: no cover
             "lon": pd.to_numeric(df[cols["lon"]], errors="coerce"),
         }).dropna()
         return registry.save_df(name=name, df=slim, kind="geo_lookup", owner=owner)
+
+# Tiny builder: create a gazetteer from a token list using offline GeoNames CSV
+from backend.geo.build_custom_gazetteer import build_gazetteer_from_token_file
 
 st.set_page_config(page_title="GIS Map & Spatio-Temporal Visualizer",
                    page_icon="🗺️", layout="wide")
@@ -67,12 +73,13 @@ The app resolves locations automatically across any dataset — no fixed lists.
 with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
     left, mid, right = st.columns([2, 2, 3])
 
+    # --- GeoNames ZIP/TXT
     with left:
         st.markdown("**Upload GeoNames** (`allCountries.zip`, `cities1000.zip`, `cities15000.zip`, etc., or an inner `.txt`):")
         gz_zip = st.file_uploader("GeoNames ZIP", type=["zip"], key="gz_zip")
         min_pop = st.number_input("Min population filter (optional)", min_value=0, value=0, step=1000)
 
-        if gz_zip is not None and st.button("Ingest ZIP"):
+        if gz_zip is not None and st.button("Ingest ZIP", use_container_width=True):
             try:
                 gid = robust_ingest_zip(
                     gz_zip,
@@ -81,12 +88,13 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                 )
                 set_active_gazetteer(gid)
                 st.success(f"Ingested and set active: {gid}")
+                st.rerun()
             except Exception as e:
                 st.error(f"Failed to ingest ZIP: {e}")
 
         st.markdown("— or —")
         gz_tsv = st.file_uploader("GeoNames TXT/TSV", type=["txt", "tsv"], key="gz_tsv")
-        if gz_tsv is not None and st.button("Ingest TXT/TSV"):
+        if gz_tsv is not None and st.button("Ingest TXT/TSV", use_container_width=True):
             try:
                 gid = ingest_geonames_tsv(
                     gz_tsv,
@@ -95,20 +103,24 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                 )
                 set_active_gazetteer(gid)
                 st.success(f"Ingested and set active: {gid}")
+                st.rerun()
             except Exception as e:
                 st.error(f"Failed to ingest TSV: {e}")
 
+    # --- Custom CSV
     with mid:
         st.markdown("**Upload Custom CSV** (`name, lat, lon [, country, admin1, population]`):")
         custom = st.file_uploader("Custom Gazetteer CSV", type=["csv"], key="gz_csv")
-        if custom is not None and st.button("Ingest Custom CSV"):
+        if custom is not None and st.button("Ingest Custom CSV", use_container_width=True):
             try:
                 gid = robust_ingest_csv(custom, title=f"Custom {custom.name}")
                 set_active_gazetteer(gid)
                 st.success(f"Ingested and set active: {gid}")
+                st.rerun()
             except Exception as e:
                 st.error(f"Failed to ingest custom CSV: {e}")
 
+    # --- Available gazetteers + Tiny builder (token list → gazetteer)
     with right:
         gaz_list = list_gazetteers()
         current_gid = get_active_gazetteer_id()
@@ -127,9 +139,69 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                 index=default_index,
                 format_func=lambda gid: f"{[g for g in gaz_list if g['id']==gid][0]['name']} • {gid}",
             )
-            if st.button("Set active gazetteer"):
+            if st.button("Set active gazetteer", use_container_width=True):
                 set_active_gazetteer(choice)
                 st.success(f"Active gazetteer set to: {choice}")
+                st.rerun()
+
+        st.markdown("---")
+        st.markdown("**Build from token list (fuzzy)**")
+        st.caption("Upload your token list (.txt) and an offline GeoNames CSV; we’ll create a gazetteer and set it active.")
+
+        import tempfile
+        from pathlib import Path
+
+        token_file = st.file_uploader("Token list (e.g., Gazetteer.txt)", type=["txt"], key="tok_list")
+        geonames_csv = st.file_uploader(
+            "Offline GeoNames CSV (e.g., geonames-all-cities-with-a-population-1000.csv)",
+            type=["csv"], key="tok_gn"
+        )
+        
+        if st.button("🔧 Build gazetteer from token list", use_container_width=True, disabled=not (token_file and geonames_csv)):
+            try:
+                # Cross‑platform temp dir
+                tmpdir = Path(tempfile.gettempdir()) / "gazetteer_build"
+                tmpdir.mkdir(parents=True, exist_ok=True)
+
+                tok_path = tmpdir / f"_tokens_{Path(token_file.name).name}"
+                gn_path  = tmpdir / f"_gn_{Path(geonames_csv.name).name}"
+
+                # Persist uploaded buffers
+                tok_bytes = token_file.getvalue() if hasattr(token_file, "getvalue") else token_file.read()
+                gn_bytes  = geonames_csv.getvalue() if hasattr(geonames_csv, "getvalue") else geonames_csv.read()
+                tok_path.write_bytes(tok_bytes)
+                gn_path.write_bytes(gn_bytes)
+
+                df_built, gid_new, summary = build_gazetteer_from_token_file(
+                    token_file=str(tok_path),
+                    geonames_csv=str(gn_path),
+                    save_to_registry=True,
+                    registry_name=f"Custom Gazetteer (from {Path(token_file.name).name})",
+                )
+
+                if df_built.empty or gid_new is None:
+                    st.warning(f"Built gazetteer is empty. Summary: {summary}")
+                else:
+                    set_active_gazetteer(gid_new)
+                    st.success(f"Built gazetteer {gid_new} • Resolved {summary['resolved']} of {summary['input_lines']} lines.")
+                    with st.expander("Preview (first 25 rows)"):
+                        st.dataframe(df_built.head(25), use_container_width=True, hide_index=True)
+                    st.rerun()
+
+            except Exception as e:
+                st.error(f"Failed to build gazetteer from token list: {e}")
+        
+        
+                if df_built.empty or gid_new is None:
+                    st.warning(f"Built gazetteer is empty. Summary: {summary}")
+                else:
+                    set_active_gazetteer(gid_new)
+                    st.success(f"Built gazetteer {gid_new} • Resolved {summary['resolved']} of {summary['input_lines']} lines.")
+                    with st.expander("Preview (first 25 rows)"):
+                        st.dataframe(df_built.head(25), use_container_width=True, hide_index=True)
+                    st.rerun()
+            except Exception as e:
+                st.error(f"Failed to build gazetteer from token list: {e}")
 
 st.divider()
 

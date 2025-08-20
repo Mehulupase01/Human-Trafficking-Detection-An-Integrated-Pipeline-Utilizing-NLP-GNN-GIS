@@ -64,6 +64,17 @@
       "source": "upload",
       "created_at": "2025-08-20 02:07:50",
       "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
+    },
+    "ds_1755653027907": {
+      "id": "ds_1755653027907",
+      "name": "Custom Master-Gazetteer.csv (ingested)",
+      "kind": "gazetteer",
+      "path": "data\\datasets\\ds_1755653027907.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": null,
+      "created_at": "2025-08-20 03:23:48",
+      "rows": 363
     }
   }
 }
