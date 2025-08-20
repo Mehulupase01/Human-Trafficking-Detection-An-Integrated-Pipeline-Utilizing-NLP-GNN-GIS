@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from functools import lru_cache
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -12,9 +12,9 @@ from backend.core import dataset_registry as registry
 
 # Optional: RapidFuzz gives much better fuzzy scores if available.
 try:
-    from rapidfuzz import fuzz  # type: ignore
+    from rapidfuzz import fuzz, process  # type: ignore
     _HAVE_RF = True
-except Exception:
+except Exception:  # pragma: no cover
     import difflib
     _HAVE_RF = False
 
@@ -22,7 +22,7 @@ except Exception:
 try:
     import pycountry  # type: ignore
     _HAVE_PYCOUNTRY = True
-except Exception:
+except Exception:  # pragma: no cover
     _HAVE_PYCOUNTRY = False
 
 # ------------------------------------------------------------------
@@ -48,41 +48,46 @@ def _norm_tokenize(s: str) -> List[str]:
 def _norm_key(s: str) -> str:
     return " ".join(_norm_tokenize(s))
 
+def _n(s: Optional[str]) -> str:
+    return _norm_key(str(s or ""))
+
 # ------------------------------------------------------------------
 # Gazetteer / explicit lookup loading
 # ------------------------------------------------------------------
 
 @lru_cache(maxsize=1)
 def _active_gaz_df() -> pd.DataFrame:
-    """Load active gazetteer as (name,lat,lon,country,admin,population) with normalized keys."""
+    """
+    Load active gazetteer as columns:
+    name, lat, lon, country, admin, population
+    plus normalized helper columns: name_n, country_n, admin_n.
+    """
     from backend.geo.gazetteer import get_active_gazetteer_id  # lazy import
     gid = get_active_gazetteer_id()
     if not gid:
-        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","name_n","country_n","admin_n"])
     try:
         df = registry.load_df(gid)
     except Exception:
-        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","name_n","country_n","admin_n"])
 
     keep = [c for c in ["name","lat","lon","country","admin","population"] if c in df.columns]
     if not keep:
-        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","norm","norm_cty"])
+        return pd.DataFrame(columns=["name","lat","lon","country","admin","population","name_n","country_n","admin_n"])
 
     df = df[keep].copy()
     df["name"] = df["name"].astype(str)
-    df["norm"] = df["name"].map(_norm_key)
     df["country"] = df.get("country", pd.Series("", index=df.index)).fillna("").astype(str)
-    df["norm_cty"] = np.where(
-        df["country"] != "",
-        (df["norm"] + " " + df["country"].str.lower()),
-        df["norm"]
-    )
+    df["admin"]   = df.get("admin",   pd.Series("", index=df.index)).fillna("").astype(str)
+
+    df["name_n"]    = df["name"].map(_n)
+    df["country_n"] = df["country"].map(_n)
+    df["admin_n"]   = df["admin"].map(_n)
     return df
 
 @lru_cache(maxsize=1)
 def _explicit_lookup_tables() -> List[pd.DataFrame]:
     """Load explicit user CSV lookups (location,lat,lon). Newest first."""
-    from backend.geo.geo_utils import list_geo_lookups  # defined elsewhere in this module/package
     try:
         items = list_geo_lookups()
     except Exception:
@@ -99,11 +104,17 @@ def _explicit_lookup_tables() -> List[pd.DataFrame]:
                 "lat": pd.to_numeric(df[cols["lat"]], errors="coerce"),
                 "lon": pd.to_numeric(df[cols["lon"]], errors="coerce"),
             }).dropna()
-            d2["norm"] = d2["location"].map(_norm_key)
+            d2["loc_n"] = d2["location"].map(_n)
             out.append(d2)
         except Exception:
             continue
     return out
+
+def clear_geo_caches() -> None:
+    """Call this if you switch the active gazetteer to refresh caches."""
+    _active_gaz_df.cache_clear()
+    _explicit_lookup_tables.cache_clear()
+    _resolve_one.cache_clear()
 
 # ------------------------------------------------------------------
 # Country helpers
@@ -134,18 +145,16 @@ def _country_from_text(norm_text: str) -> Optional[str]:
                     return c.alpha_2
             except Exception:
                 continue
-        # common extras like 'libyan', 'sudanese' won't match; that's fine
     return None
 
 def _best_city_in_country(iso2: str) -> Optional[Tuple[float, float]]:
     """Fallback centroid: pick most populous gazetteer entry for country."""
     g = _active_gaz_df()
-    if g.empty: 
+    if g.empty:
         return None
     sub = g[(g["country"].str.upper() == iso2.upper())]
     if sub.empty:
         return None
-    # prefer entries with population; fall back to any
     if "population" in sub.columns:
         sub = sub.sort_values("population", ascending=False, na_position="last")
     r = sub.iloc[0]
@@ -160,12 +169,19 @@ def _best_city_in_country(iso2: str) -> Optional[Tuple[float, float]]:
 
 def _score(a: str, b: str) -> float:
     if _HAVE_RF:
-        # token_set_ratio is robust to swapped/extra words
         return float(fuzz.token_set_ratio(a, b))
-    else:
+    else:  # pragma: no cover
         return 100.0 * difflib.SequenceMatcher(None, a, b).ratio()
 
-def _best_match(query_norm: str, cand_norms: pd.Series, min_score: float) -> Optional[int]:
+def _best_match_idx(query_norm: str, cand_norms: pd.Series, min_score: float) -> Optional[int]:
+    if _HAVE_RF:
+        res = process.extractOne(query_norm, cand_norms.tolist(), scorer=fuzz.WRatio, score_cutoff=min_score)
+        if res:
+            _, _, idx = res
+            # map back to original index
+            return cand_norms.index[idx]
+        return None
+    # Fallback: manual scan
     best_idx = None
     best = -1.0
     for idx, val in cand_norms.items():
@@ -175,27 +191,23 @@ def _best_match(query_norm: str, cand_norms: pd.Series, min_score: float) -> Opt
     return best_idx if best >= min_score else None
 
 # ------------------------------------------------------------------
-# Single-string resolution (cached)
+# Single-item resolution (cached)
+# Accepts either a string "Tripoli" or a dict:
+#   {"location": "Tripoli", "country": "Libya", "admin": "Tripoli"}
 # ------------------------------------------------------------------
 
 @lru_cache(maxsize=8192)
-def _resolve_one(raw_location: str) -> Optional[Tuple[float, float]]:
-    """Resolve one raw string to (lat, lon):
-       1) explicit CSV exact (normalized)
-       2) exact gazetteer match
-       3) country-aware fuzzy (name + country)
-       4) fuzzy on name alone
-       5) country-only fallback → most populous city as centroid
-    """
-    if not raw_location or not str(raw_location).strip():
+def _resolve_one(raw: str, ctry_hint: str = "", adm_hint: str = "") -> Optional[Tuple[float, float]]:
+    """Resolve one item to (lat, lon)."""
+    if not raw or not str(raw).strip():
         return None
-    q_norm = _norm_key(str(raw_location))
+    q_norm = _n(str(raw))
     if not q_norm:
         return None
 
     # 1) explicit lookup CSVs (priority)
     for tbl in _explicit_lookup_tables():
-        hit = tbl.loc[tbl["norm"] == q_norm]
+        hit = tbl.loc[tbl["loc_n"] == q_norm]
         if not hit.empty:
             r = hit.iloc[0]
             return float(r["lat"]), float(r["lon"])
@@ -205,26 +217,46 @@ def _resolve_one(raw_location: str) -> Optional[Tuple[float, float]]:
         return None
 
     # 2) exact in gazetteer (normalized)
-    exact = gaz.loc[gaz["norm"] == q_norm]
+    exact = gaz.loc[gaz["name_n"] == q_norm]
     if not exact.empty:
+        # prefer country/admin match if hints present
+        if ctry_hint or adm_hint:
+            c_n = _n(ctry_hint)
+            a_n = _n(adm_hint)
+            sub = exact
+            if ctry_hint:
+                sub = sub[sub["country_n"] == c_n] if not sub.empty else sub
+            if adm_hint:
+                sub = sub[sub["admin_n"] == a_n] if not sub.empty else sub
+            if not sub.empty:
+                r = sub.iloc[0]
+                return float(r["lat"]), float(r["lon"])
         r = exact.iloc[0]
         return float(r["lat"]), float(r["lon"])
 
-    # Try to detect a country code from the text (helps both 3 and 5)
-    iso2 = _country_from_text(q_norm)
+    # Try to detect a country code from the text or hints (helps centroid fallback)
+    iso2 = _country_from_text(q_norm) or _country_from_text(_n(ctry_hint)) if ctry_hint else None
 
-    # 3) country-aware fuzzy: prefer matches in that country
-    if iso2 is not None:
-        # filter gazetteer to the country
-        sub = gaz[gaz["country"].str.upper() == iso2.upper()]
+    # 3) country-aware fuzzy: prefer matches in that country/admin
+    if ctry_hint:
+        c_n = _n(ctry_hint)
+        sub = gaz[gaz["country_n"] == c_n]
         if not sub.empty:
-            idx = _best_match(q_norm, sub["norm_cty"], min_score=84.0)
+            # if admin hint exists, try admin-filtered first
+            if adm_hint:
+                a_n = _n(adm_hint)
+                sub2 = sub[sub["admin_n"] == a_n]
+                idx = _best_match_idx(q_norm, sub2["name_n"], min_score=84.0) if not sub2.empty else None
+                if idx is not None:
+                    r = sub2.loc[idx]
+                    return float(r["lat"]), float(r["lon"])
+            idx = _best_match_idx(q_norm, sub["name_n"], min_score=84.0)
             if idx is not None:
                 r = sub.loc[idx]
                 return float(r["lat"]), float(r["lon"])
 
     # 4) general fuzzy on name only
-    idx = _best_match(q_norm, gaz["norm"], min_score=90.0)
+    idx = _best_match_idx(q_norm, gaz["name_n"], min_score=90.0)
     if idx is not None:
         r = gaz.loc[idx]
         return float(r["lat"]), float(r["lon"])
@@ -241,24 +273,61 @@ def _resolve_one(raw_location: str) -> Optional[Tuple[float, float]]:
 # Public API
 # ------------------------------------------------------------------
 
-def resolve_locations_to_coords(locations: Iterable[str]) -> Dict[str, Tuple[float, float]]:
-    """Resolve an iterable of strings to (lat,lon). Uses cache for speed."""
+Item = Union[str, Dict[str, str]]
+
+def resolve_locations_to_coords(items: Iterable[Item]) -> Dict[str, Tuple[float, float]]:
+    """
+    Resolve items to (lat,lon).
+    - If item is a string, it's treated as a location name.
+    - If item is a dict, it may include {"location", "country", "admin"} for better disambiguation.
+    Returns a dict keyed by the original *location string* (for dicts, uses the 'location' field).
+    """
     out: Dict[str, Tuple[float, float]] = {}
-    for s in locations:
-        try:
-            pt = _resolve_one(str(s))
+    for it in items:
+        if isinstance(it, dict):
+            loc = str(it.get("location", "")).strip()
+            if not loc:
+                continue
+            pt = _resolve_one(loc, str(it.get("country","")), str(it.get("admin","")))
             if pt is not None:
-                out[str(s)] = pt
-        except Exception:
-            continue
+                out[loc] = pt
+        else:
+            loc = str(it)
+            pt = _resolve_one(loc, "", "")
+            if pt is not None:
+                out[loc] = pt
     return out
 
-def match_report(locations: Iterable[str]) -> Dict[str, int]:
+def match_report(items: Iterable[Item]) -> Dict[str, int]:
     """Return {'total', 'matched', 'unmatched'} for quick diagnostics."""
     total = 0
     hit = 0
-    for s in locations:
+    for it in items:
         total += 1
-        if _resolve_one(str(s)) is not None:
+        if isinstance(it, dict):
+            loc = str(it.get("location",""))
+            ok = _resolve_one(loc, str(it.get("country","")), str(it.get("admin",""))) is not None if loc else False
+        else:
+            ok = _resolve_one(str(it), "", "") is not None
+        if ok:
             hit += 1
     return {"total": total, "matched": hit, "unmatched": total - hit}
+
+# ------------------------------------------------------------------
+# Explicit lookup helpers (used by the page)
+# ------------------------------------------------------------------
+
+def save_geo_lookup_csv(name: str, df: pd.DataFrame, owner: str | None = None):
+    cols = {c.lower(): c for c in df.columns}
+    need = {"location", "lat", "lon"}
+    if not need.issubset(set(cols)):
+        raise ValueError("Geo lookup CSV must have columns: location, lat, lon")
+    slim = pd.DataFrame({
+        "location": df[cols["location"]].astype(str),
+        "lat": pd.to_numeric(df[cols["lat"]], errors="coerce"),
+        "lon": pd.to_numeric(df[cols["lon"]], errors="coerce"),
+    }).dropna()
+    return registry.save_df(name=name, df=slim, kind="geo_lookup", owner=owner)
+
+def list_geo_lookups():
+    return registry.find_datasets(kind="geo_lookup")

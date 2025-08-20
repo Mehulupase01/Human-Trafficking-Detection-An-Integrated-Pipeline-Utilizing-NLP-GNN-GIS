@@ -1,6 +1,9 @@
 # frontend/pages/8_Map_GIS_Visualizer.py
 from __future__ import annotations
 
+import tempfile
+from pathlib import Path
+
 import folium
 import pandas as pd
 import streamlit as st
@@ -13,7 +16,7 @@ from backend.api.graph_queries import concat_processed_frames
 from backend.api.gis_data import compute_location_stats, build_timestamped_geojson
 
 # Fuzzy resolver + diagnostics (with safe fallback for match_report)
-from backend.geo.geo_utils import resolve_locations_to_coords
+from backend.geo.geo_utils import resolve_locations_to_coords, clear_geo_caches
 try:
     from backend.geo.geo_utils import match_report  # type: ignore
 except Exception:  # pragma: no cover
@@ -87,6 +90,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                     title=f"GeoNames {gz_zip.name}",
                 )
                 set_active_gazetteer(gid)
+                clear_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
@@ -102,6 +106,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                     min_population=int(min_pop),
                 )
                 set_active_gazetteer(gid)
+                clear_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
@@ -115,6 +120,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
             try:
                 gid = robust_ingest_csv(custom, title=f"Custom {custom.name}")
                 set_active_gazetteer(gid)
+                clear_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
@@ -141,6 +147,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
             )
             if st.button("Set active gazetteer", use_container_width=True):
                 set_active_gazetteer(choice)
+                clear_geo_caches()
                 st.success(f"Active gazetteer set to: {choice}")
                 st.rerun()
 
@@ -148,25 +155,21 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
         st.markdown("**Build from token list (fuzzy)**")
         st.caption("Upload your token list (.txt) and an offline GeoNames CSV; we’ll create a gazetteer and set it active.")
 
-        import tempfile
-        from pathlib import Path
-
         token_file = st.file_uploader("Token list (e.g., Gazetteer.txt)", type=["txt"], key="tok_list")
         geonames_csv = st.file_uploader(
             "Offline GeoNames CSV (e.g., geonames-all-cities-with-a-population-1000.csv)",
             type=["csv"], key="tok_gn"
         )
-        
-        if st.button("🔧 Build gazetteer from token list", use_container_width=True, disabled=not (token_file and geonames_csv)):
+
+        can_build = bool(token_file and geonames_csv)
+        if st.button("🔧 Build gazetteer from token list", use_container_width=True, disabled=not can_build):
             try:
-                # Cross‑platform temp dir
                 tmpdir = Path(tempfile.gettempdir()) / "gazetteer_build"
                 tmpdir.mkdir(parents=True, exist_ok=True)
 
                 tok_path = tmpdir / f"_tokens_{Path(token_file.name).name}"
                 gn_path  = tmpdir / f"_gn_{Path(geonames_csv.name).name}"
 
-                # Persist uploaded buffers
                 tok_bytes = token_file.getvalue() if hasattr(token_file, "getvalue") else token_file.read()
                 gn_bytes  = geonames_csv.getvalue() if hasattr(geonames_csv, "getvalue") else geonames_csv.read()
                 tok_path.write_bytes(tok_bytes)
@@ -183,25 +186,72 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                     st.warning(f"Built gazetteer is empty. Summary: {summary}")
                 else:
                     set_active_gazetteer(gid_new)
-                    st.success(f"Built gazetteer {gid_new} • Resolved {summary['resolved']} of {summary['input_lines']} lines.")
+                    clear_geo_caches()
+                    st.success(
+                        f"Built gazetteer {gid_new} • "
+                        f"Resolved {summary.get('resolved', '—')} of {summary.get('input_lines', '—')} lines."
+                    )
                     with st.expander("Preview (first 25 rows)"):
                         st.dataframe(df_built.head(25), use_container_width=True, hide_index=True)
                     st.rerun()
 
             except Exception as e:
                 st.error(f"Failed to build gazetteer from token list: {e}")
-        
-        
-                if df_built.empty or gid_new is None:
-                    st.warning(f"Built gazetteer is empty. Summary: {summary}")
-                else:
-                    set_active_gazetteer(gid_new)
-                    st.success(f"Built gazetteer {gid_new} • Resolved {summary['resolved']} of {summary['input_lines']} lines.")
-                    with st.expander("Preview (first 25 rows)"):
-                        st.dataframe(df_built.head(25), use_container_width=True, hide_index=True)
+
+# ───────────────────────── Manage stored gazetteers & lookups ─────────────────────────
+with st.expander("🧹 Manage stored gazetteers & explicit lookups", expanded=False):
+    gaz = list_gazetteers()
+    lookups = list_geo_lookups()
+
+    st.markdown("**Gazetteers**")
+    if not gaz:
+        st.caption("No gazetteers saved.")
+    else:
+        for g in gaz:
+            col1, col2, col3, col4 = st.columns([5, 2, 2, 2])
+            col1.write(f"**{g.get('name','(unnamed)')}**  \n`{g.get('id','')}`")
+            if col2.button("Set active", key=f"g_set_{g['id']}"):
+                set_active_gazetteer(g["id"])
+                clear_geo_caches()
+                st.success(f"Active gazetteer set to: {g['id']}")
+                st.rerun()
+            if col3.button("Preview", key=f"g_prev_{g['id']}"):
+                try:
+                    dfp = registry.load_df(g["id"]).head(25)
+                    st.dataframe(dfp, use_container_width=True, hide_index=True)
+                except Exception as e:
+                    st.error(f"Preview failed: {e}")
+            if col4.button("Delete", key=f"g_del_{g['id']}"):
+                try:
+                    registry.delete(g["id"])
+                    clear_geo_caches()
+                    st.success(f"Deleted gazetteer: {g['id']}")
                     st.rerun()
-            except Exception as e:
-                st.error(f"Failed to build gazetteer from token list: {e}")
+                except Exception as e:
+                    st.error(f"Delete failed: {e}")
+
+    st.markdown("---")
+    st.markdown("**Explicit geo lookups (override tables)**")
+    if not lookups:
+        st.caption("No explicit lookup tables saved.")
+    else:
+        for e in lookups:
+            col1, col2, col3 = st.columns([6, 2, 2])
+            col1.write(f"**{e.get('name','(unnamed)')}**  \n`{e.get('id','')}`")
+            if col2.button("Preview", key=f"gl_prev_{e['id']}"):
+                try:
+                    dfp = registry.load_df(e["id"]).head(25)
+                    st.dataframe(dfp, use_container_width=True, hide_index=True)
+                except Exception as ex:
+                    st.error(f"Preview failed: {ex}")
+            if col3.button("Delete", key=f"gl_del_{e['id']}"):
+                try:
+                    registry.delete(e["id"])
+                    clear_geo_caches()
+                    st.success(f"Deleted geo lookup: {e['id']}")
+                    st.rerun()
+                except Exception as ex:
+                    st.error(f"Delete failed: {ex}")
 
 st.divider()
 
@@ -294,6 +344,7 @@ with st.expander("📍 (Optional) Upload an explicit Location → Lat/Lon mappin
         try:
             df_geo = pd.read_csv(up)
             gid = save_geo_lookup_csv(name=f"Geo Lookup ({up.name})", df=df_geo, owner=(owner or None))
+            clear_geo_caches()
             st.success(f"Saved geo lookup: {gid}")
         except Exception as e:
             st.error(f"Failed to save geo lookup: {e}")
