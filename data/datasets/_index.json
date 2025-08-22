@@ -21,16 +21,16 @@
       "created_at": "2025-08-20 06:57:04",
       "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
     },
-    "ds_1755668271277": {
-      "id": "ds_1755668271277",
+    "ds_1755684114350": {
+      "id": "ds_1755684114350",
       "name": "Custom Master-Gazetteer.csv (ingested)",
       "kind": "gazetteer",
-      "path": "data\\datasets\\ds_1755668271277.parquet",
+      "path": "data\\datasets\\ds_1755684114350.parquet",
       "format": "parquet",
       "owner": null,
       "source": null,
-      "created_at": "2025-08-20 07:37:51",
-      "rows": 0
+      "created_at": "2025-08-20 12:01:54",
+      "rows": 363
     }
   }
 }

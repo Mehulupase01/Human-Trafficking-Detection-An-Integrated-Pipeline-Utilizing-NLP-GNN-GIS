@@ -1,35 +1,41 @@
 # frontend/pages/8_Map_GIS_Visualizer.py
 from __future__ import annotations
 
-import tempfile
-from pathlib import Path
+import ast
+import json
+import re
+from typing import Iterable, List, Tuple
 
 import folium
+import numpy as np
 import pandas as pd
 import streamlit as st
+from branca.element import Element, Figure, JavascriptLink, MacroElement, Template
 from folium.plugins import Fullscreen, HeatMap, MarkerCluster, TimestampedGeoJson
 from streamlit.components.v1 import html as st_html
-from branca.element import Figure, JavascriptLink, MacroElement, Template, Element
 
 from backend.core import dataset_registry as registry
 from backend.api.graph_queries import concat_processed_frames
 from backend.api.gis_data import compute_location_stats, build_timestamped_geojson
 
-# Fuzzy resolver + diagnostics (with safe fallback for match_report)
-from backend.geo.geo_utils import resolve_locations_to_coords, clear_geo_caches
+# --- Fuzzy resolver + diagnostics (imports are safe even if extra functions are missing)
+from backend.geo.geo_utils import resolve_locations_to_coords
 try:
-    from backend.geo.geo_utils import match_report  # type: ignore
-except Exception:  # pragma: no cover
-    def match_report(_locations):
-        return {"total": len(_locations or []), "matched": 0, "unmatched": len(_locations or [])}
+    from backend.geo.geo_utils import match_report, bust_geo_caches  # type: ignore
+except Exception:
+    def match_report(locs: Iterable[str]):
+        locs = list(locs or [])
+        return {"total": len(locs), "matched": 0, "unmatched": len(locs)}
+    def bust_geo_caches():
+        pass
 
-# Robust gazetteer ingesters (fixes float.strip / tokenizing errors)
+# --- Robust gazetteer ingesters (avoid float.strip / tokenizer errors)
 from backend.gis.gis_mapper import (
     ingest_geonames_zip as robust_ingest_zip,
     ingest_custom_gazetteer_csv as robust_ingest_csv,
 )
 
-# List/set active gazetteers; optional TXT/TSV ingester
+# --- Gazetteer list/set + optional TXT/TSV ingest
 from backend.geo.gazetteer import (
     list_gazetteers,
     ingest_geonames_tsv,
@@ -37,7 +43,7 @@ from backend.geo.gazetteer import (
     get_active_gazetteer_id,
 )
 
-# Explicit lookup helpers — import if available; else provide safe fallbacks
+# --- Explicit lookup helpers: import if available, else provide fallbacks
 try:
     from backend.geo.geo_utils import save_geo_lookup_csv, list_geo_lookups  # type: ignore
 except Exception:  # pragma: no cover
@@ -47,9 +53,9 @@ except Exception:  # pragma: no cover
     def save_geo_lookup_csv(name: str, df: pd.DataFrame, owner: str | None = None):
         cols = {c.lower(): c for c in df.columns}
         need = ["location", "lat", "lon"]
-        missing = [c for c in need if c not in cols]
-        if missing:
-            raise ValueError("Geo lookup CSV must have columns: location, lat, lon")
+        for c in need:
+            if c not in cols:
+                raise ValueError("Geo lookup CSV must have columns: location, lat, lon")
         slim = pd.DataFrame({
             "location": df[cols["location"]].astype(str),
             "lat": pd.to_numeric(df[cols["lat"]], errors="coerce"),
@@ -57,9 +63,7 @@ except Exception:  # pragma: no cover
         }).dropna()
         return registry.save_df(name=name, df=slim, kind="geo_lookup", owner=owner)
 
-# Tiny builder: create a gazetteer from a token list using offline GeoNames CSV
-from backend.geo.build_custom_gazetteer import build_gazetteer_from_token_file
-
+# ---------------------- Page ----------------------
 st.set_page_config(page_title="GIS Map & Spatio-Temporal Visualizer",
                    page_icon="🗺️", layout="wide")
 st.title("🗺️ GIS Map & Spatio-Temporal Visualizer")
@@ -73,7 +77,7 @@ The app resolves locations automatically across any dataset — no fixed lists.
 )
 
 # ───────────────────────── Gazetteer Manager ─────────────────────────
-with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
+with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=False):
     left, mid, right = st.columns([2, 2, 3])
 
     # --- GeoNames ZIP/TXT
@@ -90,7 +94,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                     title=f"GeoNames {gz_zip.name}",
                 )
                 set_active_gazetteer(gid)
-                clear_geo_caches()
+                bust_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
@@ -106,7 +110,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                     min_population=int(min_pop),
                 )
                 set_active_gazetteer(gid)
-                clear_geo_caches()
+                bust_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
@@ -120,13 +124,13 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
             try:
                 gid = robust_ingest_csv(custom, title=f"Custom {custom.name}")
                 set_active_gazetteer(gid)
-                clear_geo_caches()
+                bust_geo_caches()
                 st.success(f"Ingested and set active: {gid}")
                 st.rerun()
             except Exception as e:
                 st.error(f"Failed to ingest custom CSV: {e}")
 
-    # --- Available gazetteers + Tiny builder (token list → gazetteer)
+    # --- Available gazetteers
     with right:
         gaz_list = list_gazetteers()
         current_gid = get_active_gazetteer_id()
@@ -145,126 +149,17 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=True):
                 index=default_index,
                 format_func=lambda gid: f"{[g for g in gaz_list if g['id']==gid][0]['name']} • {gid}",
             )
-            if st.button("Set active gazetteer", use_container_width=True):
+            c1, c2 = st.columns([1,1])
+            if c1.button("Set active", use_container_width=True):
                 set_active_gazetteer(choice)
-                clear_geo_caches()
+                bust_geo_caches()
                 st.success(f"Active gazetteer set to: {choice}")
                 st.rerun()
-
-        st.markdown("---")
-        st.markdown("**Build from token list (fuzzy)**")
-        st.caption("Upload your token list (.txt) and an offline GeoNames CSV; we’ll create a gazetteer and set it active.")
-
-        token_file = st.file_uploader("Token list (e.g., Gazetteer.txt)", type=["txt"], key="tok_list")
-        geonames_csv = st.file_uploader(
-            "Offline GeoNames CSV (e.g., geonames-all-cities-with-a-population-1000.csv)",
-            type=["csv"], key="tok_gn"
-        )
-
-        can_build = bool(token_file and geonames_csv)
-        if st.button("🔧 Build gazetteer from token list", use_container_width=True, disabled=not can_build):
-            try:
-                tmpdir = Path(tempfile.gettempdir()) / "gazetteer_build"
-                tmpdir.mkdir(parents=True, exist_ok=True)
-
-                tok_path = tmpdir / f"_tokens_{Path(token_file.name).name}"
-                gn_path  = tmpdir / f"_gn_{Path(geonames_csv.name).name}"
-
-                tok_bytes = token_file.getvalue() if hasattr(token_file, "getvalue") else token_file.read()
-                gn_bytes  = geonames_csv.getvalue() if hasattr(geonames_csv, "getvalue") else geonames_csv.read()
-                tok_path.write_bytes(tok_bytes)
-                gn_path.write_bytes(gn_bytes)
-
-                df_built, gid_new, summary = build_gazetteer_from_token_file(
-                    token_file=str(tok_path),
-                    geonames_csv=str(gn_path),
-                    save_to_registry=True,
-                    registry_name=f"Custom Gazetteer (from {Path(token_file.name).name})",
-                )
-
-                if df_built.empty or gid_new is None:
-                    st.warning(f"Built gazetteer is empty. Summary: {summary}")
-                else:
-                    set_active_gazetteer(gid_new)
-                    clear_geo_caches()
-                    st.success(
-                        f"Built gazetteer {gid_new} • "
-                        f"Resolved {summary.get('resolved', '—')} of {summary.get('input_lines', '—')} lines."
-                    )
-                    with st.expander("Preview (first 25 rows)"):
-                        st.dataframe(df_built.head(25), use_container_width=True, hide_index=True)
-                    st.rerun()
-
-            except Exception as e:
-                st.error(f"Failed to build gazetteer from token list: {e}")
-
-# ───────────────────────── Manage stored gazetteers & lookups ─────────────────────────
-with st.expander("🧹 Manage stored gazetteers & explicit lookups", expanded=False):
-    gaz = list_gazetteers()
-    lookups = list_geo_lookups()
-
-    st.markdown("**Gazetteers**")
-    if not gaz:
-        st.caption("No gazetteers saved.")
-    else:
-        for g in gaz:
-            col1, col2, col3, col4 = st.columns([5, 2, 2, 2])
-            col1.write(f"**{g.get('name','(unnamed)')}**  \n`{g.get('id','')}`")
-            if col2.button("Set active", key=f"g_set_{g['id']}"):
-                set_active_gazetteer(g["id"])
-                clear_geo_caches()
-                st.success(f"Active gazetteer set to: {g['id']}")
-                st.rerun()
-            if col3.button("Preview", key=f"g_prev_{g['id']}"):
-                try:
-                    dfp = registry.load_df(g["id"]).head(25)
-                    st.dataframe(dfp, use_container_width=True, hide_index=True)
-                except Exception as e:
-                    st.error(f"Preview failed: {e}")
-            if col4.button("Delete", key=f"g_del_{g['id']}"):
-                try:
-                    registry.delete(g["id"])
-                    clear_geo_caches()
-                    st.success(f"Deleted gazetteer: {g['id']}")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Delete failed: {e}")
-
-    st.markdown("---")
-    st.markdown("**Explicit geo lookups (override tables)**")
-    if not lookups:
-        st.caption("No explicit lookup tables saved.")
-    else:
-        for e in lookups:
-            col1, col2, col3 = st.columns([6, 2, 2])
-            col1.write(f"**{e.get('name','(unnamed)')}**  \n`{e.get('id','')}`")
-            if col2.button("Preview", key=f"gl_prev_{e['id']}"):
-                try:
-                    dfp = registry.load_df(e["id"]).head(25)
-                    st.dataframe(dfp, use_container_width=True, hide_index=True)
-                except Exception as ex:
-                    st.error(f"Preview failed: {ex}")
-            if col3.button("Delete", key=f"gl_del_{e['id']}"):
-                try:
-                    registry.delete(e["id"])
-                    clear_geo_caches()
-                    st.success(f"Deleted geo lookup: {e['id']}")
-                    st.rerun()
-                except Exception as ex:
-                    st.error(f"Delete failed: {ex}")
+            if c2.button("Refresh caches", use_container_width=True):
+                bust_geo_caches()
+                st.success("Gazetteer caches cleared.")
 
 st.divider()
-
-st.markdown(
-    """
-**Map features**
-- Dark basemap, zoom/pan, fullscreen
-- Markers sized by **victim count**, with popups listing **Victims**, **Traffickers**, **Chiefs**, and **incoming/outgoing** counts
-- **Animated trajectories** (time axis) and **heatmap / clustering** layers
-- **In-browser PNG/PDF export** (Leaflet EasyPrint)
-- **Overlay saved predictions & ETA runs**
-"""
-)
 
 # ───────────────────────── Data sources ─────────────────────────
 st.subheader("1) Data sources")
@@ -285,112 +180,154 @@ if not selected:
     st.stop()
 src_ids = [e["id"] for e in selected]
 
-# ── Prediction overlay (optional)
-st.subheader("Prediction overlay (optional)")
-pred_runs = registry.find_datasets(kind="prediction_run")
-pred_options = []
-for pr in pred_runs:
-    try:
-        payload = registry.load_json(pr["id"])
-        victim = payload.get("victim")
-        pred_locs = payload.get("predicted_next_locations", [])
-        pred_str = " → ".join([p.get("location", "?") for p in pred_locs[:3]])
-        pred_options.append((f"{victim} : {pred_str}  •  {pr['id']}", pr["id"]))
-    except Exception:
-        continue
+with st.spinner("Loading data..."):
+    df = concat_processed_frames(src_ids)
 
-if pred_options:
-    pred_lookup = {pid: label for (label, pid) in pred_options}
-    sel_pred_ids = st.multiselect(
-        "Select prediction runs to overlay:",
-        options=list(pred_lookup.keys()),
-        format_func=lambda pid: pred_lookup.get(pid, pid),
-    )
-else:
-    sel_pred_ids = []
-    st.caption("No saved prediction runs found yet.")
+if df is None or df.empty:
+    st.error("Loaded dataframe is empty.")
+    st.stop()
 
-# ── ETA overlay (optional)
-st.subheader("ETA overlay (optional)")
-eta_runs = registry.find_datasets(kind="eta_run")
-eta_options = []
-for er in eta_runs:
-    try:
-        payload = registry.load_json(er["id"])
-        victim = payload.get("victim")
-        steps = payload.get("steps")
-        eta_str = " + ".join([str(s.get("eta_days", "?")) for s in payload.get("steps_detail", [])][:3])
-        eta_options.append((f"{victim} : {steps} steps • {eta_str} days  •  {er['id']}", er["id"]))
-    except Exception:
-        continue
-
-if eta_options:
-    eta_lookup = {pid: label for (label, pid) in eta_options}
-    sel_eta_ids = st.multiselect(
-        "Select ETA runs to overlay:",
-        options=list(eta_lookup.keys()),
-        format_func=lambda pid: eta_lookup.get(pid, pid),
-    )
-else:
-    sel_eta_ids = []
-    st.caption("No saved ETA runs found yet.")
-
-# ───────────────────────── Explicit geo lookup (optional) ─────────────────────────
-with st.expander("📍 (Optional) Upload an explicit Location → Lat/Lon mapping", expanded=False):
-    st.markdown("Upload a CSV with columns: **location, lat, lon** (these override gazetteer matches).")
-    up = st.file_uploader("Upload geo lookup CSV", type=["csv"])
-    owner = st.text_input("Owner email (optional)", value="")
-    if up is not None:
-        try:
-            df_geo = pd.read_csv(up)
-            gid = save_geo_lookup_csv(name=f"Geo Lookup ({up.name})", df=df_geo, owner=(owner or None))
-            clear_geo_caches()
-            st.success(f"Saved geo lookup: {gid}")
-        except Exception as e:
-            st.error(f"Failed to save geo lookup: {e}")
-    prev = list_geo_lookups()
-    if prev:
-        st.caption(f"Found {len(prev)} explicit lookup tables (newest first). These take priority over gazetteer matches.")
-
-st.divider()
-
-# ───────────────────────── Map options ─────────────────────────
+# ───────────────────────── Column selection for places ─────────────────────────
 st.subheader("2) Map options")
-c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
+
+# Good candidates for location-like columns
+CAND_LOC_COLS = [
+    "Location",
+    "Locations (NLP)",
+    "City / Locations Crossed",
+    "Final Location",
+    "City/ Locations Crossed",
+    "City / Locations",
+    "City / Locations crossed",
+]
+
+cols_present = [c for c in CAND_LOC_COLS if c in df.columns]
+default_loc_col = cols_present[0] if cols_present else df.columns[0]
+place_col = st.selectbox(
+    "Pick the column that contains places (city/country/region):",
+    options=list(df.columns),
+    index=list(df.columns).index(default_loc_col),
+)
+
+# Timing column/options
+with st.expander("⏱️ Trajectory timing (when you enable animation)", expanded=False):
+    st.caption("If you don't have dates, we’ll build a synthetic timeline by cumulatively adding 'Time Spent (days)'.")
+    time_col = st.selectbox(
+        "Column with 'days spent' per hop (optional):",
+        options=["(none)"] + list(df.columns),
+        index=(["(none)"] + list(df.columns)).index("Time Spent (days)") if "Time Spent (days)" in df.columns else 0,
+    )
+    default_days = st.number_input("Default days per hop (used when missing)", min_value=1, max_value=90, value=7, step=1)
+    animate = st.toggle("Animate trajectories", value=True, help="Disable if you only want static markers/heatmap.")
+
+# Helper: parse cell that may contain a list or single place
+_QSTR = re.compile(r"""['"]([^'"]+)['"]""")
+def extract_places(cell) -> List[str]:
+    """
+    Supports:
+      - "Tripoli (Libya)"
+      - ['Eritrea' 'Ethiopia' 'Hitsats']
+      - "['Eritrea', 'Ethiopia', 'Hitsats']"
+      - ["Eritrea","Ethiopia","Hitsats"]
+      - or a single token "Italy"
+    """
+    if cell is None:
+        return []
+    s = str(cell).strip()
+    if not s:
+        return []
+    # Try literal list first
+    if s.startswith("[") and s.endswith("]"):
+        # 1) Try Python literal
+        try:
+            val = ast.literal_eval(s)
+            if isinstance(val, (list, tuple)):
+                return [str(x).strip() for x in val if str(x).strip()]
+        except Exception:
+            # 2) fallback: grab everything between quotes
+            found = _QSTR.findall(s)
+            if found:
+                return [t.strip() for t in found if t.strip()]
+            # 3) split on whitespace inside brackets
+            inner = s[1:-1].strip()
+            if inner:
+                return [t.strip().strip(",") for t in inner.split() if t.strip().strip(",")]
+        return []
+    # Single token
+    return [s]
+
+# Debug expander
+with st.expander("🔎 Data debug (click to expand)", expanded=False):
+    st.write("Dataframe shape:", df.shape)
+    st.write("Columns:", list(df.columns))
+    st.dataframe(df.head(10), use_container_width=True)
+
+# Preview raw values
+with st.expander("🍪 Preview locations to resolve (first 30)", expanded=False):
+    try:
+        sample_vals = df[place_col].head(30).astype(str).tolist()
+    except Exception:
+        # guard against scalar returning .tolist() mistakes
+        sample_vals = [str(df[place_col].head(30).values)]
+    st.code(json.dumps(sample_vals, indent=2), language="json")
+
+# Build a flat list of distinct places from the chosen column
+all_places: List[str] = []
+for v in df[place_col].dropna().values.tolist():
+    all_places.extend(extract_places(v))
+
+# Resolution sample table (first 20)
+with st.expander("🪴 Resolution sample (first 20)", expanded=True):
+    sample = all_places[:20]
+    res_rows: List[Tuple[str, float, float]] = []
+    for s in sample:
+        pt = resolve_locations_to_coords([s]).get(s)
+        if pt is None:
+            res_rows.append((s, np.nan, np.nan))
+        else:
+            res_rows.append((s, float(pt[0]), float(pt[1])))
+    if res_rows:
+        st.dataframe(pd.DataFrame(res_rows, columns=["location", "lat", "lon"]),
+                     use_container_width=True, hide_index=True)
+    rep = match_report(all_places)
+    st.caption(f"Resolved locations (direct fuzzy): {rep['matched']} / {rep['total']} (unmatched: {rep['unmatched']}).")
+
+# Layer toggles
+c1, c2 = st.columns([1, 1])
 with c1:
     use_cluster = st.toggle("Marker cluster", value=True)
 with c2:
-    show_heatmap = st.toggle("Heatmap layer", value=True)
-with c3:
-    default_days = st.number_input("Default days per hop (if unknown)", min_value=1, max_value=90, value=7, step=1)
-with c4:
-    animate = st.toggle("Animate trajectories", value=True)
+    show_heatmap = st.toggle("Heatmap layer", value=False)
 
-st.caption("Use the **Export map** button (top-left) for PNG/PDF, or the **Download map (HTML)** button below.")
+# If nothing resolvable, stop early
+if not all_places:
+    st.warning("No mappable locations found.\n\n• Check the Data debug expander above — verify the selected column actually contains place names or lists.\n• Ensure a gazetteer is ingested and active, or upload an explicit (location,lat,lon) CSV in the Gazetteer Manager.")
+    st.stop()
 
-# ───────────────────────── Build data ─────────────────────────
-with st.spinner("Loading & aggregating data..."):
-    df = concat_processed_frames(src_ids)
-    nodes_df, edges_df, loc_to_victims = compute_location_stats(df)
+# ───────────────────────── Build nodes/edges and (optionally) animation ─────────────────────────
+with st.spinner("Computing map layers..."):
+    # compute_location_stats groups by place and returns nodes_df with lat/lon/count & lists
+    nodes_df, edges_df, loc_to_victims = compute_location_stats(
+        df=df,
+        place_col=place_col,
+        time_col=(None if time_col == "(none)" else time_col),
+        default_days_per_hop=int(default_days),
+    )
 
-# quick feedback about resolution quality
-rep = match_report(nodes_df["location"].tolist()) if not nodes_df.empty else {"total": 0, "matched": 0, "unmatched": 0}
-st.caption(f"Resolved locations: {rep['matched']} / {rep['total']} (unmatched: {rep['unmatched']}).")
-
-if nodes_df.empty:
-    st.warning("No mappable locations found. Upload a gazetteer (GeoNames/custom) above, or an explicit lookup CSV.")
+if nodes_df is None or nodes_df.empty:
+    st.warning("No resolved coordinates after gazetteer matching. Double‑check the active gazetteer and the chosen column.")
     st.stop()
 
 # Fit to bounds
 min_lat, max_lat = nodes_df["lat"].min(), nodes_df["lat"].max()
 min_lon, max_lon = nodes_df["lon"].min(), nodes_df["lon"].max()
-center_lat = (min_lat + max_lat) / 2.0
-center_lon = (min_lon + max_lon) / 2.0
+center_lat = float((min_lat + max_lat) / 2.0)
+center_lon = float((min_lon + max_lon) / 2.0)
 
 # Base map
 fig = Figure(width="100%", height="720px")
 m = folium.Map(location=[center_lat, center_lon],
-               zoom_start=5,
+               zoom_start=4,
                tiles="CartoDB dark_matter",
                control_scale=True)
 fig.add_child(m)
@@ -427,10 +364,7 @@ addEasyPrint({{this._parent.get_name()}});
 m.add_child(run_after)
 
 # Cluster or simple layer
-if use_cluster:
-    cluster = MarkerCluster(name="Markers").add_to(m)
-else:
-    cluster = folium.FeatureGroup(name="Markers").add_to(m)
+cluster = MarkerCluster(name="Markers").add_to(m) if use_cluster else folium.FeatureGroup(name="Markers").add_to(m)
 
 # Scale marker radius by victim count
 min_c = int(nodes_df["count"].min())
@@ -446,19 +380,19 @@ for _, row in nodes_df.iterrows():
     loc = row["location"]
     lat = float(row["lat"])
     lon = float(row["lon"])
-    victims = row["victims"]
-    perps = row["traffickers"]
-    chiefs = row["chiefs"]
-    incoming = int(row["incoming"])
-    outgoing = int(row["outgoing"])
-    count = int(row["count"])
+    victims = row.get("victims", []) or []
+    perps = row.get("traffickers", []) or []
+    chiefs = row.get("chiefs", []) or []
+    incoming = int(row.get("incoming", 0))
+    outgoing = int(row.get("outgoing", 0))
+    count = int(row.get("count", 1))
 
     popup_html = f"""
     <div style="font-family:Inter,system-ui,Arial; font-size:12px; color:#eee; background:#1f2430; padding:10px; border-radius:8px; max-width:380px;">
       <div style="font-weight:600; font-size:13px; margin-bottom:6px;">{loc}</div>
-      <div><b>Victims</b> ({len(victims)}): {', '.join(victims[:20])}{' ...' if len(victims) > 20 else ''}</div>
-      <div><b>Traffickers</b> ({len(perps)}): {', '.join(perps[:20])}{' ...' if len(perps) > 20 else ''}</div>
-      <div><b>Chiefs</b> ({len(chiefs)}): {', '.join(chiefs[:20])}{' ...' if len(chiefs) > 20 else ''}</div>
+      <div><b>Victims</b> ({len(victims)}): {', '.join(victims[:12])}{' ...' if len(victims) > 12 else ''}</div>
+      <div><b>Traffickers</b> ({len(perps)}): {', '.join(perps[:12])}{' ...' if len(perps) > 12 else ''}</div>
+      <div><b>Chiefs</b> ({len(chiefs)}): {', '.join(chiefs[:12])}{' ...' if len(chiefs) > 12 else ''}</div>
       <div style="margin-top:6px;"><b>Incoming</b>: {incoming} &nbsp; | &nbsp; <b>Outgoing</b>: {outgoing}</div>
       <div style="margin-top:6px;"><b>Victim count (node size)</b>: {count}</div>
     </div>
@@ -481,104 +415,42 @@ if show_heatmap:
     heat_pts = [[float(r["lat"]), float(r["lon"]), float(r["count"])] for _, r in nodes_df.iterrows()]
     HeatMap(heat_pts, name="Heatmap", min_opacity=0.3, radius=25, blur=18, max_zoom=8).add_to(m)
 
-# Animated trajectories
+# Animated trajectories (TimestampedGeoJson) — no 'name' kw to avoid the init() error
 if animate:
-    with st.spinner("Building animated trajectories..."):
-        tj = build_timestamped_geojson(df, default_days_per_hop=int(default_days), base_date="2020-01-01")
-    if tj["features"]:
-        TimestampedGeoJson(
-            data=tj,
-            period="P1D",
-            add_last_point=False,
-            duration="P7D",
-            transition_time=200,
-            loop=False,
-            auto_play=False,
-            max_speed=5,
-            loop_button=True,
-            date_options="YYYY-MM-DD",
-            time_slider_drag_update=True,
-            name="Animated Trajectories",
-        ).add_to(m)
-    else:
-        st.info("No trajectory segments to animate (insufficient geocodes).")
-
-# Overlay predictions
-if sel_pred_ids:
-    pred_group = folium.FeatureGroup(name="Predicted Paths", show=True).add_to(m)
-    for pid in sel_pred_ids:
-        try:
-            payload = registry.load_json(pid)
-        except Exception:
-            continue
-        victim = payload.get("victim")
-        seq = [d.get("location") for d in payload.get("predicted_next_locations", []) if isinstance(d, dict)]
-        if not victim or not seq:
-            continue
-        sub = df[df["Serialized ID"] == victim].sort_values("Route_Order", kind="stable")
-        if sub.empty:
-            continue
-        last_loc = str(sub.iloc[-1]["Location"])
-        full_path = [last_loc] + [s for s in seq if isinstance(s, str) and s.strip()]
-        try:
-            coords_map = resolve_locations_to_coords(full_path)
-        except Exception:
-            coords_map = {}
-        for a, b in zip(full_path, full_path[1:]):
-            if a not in coords_map or b not in coords_map:
-                continue
-            lat1, lon1 = coords_map[a]
-            lat2, lon2 = coords_map[b]
-            folium.PolyLine(
-                locations=[(lat1, lon1), (lat2, lon2)],
-                color="#FFE082",
-                weight=3,
-                opacity=0.85,
-                dash_array="6,6",
-                tooltip=f"Predicted: {victim} • {a} → {b}",
-            ).add_to(pred_group)
-
-# Overlay ETA runs
-if sel_eta_ids:
-    eta_group = folium.FeatureGroup(name="ETA Paths", show=True).add_to(m)
-    for eid in sel_eta_ids:
-        try:
-            payload = registry.load_json(eid)
-        except Exception:
-            continue
-        victim = payload.get("victim")
-        detail = payload.get("steps_detail", [])
-        if not victim or not detail:
-            continue
-        sub = df[df["Serialized ID"] == victim].sort_values("Route_Order", kind="stable")
-        if sub.empty:
-            continue
-        last_loc = str(sub.iloc[-1]["Location"])
-        seq = [last_loc] + [d.get("to") for d in detail if isinstance(d, dict) and d.get("to")]
-        try:
-            coords_map = resolve_locations_to_coords(seq)
-        except Exception:
-            coords_map = {}
-        for (a, b), step in zip(zip(seq, seq[1:]), detail):
-            if a not in coords_map or b not in coords_map:
-                continue
-            lat1, lon1 = coords_map[a]
-            lat2, lon2 = coords_map[b]
-            days = step.get("eta_days", "?")
-            weeks = step.get("eta_weeks", "?")
-            folium.PolyLine(
-                locations=[(lat1, lon1), (lat2, lon2)],
-                color="#FFF59D",
-                weight=4,
-                opacity=0.9,
-                dash_array="2,8",
-                tooltip=f"ETA: {victim} • {a} → {b} ≈ {days}d (~{weeks}w)",
-            ).add_to(eta_group)
+    try:
+        with st.spinner("Building animated trajectories..."):
+            # build_timestamped_geojson now supports: df, place_col, time_col, default_days_per_hop
+            tj = build_timestamped_geojson(
+                df=df,
+                place_col=place_col,
+                time_col=(None if time_col == "(none)" else time_col),
+                default_days_per_hop=int(default_days),
+                base_date="2020-01-01",
+            )
+        if tj and tj.get("features"):
+            TimestampedGeoJson(
+                data=tj,
+                period="P1D",
+                add_last_point=False,
+                duration="P7D",
+                transition_time=200,
+                loop=False,
+                auto_play=False,
+                max_speed=5,
+                loop_button=True,
+                date_options="YYYY-MM-DD",
+                time_slider_drag_update=True,
+            ).add_to(m)
+        else:
+            st.info("No trajectory segments to animate (insufficient geocodes or no timing info).")
+    except TypeError as e:
+        # user hit: init() got an unexpected keyword argument 'name'
+        st.warning(f"Animation disabled: {e}")
 
 # Controls & bounds
 folium.LayerControl(collapsed=False).add_to(m)
 try:
-    m.fit_bounds([[min_lat, min_lon], [max_lat, max_lon]])
+    m.fit_bounds([[float(min_lat), float(min_lon)], [float(max_lat), float(max_lon)]])
 except Exception:
     pass
 
