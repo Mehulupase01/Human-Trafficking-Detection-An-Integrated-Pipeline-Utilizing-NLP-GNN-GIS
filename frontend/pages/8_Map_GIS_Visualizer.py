@@ -18,7 +18,7 @@ from backend.core import dataset_registry as registry
 from backend.api.graph_queries import concat_processed_frames
 from backend.api.gis_data import compute_location_stats, build_timestamped_geojson
 
-# --- Fuzzy resolver + diagnostics (imports are safe even if extra functions are missing)
+# Fuzzy resolver + diagnostics (safe fallbacks)
 from backend.geo.geo_utils import resolve_locations_to_coords
 try:
     from backend.geo.geo_utils import match_report, bust_geo_caches  # type: ignore
@@ -29,13 +29,13 @@ except Exception:
     def bust_geo_caches():
         pass
 
-# --- Robust gazetteer ingesters (avoid float.strip / tokenizer errors)
+# Robust gazetteer ingesters
 from backend.gis.gis_mapper import (
     ingest_geonames_zip as robust_ingest_zip,
     ingest_custom_gazetteer_csv as robust_ingest_csv,
 )
 
-# --- Gazetteer list/set + optional TXT/TSV ingest
+# Gazetteer list/set + optional TXT/TSV
 from backend.geo.gazetteer import (
     list_gazetteers,
     ingest_geonames_tsv,
@@ -43,7 +43,7 @@ from backend.geo.gazetteer import (
     get_active_gazetteer_id,
 )
 
-# --- Explicit lookup helpers: import if available, else provide fallbacks
+# Explicit lookup helpers — import if available; else provide fallbacks
 try:
     from backend.geo.geo_utils import save_geo_lookup_csv, list_geo_lookups  # type: ignore
 except Exception:  # pragma: no cover
@@ -130,7 +130,7 @@ with st.expander("📚 Gazetteer Manager (GeoNames/custom)", expanded=False):
             except Exception as e:
                 st.error(f"Failed to ingest custom CSV: {e}")
 
-    # --- Available gazetteers
+    # --- Available gazetteers + quick controls
     with right:
         gaz_list = list_gazetteers()
         current_gid = get_active_gazetteer_id()
@@ -190,17 +190,15 @@ if df is None or df.empty:
 # ───────────────────────── Column selection for places ─────────────────────────
 st.subheader("2) Map options")
 
-# Good candidates for location-like columns
 CAND_LOC_COLS = [
+    "City / Locations Crossed",
     "Location",
     "Locations (NLP)",
-    "City / Locations Crossed",
     "Final Location",
     "City/ Locations Crossed",
     "City / Locations",
     "City / Locations crossed",
 ]
-
 cols_present = [c for c in CAND_LOC_COLS if c in df.columns]
 default_loc_col = cols_present[0] if cols_present else df.columns[0]
 place_col = st.selectbox(
@@ -209,9 +207,9 @@ place_col = st.selectbox(
     index=list(df.columns).index(default_loc_col),
 )
 
-# Timing column/options
-with st.expander("⏱️ Trajectory timing (when you enable animation)", expanded=False):
-    st.caption("If you don't have dates, we’ll build a synthetic timeline by cumulatively adding 'Time Spent (days)'.")
+# Timing / animation
+with st.expander("🌸 Trajectory timing (when you enable animation)", expanded=False):
+    st.caption("If you don't have dates, we build a synthetic timeline by cumulatively adding 'Time Spent (days)'.")
     time_col = st.selectbox(
         "Column with 'days spent' per hop (optional):",
         options=["(none)"] + list(df.columns),
@@ -220,40 +218,45 @@ with st.expander("⏱️ Trajectory timing (when you enable animation)", expande
     default_days = st.number_input("Default days per hop (used when missing)", min_value=1, max_value=90, value=7, step=1)
     animate = st.toggle("Animate trajectories", value=True, help="Disable if you only want static markers/heatmap.")
 
-# Helper: parse cell that may contain a list or single place
+# ── Very robust place extractor ───────────────────────────────────────────────
 _QSTR = re.compile(r"""['"]([^'"]+)['"]""")
+
 def extract_places(cell) -> List[str]:
     """
-    Supports:
+    Handles:
       - "Tripoli (Libya)"
-      - ['Eritrea' 'Ethiopia' 'Hitsats']
+      - ['Eritrea' 'Ethiopia' 'Hitsats']   ← *no commas*
       - "['Eritrea', 'Ethiopia', 'Hitsats']"
       - ["Eritrea","Ethiopia","Hitsats"]
-      - or a single token "Italy"
+      - stray free text → single token
     """
     if cell is None:
         return []
     s = str(cell).strip()
     if not s:
         return []
-    # Try literal list first
+
+    # List-looking payloads
     if s.startswith("[") and s.endswith("]"):
-        # 1) Try Python literal
+        # normalize odd " ' '" gaps into "','"
+        t = s.replace("' '", "', '").replace('" "', '", "')
         try:
-            val = ast.literal_eval(s)
+            val = ast.literal_eval(t)
             if isinstance(val, (list, tuple)):
                 return [str(x).strip() for x in val if str(x).strip()]
         except Exception:
-            # 2) fallback: grab everything between quotes
-            found = _QSTR.findall(s)
-            if found:
-                return [t.strip() for t in found if t.strip()]
-            # 3) split on whitespace inside brackets
-            inner = s[1:-1].strip()
-            if inner:
-                return [t.strip().strip(",") for t in inner.split() if t.strip().strip(",")]
-        return []
-    # Single token
+            pass
+        # quoted tokens
+        found = _QSTR.findall(t)
+        if found:
+            return [f.strip() for f in found if f.strip()]
+        # last‑ditch: split inner on whitespace/commas
+        inner = t[1:-1]
+        inner = re.sub(r"[;,|]+", " ", inner)
+        toks = [tok.strip() for tok in inner.split() if tok.strip()]
+        return toks
+
+    # Single token / free text
     return [s]
 
 # Debug expander
@@ -267,7 +270,6 @@ with st.expander("🍪 Preview locations to resolve (first 30)", expanded=False)
     try:
         sample_vals = df[place_col].head(30).astype(str).tolist()
     except Exception:
-        # guard against scalar returning .tolist() mistakes
         sample_vals = [str(df[place_col].head(30).values)]
     st.code(json.dumps(sample_vals, indent=2), language="json")
 
@@ -283,7 +285,7 @@ with st.expander("🪴 Resolution sample (first 20)", expanded=True):
     for s in sample:
         pt = resolve_locations_to_coords([s]).get(s)
         if pt is None:
-            res_rows.append((s, np.nan, np.nan))
+            res_rows.append((s, None, None))
         else:
             res_rows.append((s, float(pt[0]), float(pt[1])))
     if res_rows:
@@ -306,7 +308,7 @@ if not all_places:
 
 # ───────────────────────── Build nodes/edges and (optionally) animation ─────────────────────────
 with st.spinner("Computing map layers..."):
-    # compute_location_stats groups by place and returns nodes_df with lat/lon/count & lists
+    # NOTE: do NOT pass unsupported kwargs; keep signature stable.
     nodes_df, edges_df, loc_to_victims = compute_location_stats(
         df=df,
         place_col=place_col,
@@ -415,11 +417,10 @@ if show_heatmap:
     heat_pts = [[float(r["lat"]), float(r["lon"]), float(r["count"])] for _, r in nodes_df.iterrows()]
     HeatMap(heat_pts, name="Heatmap", min_opacity=0.3, radius=25, blur=18, max_zoom=8).add_to(m)
 
-# Animated trajectories (TimestampedGeoJson) — no 'name' kw to avoid the init() error
+# Animated trajectories (TimestampedGeoJson)
 if animate:
     try:
         with st.spinner("Building animated trajectories..."):
-            # build_timestamped_geojson now supports: df, place_col, time_col, default_days_per_hop
             tj = build_timestamped_geojson(
                 df=df,
                 place_col=place_col,
@@ -444,7 +445,6 @@ if animate:
         else:
             st.info("No trajectory segments to animate (insufficient geocodes or no timing info).")
     except TypeError as e:
-        # user hit: init() got an unexpected keyword argument 'name'
         st.warning(f"Animation disabled: {e}")
 
 # Controls & bounds

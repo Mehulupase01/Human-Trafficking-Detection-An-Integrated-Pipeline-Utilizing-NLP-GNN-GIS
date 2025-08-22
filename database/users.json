@@ -1,0 +1,14 @@
+{
+  "a@b.com": {
+    "password": "efc8fba9489b1d63fb2efe99f2695aa40a8e3ee9c00738145ddd632f8c4c39d2",
+    "role": "Pending",
+    "verified": false,
+    "metadata": {
+      "first_name": "Mehul",
+      "last_name": "Researcher",
+      "organization_type": "University",
+      "organization": "Universiteit Leiden",
+      "country": "India"
+    }
+  }
+}
