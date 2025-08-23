@@ -10,17 +10,6 @@
       "source": "ds_1755553425371,ds_1755552061555",
       "created_at": "2025-08-18 23:50:58"
     },
-    "ds_1755665824301": {
-      "id": "ds_1755665824301",
-      "name": "Test-1",
-      "kind": "processed",
-      "path": "data\\datasets\\ds_1755665824301.parquet",
-      "format": "parquet",
-      "owner": null,
-      "source": "upload",
-      "created_at": "2025-08-20 06:57:04",
-      "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
-    },
     "ds_1755684114350": {
       "id": "ds_1755684114350",
       "name": "Custom Master-Gazetteer.csv (ingested)",
@@ -31,6 +20,17 @@
       "source": null,
       "created_at": "2025-08-20 12:01:54",
       "rows": 363
+    },
+    "ds_1755978308365": {
+      "id": "ds_1755978308365",
+      "name": "Africa Dataset",
+      "kind": "processed",
+      "path": "data\\datasets\\ds_1755978308365.parquet",
+      "format": "parquet",
+      "owner": null,
+      "source": "upload",
+      "created_at": "2025-08-23 21:45:08",
+      "content_hash": "37a63c667a7d8888375f59dfc089996c933b4e5faecb6565be429aa9d1408f94"
     }
   }
 }

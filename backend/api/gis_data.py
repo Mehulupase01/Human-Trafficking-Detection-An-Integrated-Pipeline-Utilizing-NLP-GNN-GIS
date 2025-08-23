@@ -3,83 +3,98 @@ from __future__ import annotations
 
 import ast
 import datetime as dt
-import json
-import math
 import re
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
 from backend.geo.geo_utils import resolve_locations_to_coords
 
-
 # -----------------------------
-# Robust list/number extractors
+# Robust extractors
 # -----------------------------
 
 _QSTR = re.compile(r"""['"]([^'"]+)['"]""")
 _NUMS = re.compile(r"-?\d+(?:\.\d+)?")
 
+def _as_list(obj) -> List:
+    """Return obj as a Python list when it is already list-like."""
+    if isinstance(obj, (list, tuple, np.ndarray, pd.Series)):
+        return list(obj)
+    return []
 
 def _parse_list_of_places(cell) -> List[str]:
     """
-    Accepts many shapes:
-      - "Tripoli (Libya)"
-      - ['Eritrea' 'Ethiopia' 'Hitsats']
-      - "['Eritrea', 'Ethiopia', 'Hitsats']"
-      - ["Eritrea","Ethiopia","Hitsats"]
-      - list objects
+    Accept many forms:
+      - raw list objects: ['Eritrea', 'Ethiopia', ...]
+      - numpy/pandas arrays/series
+      - strings like:
+        "['Eritrea' 'Ethiopia' 'Hitsats' 'Italy']"  ← (no commas, space-separated)
+        "['Eritrea', 'Ethiopia', 'Hitsats']"
+        "[Eritrea Ethiopia Hitsats Italy]" (no quotes)
+        "Tripoli (Libya)" (single value)
     Returns a clean list of non-empty strings.
     """
-    if cell is None:
+    if cell is None or (isinstance(cell, float) and np.isnan(cell)):
         return []
-    if isinstance(cell, (list, tuple, np.ndarray, pd.Series)):
-        return [str(x).strip() for x in list(cell) if str(x).strip()]
+
+    lst = _as_list(cell)
+    if lst:
+        return [str(x).strip() for x in lst if str(x).strip()]
 
     s = str(cell).strip()
     if not s:
         return []
 
-    # Looks like a Python-ish list?
     if s.startswith("[") and s.endswith("]"):
-        # 1) Try literal
+        inner = s[1:-1].strip()
+
+        # 1) Try literal eval (best case)
         try:
-            val = ast.literal_eval(s)
-            if isinstance(val, (list, tuple)):
-                return [str(x).strip() for x in val if str(x).strip()]
+            cand = ast.literal_eval(s)
+            if isinstance(cand, (list, tuple)):
+                return [str(x).strip() for x in cand if str(x).strip()]
         except Exception:
             pass
-        # 2) Try “quote captures”
-        found = _QSTR.findall(s)
-        if found:
-            return [t.strip() for t in found if t.strip()]
-        # 3) Fallback: split inner by whitespace/comma
-        inner = s[1:-1].strip()
-        if inner:
-            toks = re.split(r"[,\s]+", inner)
-            toks = [t for t in toks if t]
-            return toks
-        return []
 
-    # Otherwise a single token
+        # 2) Try quoted tokens
+        q = _QSTR.findall(s)
+        if q:
+            return [t.strip() for t in q if t.strip()]
+
+        # 3) Space/comma separation for unquoted values or
+        #    python-style lists without commas: ['A' 'B'] or [A B]
+        #    Normalize commas → space, then split on whitespace.
+        inner = inner.replace(",", " ")
+        toks = [t for t in inner.split() if t]
+        return toks
+
+    # Single token
     return [s]
 
 
 def _parse_list_of_days(cell) -> List[float]:
     """
-    Parse a parallel list of 'days spent' from a cell.
-    Accepts: [7, 4, 2], "7,4,2", "7 4 2", or free text with numbers.
+    Parse 'days' from a cell. Accepts:
+      - list/array/series of numbers or strings with numbers
+      - string lists (with/without commas)
+      - a *single scalar number* → we return [that single number] and the caller can replicate
+      - free text with numbers
     """
-    if cell is None:
+    if cell is None or (isinstance(cell, float) and np.isnan(cell)):
         return []
-    if isinstance(cell, (list, tuple, np.ndarray, pd.Series)):
+
+    if isinstance(cell, (int, float)) and not isinstance(cell, bool):
+        return [float(cell)]
+
+    lst = _as_list(cell)
+    if lst:
         out: List[float] = []
-        for x in list(cell):
+        for x in lst:
             try:
                 out.append(float(x))
             except Exception:
-                # pull first number from string, if any
                 m = _NUMS.search(str(x))
                 if m:
                     out.append(float(m.group(0)))
@@ -88,13 +103,14 @@ def _parse_list_of_days(cell) -> List[float]:
     s = str(cell).strip()
     if not s:
         return []
-    # Try Python literal
+
     if s.startswith("[") and s.endswith("]"):
+        # try literal first
         try:
-            val = ast.literal_eval(s)
-            if isinstance(val, (list, tuple)):
+            cand = ast.literal_eval(s)
+            if isinstance(cand, (list, tuple)):
                 out: List[float] = []
-                for x in list(val):
+                for x in cand:
                     try:
                         out.append(float(x))
                     except Exception:
@@ -104,7 +120,11 @@ def _parse_list_of_days(cell) -> List[float]:
                 return out
         except Exception:
             pass
-    # Generic extract of all numbers
+
+        # generic extract from inside brackets
+        return [float(x) for x in _NUMS.findall(s)]
+
+    # free text: pull all numbers
     return [float(x) for x in _NUMS.findall(s)]
 
 
@@ -115,37 +135,45 @@ def _parse_list_of_days(cell) -> List[float]:
 def compute_location_stats(
     df: pd.DataFrame,
     place_col: str,
-    time_col: Optional[str] = None,
-    default_days_per_hop: int = 7,
+    time_col: Optional[str] = None,            # unused in aggregation (kept for API compat)
+    default_days_per_hop: int = 7,             # unused here
 ) -> Tuple[pd.DataFrame, pd.DataFrame, Dict[str, List[str]]]:
     """
     Aggregate nodes from any 'place_col' by resolving all distinct places.
-    Edges_df is returned empty for now (optional future use).
 
     Returns:
       nodes_df columns:
         ['location','lat','lon','count','victims','traffickers','chiefs','incoming','outgoing']
       edges_df: empty DataFrame (kept for compatibility)
-      loc_to_victims: dict location -> list of victim ids (if present)
+      loc_to_victims: dict location -> list of victim ids (placeholder for now)
     """
     if df is None or df.empty or place_col not in df.columns:
-        return pd.DataFrame(columns=["location","lat","lon","count","victims","traffickers","chiefs","incoming","outgoing"]), pd.DataFrame(), {}
+        return (
+            pd.DataFrame(columns=[
+                "location","lat","lon","count","victims","traffickers","chiefs","incoming","outgoing"
+            ]),
+            pd.DataFrame(),
+            {}
+        )
 
-    # Flatten the selected column to a list of place strings
-    flat_places: List[str] = []
+    flat: List[str] = []
     for v in df[place_col].dropna().values.tolist():
-        flat_places.extend(_parse_list_of_places(v))
+        flat.extend(_parse_list_of_places(v))
 
-    if not flat_places:
-        return pd.DataFrame(columns=["location","lat","lon","count","victims","traffickers","chiefs","incoming","outgoing"]), pd.DataFrame(), {}
+    if not flat:
+        return (
+            pd.DataFrame(columns=[
+                "location","lat","lon","count","victims","traffickers","chiefs","incoming","outgoing"
+            ]),
+            pd.DataFrame(),
+            {}
+        )
 
-    # Resolve all unique place strings
-    uniq = sorted({s for s in flat_places if str(s).strip()})
+    uniq = sorted({s for s in flat if str(s).strip()})
     coord_map = resolve_locations_to_coords(uniq)
 
-    # Count occurrences and keep lightweight metadata if available
     counts: Dict[str, int] = {}
-    for s in flat_places:
+    for s in flat:
         if not str(s).strip():
             continue
         counts[s] = counts.get(s, 0) + 1
@@ -160,7 +188,7 @@ def compute_location_stats(
             "lat": float(pt[0]),
             "lon": float(pt[1]),
             "count": int(cnt),
-            "victims": [],        # placeholders; your pipeline can populate these later
+            "victims": [],
             "traffickers": [],
             "chiefs": [],
             "incoming": 0,
@@ -168,9 +196,8 @@ def compute_location_stats(
         })
 
     nodes_df = pd.DataFrame(rows)
-    edges_df = pd.DataFrame(columns=["a","b"])  # placeholder
+    edges_df = pd.DataFrame(columns=["a","b"])
     loc_to_victims: Dict[str, List[str]] = {}
-
     return nodes_df, edges_df, loc_to_victims
 
 
@@ -186,81 +213,107 @@ def build_timestamped_geojson(
     base_date: str = "2020-01-01",
 ) -> Dict:
     """
-    Build a TimestampedGeoJson from *row-wise* trajectories.
+    Build a TimestampedGeoJson from either:
+      A) list-per-row trajectories in `place_col`, or
+      B) row-per-hop tables (one location per row) with ID + order.
 
-    Each row may contain:
-      - a list-like of places in `place_col`
-      - optionally, a parallel list-like of days in `time_col` (length == len(places) or len(places)-1)
-    We:
-      1) resolve each place to (lat,lon)
-      2) create segments between consecutive places
-      3) assign times by cumulatively adding days, starting from base_date
+    Row-per-hop detection:
+      - id_col   = ['Unique ID', 'Serialized ID'] (first match)
+      - order_col= ['Route_Order', 'Route Order'] (first match)
     """
+
+    fc_empty = {"type": "FeatureCollection", "features": []}
     if df is None or df.empty or place_col not in df.columns:
-        return {"type": "FeatureCollection", "features": []}
+        return fc_empty
 
     try:
-        start = dt.datetime.fromisoformat(base_date)
+        start0 = dt.datetime.fromisoformat(base_date)
     except Exception:
-        start = dt.datetime(2020, 1, 1)
+        start0 = dt.datetime(2020, 1, 1)
 
     features: List[Dict] = []
 
-    for _, row in df.iterrows():
-        places = _parse_list_of_places(row.get(place_col))
-        if len(places) < 2:
-            # a single point is not an animated segment; skip
-            continue
-
-        days_list: List[float] = []
-        if time_col and (time_col in df.columns):
-            days_list = _parse_list_of_days(row.get(time_col, None))
-
-        # If we got N places, we need N-1 hop-durations.
-        # Accept length N (per-place duration) or N-1 (per-hop duration) or empty (use default)
-        if days_list:
-            if len(days_list) == len(places) - 1:
-                hop_days = days_list
-            elif len(days_list) == len(places):
-                # convert per-place → per-hop by pairing
-                hop_days = [float(days_list[i]) for i in range(len(places) - 1)]
-            else:
-                hop_days = [float(default_days_per_hop)] * (len(places) - 1)
-        else:
-            hop_days = [float(default_days_per_hop)] * (len(places) - 1)
-
-        # Resolve coordinates
-        coord_map = resolve_locations_to_coords(places)
-
-        # Build segments
-        current_time = start
-        for i in range(len(places) - 1):
-            a, b = places[i], places[i + 1]
-            pa = coord_map.get(a)
-            pb = coord_map.get(b)
-            if pa is None or pb is None:
-                # skip segments that fail to geocode
-                current_time += dt.timedelta(days=float(hop_days[i]))
+    # -------- MODE A: list-per-row --------
+    list_like_rows = sum(1 for v in df[place_col].head(200) if len(_parse_list_of_places(v)) >= 2)
+    if list_like_rows > 0:
+        for _, row in df.iterrows():
+            places = _parse_list_of_places(row.get(place_col))
+            if len(places) < 2:
                 continue
 
-            # Times for this segment: start -> start+hop
-            t0 = current_time
-            t1 = current_time + dt.timedelta(days=float(hop_days[i]))
-            current_time = t1  # advance
+            days_raw = _parse_list_of_days(row.get(time_col)) if time_col and time_col in df else []
+            if not days_raw:
+                hop_days = [default_days_per_hop] * (len(places) - 1)
+            elif len(days_raw) == len(places) - 1:
+                hop_days = days_raw
+            elif len(days_raw) == len(places):
+                hop_days = days_raw[:-1]
+            else:
+                hop_days = [default_days_per_hop] * (len(places) - 1)
 
-            # Folium TimestampedGeoJson expects RFC3339 strings
-            f = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": [[float(pa[1]), float(pa[0])], [float(pb[1]), float(pb[0])]],  # [lon,lat]
-                },
-                "properties": {
-                    "times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
-                    "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.8},
-                    "popup": f"{a} → {b}",
-                },
-            }
-            features.append(f)
+            coord_map = resolve_locations_to_coords(places)
+            current = start0
+            for i in range(len(places) - 1):
+                a, b = places[i], places[i + 1]
+                pa, pb = coord_map.get(a), coord_map.get(b)
+                if pa and pb:
+                    t0, t1 = current, current + dt.timedelta(days=float(hop_days[i]))
+                    current = t1
+                    features.append({
+                        "type": "Feature",
+                        "geometry": {"type": "LineString",
+                                     "coordinates": [[float(pa[1]), float(pa[0])],
+                                                     [float(pb[1]), float(pb[0])]]},
+                        "properties": {"times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
+                                       "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.8},
+                                       "popup": f"{a} → {b}"},
+                    })
+        return {"type": "FeatureCollection", "features": features}
+
+    # -------- MODE B: row-per-hop --------
+    id_col = next((c for c in ["Unique ID", "Serialized ID"] if c in df.columns), None)
+    order_col = next((c for c in ["Route_Order", "Route Order"] if c in df.columns), None)
+    if id_col is None:
+        return fc_empty
+
+    work = df[[id_col, place_col] + ([order_col] if order_col else []) +
+              ([time_col] if time_col and time_col in df else [])].copy()
+    if order_col:
+        work[order_col] = pd.to_numeric(work[order_col], errors="coerce")
+
+    for pid, g in work.groupby(id_col):
+        if order_col:
+            g = g.sort_values(order_col, kind="mergesort")
+        seq = [(_parse_list_of_places(v) or [None])[0] for v in g[place_col].values if v]
+        if len(seq) < 2:
+            continue
+
+        hop_days = []
+        if time_col and time_col in g.columns:
+            for v in g[time_col].values:
+                parsed = _parse_list_of_days(v)
+                hop_days.append(parsed[0] if parsed else default_days_per_hop)
+        if not hop_days:
+            hop_days = [default_days_per_hop] * len(seq)
+
+        coord_map = resolve_locations_to_coords(seq)
+        current = start0
+        for i in range(len(seq) - 1):
+            a, b = seq[i], seq[i + 1]
+            pa, pb = coord_map.get(a), coord_map.get(b)
+            if pa and pb:
+                dur = float(hop_days[i]) if i < len(hop_days) else default_days_per_hop
+                t0, t1 = current, current + dt.timedelta(days=dur)
+                current = t1
+                features.append({
+                    "type": "Feature",
+                    "geometry": {"type": "LineString",
+                                 "coordinates": [[float(pa[1]), float(pa[0])],
+                                                 [float(pb[1]), float(pb[0])]]},
+                    "properties": {"times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
+                                   "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.8},
+                                   "popup": f"{a} → {b} (ID={pid})"},
+                })
 
     return {"type": "FeatureCollection", "features": features}
+
