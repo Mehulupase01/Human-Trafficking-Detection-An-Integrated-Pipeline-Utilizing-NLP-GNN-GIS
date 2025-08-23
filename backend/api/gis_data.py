@@ -213,18 +213,18 @@ def build_timestamped_geojson(
     base_date: str = "2020-01-01",
 ) -> Dict:
     """
-    Build a TimestampedGeoJson from row-wise trajectories.
+    Build a TimestampedGeoJson from either:
+      A) list-per-row trajectories in `place_col`, or
+      B) row-per-hop tables (one location per row) with ID + order.
 
-    Each row may contain:
-      - a list-like of places in `place_col`
-      - optionally, a parallel list-like of days in `time_col`
-        * length == len(places)-1 (per-hop), OR
-        * length == len(places) (per-place), OR
-        * a single scalar (use for all hops), OR
-        * empty → use default_days_per_hop for each hop
+    Row-per-hop detection:
+      - id_col   = ['Unique ID', 'Serialized ID'] (first match)
+      - order_col= ['Route_Order', 'Route Order'] (first match)
     """
+
+    fc_empty = {"type": "FeatureCollection", "features": []}
     if df is None or df.empty or place_col not in df.columns:
-        return {"type": "FeatureCollection", "features": []}
+        return fc_empty
 
     try:
         start0 = dt.datetime.fromisoformat(base_date)
@@ -233,60 +233,87 @@ def build_timestamped_geojson(
 
     features: List[Dict] = []
 
-    for _, row in df.iterrows():
-        places = _parse_list_of_places(row.get(place_col))
-        if len(places) < 2:
-            continue
-
-        # Parse days
-        days_raw: List[float] = []
-        if time_col and (time_col in df.columns):
-            days_raw = _parse_list_of_days(row.get(time_col))
-
-        # Normalize to per-hop days
-        if not days_raw:
-            hop_days = [float(default_days_per_hop)] * (len(places) - 1)
-        elif len(days_raw) == 1:
-            # scalar → use same days for every hop
-            hop_days = [float(days_raw[0])] * (len(places) - 1)
-        elif len(days_raw) == len(places) - 1:
-            hop_days = [float(d) for d in days_raw]
-        elif len(days_raw) == len(places):
-            hop_days = [float(days_raw[i]) for i in range(len(places) - 1)]
-        else:
-            hop_days = [float(default_days_per_hop)] * (len(places) - 1)
-
-        # Geocode
-        coord_map = resolve_locations_to_coords(places)
-
-        # Build segments
-        current = start0
-        for i in range(len(places) - 1):
-            a, b = places[i], places[i + 1]
-            pa = coord_map.get(a)
-            pb = coord_map.get(b)
-            dur = float(hop_days[i])
-
-            # Advance time even if we can't draw segment, to keep alignment
-            t0 = current
-            t1 = current + dt.timedelta(days=dur)
-            current = t1
-
-            if pa is None or pb is None:
+    # -------- MODE A: list-per-row --------
+    list_like_rows = sum(1 for v in df[place_col].head(200) if len(_parse_list_of_places(v)) >= 2)
+    if list_like_rows > 0:
+        for _, row in df.iterrows():
+            places = _parse_list_of_places(row.get(place_col))
+            if len(places) < 2:
                 continue
 
-            features.append({
-                "type": "Feature",
-                "geometry": {
-                    "type": "LineString",
-                    # GeoJSON uses [lon, lat]
-                    "coordinates": [[float(pa[1]), float(pa[0])], [float(pb[1]), float(pb[0])]],
-                },
-                "properties": {
-                    "times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
-                    "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.85},
-                    "popup": f"{a} → {b}",
-                },
-            })
+            days_raw = _parse_list_of_days(row.get(time_col)) if time_col and time_col in df else []
+            if not days_raw:
+                hop_days = [default_days_per_hop] * (len(places) - 1)
+            elif len(days_raw) == len(places) - 1:
+                hop_days = days_raw
+            elif len(days_raw) == len(places):
+                hop_days = days_raw[:-1]
+            else:
+                hop_days = [default_days_per_hop] * (len(places) - 1)
+
+            coord_map = resolve_locations_to_coords(places)
+            current = start0
+            for i in range(len(places) - 1):
+                a, b = places[i], places[i + 1]
+                pa, pb = coord_map.get(a), coord_map.get(b)
+                if pa and pb:
+                    t0, t1 = current, current + dt.timedelta(days=float(hop_days[i]))
+                    current = t1
+                    features.append({
+                        "type": "Feature",
+                        "geometry": {"type": "LineString",
+                                     "coordinates": [[float(pa[1]), float(pa[0])],
+                                                     [float(pb[1]), float(pb[0])]]},
+                        "properties": {"times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
+                                       "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.8},
+                                       "popup": f"{a} → {b}"},
+                    })
+        return {"type": "FeatureCollection", "features": features}
+
+    # -------- MODE B: row-per-hop --------
+    id_col = next((c for c in ["Unique ID", "Serialized ID"] if c in df.columns), None)
+    order_col = next((c for c in ["Route_Order", "Route Order"] if c in df.columns), None)
+    if id_col is None:
+        return fc_empty
+
+    work = df[[id_col, place_col] + ([order_col] if order_col else []) +
+              ([time_col] if time_col and time_col in df else [])].copy()
+    if order_col:
+        work[order_col] = pd.to_numeric(work[order_col], errors="coerce")
+
+    for pid, g in work.groupby(id_col):
+        if order_col:
+            g = g.sort_values(order_col, kind="mergesort")
+        seq = [(_parse_list_of_places(v) or [None])[0] for v in g[place_col].values if v]
+        if len(seq) < 2:
+            continue
+
+        hop_days = []
+        if time_col and time_col in g.columns:
+            for v in g[time_col].values:
+                parsed = _parse_list_of_days(v)
+                hop_days.append(parsed[0] if parsed else default_days_per_hop)
+        if not hop_days:
+            hop_days = [default_days_per_hop] * len(seq)
+
+        coord_map = resolve_locations_to_coords(seq)
+        current = start0
+        for i in range(len(seq) - 1):
+            a, b = seq[i], seq[i + 1]
+            pa, pb = coord_map.get(a), coord_map.get(b)
+            if pa and pb:
+                dur = float(hop_days[i]) if i < len(hop_days) else default_days_per_hop
+                t0, t1 = current, current + dt.timedelta(days=dur)
+                current = t1
+                features.append({
+                    "type": "Feature",
+                    "geometry": {"type": "LineString",
+                                 "coordinates": [[float(pa[1]), float(pa[0])],
+                                                 [float(pb[1]), float(pb[0])]]},
+                    "properties": {"times": [t0.strftime("%Y-%m-%d"), t1.strftime("%Y-%m-%d")],
+                                   "style": {"color": "#66D9EF", "weight": 3, "opacity": 0.8},
+                                   "popup": f"{a} → {b} (ID={pid})"},
+                })
 
     return {"type": "FeatureCollection", "features": features}
+
