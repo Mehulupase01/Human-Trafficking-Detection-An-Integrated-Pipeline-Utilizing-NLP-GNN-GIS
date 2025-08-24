@@ -1,0 +1,143 @@
+from __future__ import annotations
+"""
+Shared metric utilities (dependency-light, numerically safe).
+
+Classification:
+- precision_recall_f1
+- ap_pr (Average Precision; area under PR curve)
+- roc_auc
+- confusion_counts
+- brier_score
+- expected_calibration_error
+
+Ranking:
+- ndcg_at_k
+- mean_average_precision (MAP)
+- mean_reciprocal_rank (MRR)
+- hits_at_k
+- recall_at_k
+- precision_at_k
+
+Curves (for plotting):
+- pr_curve_points
+- roc_curve_points
+- reliability_bins
+"""
+
+from typing import Iterable, List, Sequence, Tuple, Dict
+import numpy as np
+
+# --------- classification metrics ----------
+
+def precision_recall_f1(y_true: Sequence[int], y_pred: Sequence[int]) -> Tuple[float, float, float]:
+    yt = np.asarray(y_true).astype(bool)
+    yp = np.asarray(y_pred).astype(bool)
+    tp = float(np.sum(yt & yp))
+    fp = float(np.sum(~yt & yp))
+    fn = float(np.sum(yt & ~yp))
+    prec = tp / (tp + fp + 1e-12)
+    rec  = tp / (tp + fn + 1e-12)
+    f1   = 2.0 * prec * rec / (prec + rec + 1e-12)
+    return prec, rec, f1
+
+def ap_pr(y_true: Sequence[int], y_score: Sequence[float]) -> float:
+    """Average Precision (area under PR). Stable for ties."""
+    yt = np.asarray(y_true).astype(int)
+    ys = np.asarray(y_score).astype(float)
+    order = np.argsort(-ys)
+    yt = yt[order]
+    tp = np.cumsum(yt)
+    fp = np.cumsum(1 - yt)
+    prec = tp / np.maximum(tp + fp, 1)
+    if tp[-1] == 0:
+        return 0.0
+    rec = tp / tp[-1]
+    # integrate precision wrt recall
+    return float(np.trapz(prec, rec))
+
+def roc_auc(y_true: Sequence[int], y_score: Sequence[float]) -> float:
+    """AUC via rank statistic (Mann–Whitney)."""
+    yt = np.asarray(y_true).astype(int)
+    ys = np.asarray(y_score).astype(float)
+    order = np.argsort(ys)
+    yt = yt[order]
+    n_pos = int(yt.sum())
+    n_neg = len(yt) - n_pos
+    if n_pos == 0 or n_neg == 0:
+        return 0.5
+    # Sum of ranks of positives (1..n)
+    ranks = np.arange(1, len(yt) + 1)
+    rank_sum = float(ranks[yt == 1].sum())
+    auc = (rank_sum - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
+    return float(auc)
+
+def confusion_counts(y_true: Sequence[int], y_pred: Sequence[int]) -> Dict[str, int]:
+    yt = np.asarray(y_true).astype(bool)
+    yp = np.asarray(y_pred).astype(bool)
+    tp = int(np.sum(yt & yp))
+    tn = int(np.sum(~yt & ~yp))
+    fp = int(np.sum(~yt & yp))
+    fn = int(np.sum(yt & ~yp))
+    return {"tp": tp, "tn": tn, "fp": fp, "fn": fn}
+
+def brier_score(y_true: Sequence[int], y_prob: Sequence[float]) -> float:
+    yt = np.asarray(y_true).astype(float)
+    yp = np.asarray(y_prob).astype(float)
+    return float(np.mean((yp - yt) ** 2))
+
+def expected_calibration_error(y_true: Sequence[int], y_prob: Sequence[float], n_bins: int = 15) -> float:
+    yt = np.asarray(y_true).astype(int)
+    yp = np.asarray(y_prob).astype(float)
+    yp = np.clip(yp, 0.0, 1.0)
+    bins = np.linspace(0.0, 1.0, n_bins + 1)
+    idx = np.digitize(yp, bins) - 1
+    ece = 0.0
+    for b in range(n_bins):
+        m = idx == b
+        if not np.any(m):
+            continue
+        conf = float(yp[m].mean())
+        acc = float(yt[m].mean())
+        ece += (np.sum(m) / len(yt)) * abs(conf - acc)
+    return float(ece)
+
+# --------- ranking metrics ----------
+
+def dcg_at_k(rels: Sequence[float], k: int) -> float:
+    r = np.asarray(rels, dtype=float)[:k]
+    if r.size == 0:
+        return 0.0
+    discounts = 1.0 / np.log2(np.arange(2, r.size + 2))
+    return float(np.sum((2**r - 1) * discounts))
+
+def ndcg_at_k(rels: Sequence[float], k: int) -> float:
+    ideal = dcg_at_k(sorted(rels, reverse=True), k)
+    if ideal == 0.0:
+        return 0.0
+    return dcg_at_k(rels, k) / ideal
+
+def mean_average_precision(all_rel_lists: Sequence[Sequence[int]]) -> float:
+    """MAP over multiple queries; rel=1 is relevant, 0 not."""
+    aps = []
+    for rels in all_rel_lists:
+        rels = list(map(int, rels))
+        if sum(rels) == 0:
+            aps.append(0.0)
+            continue
+        cum_rel = 0
+        precs = []
+        for i, r in enumerate(rels, start=1):
+            if r:
+                cum_rel += 1
+                precs.append(cum_rel / i)
+        aps.append(sum(precs) / sum(rels))
+    return float(np.mean(aps) if aps else 0.0)
+
+def mean_reciprocal_rank(first_hit_ranks: Sequence[int]) -> float:
+    arr = np.asarray(first_hit_ranks, dtype=float)
+    arr = np.where(arr <= 0, np.inf, arr)  # non-hit → inf
+    return float(np.mean(1.0 / arr))
+
+def hits_at_k(ranks: Sequence[int], k: int) -> float:
+    r = np.asarray(ranks, dtype=int)
+    return float(np.mean(r > 0) if k is None else np.mean((r > 0

@@ -1,0 +1,27 @@
+# Evaluation defaults + column overrides
+seed: 42
+cv_k: 5
+test_frac: 0.30
+
+columns:
+  # Override any of these if your dataset uses different names.
+  text: text
+  label: label
+  sid: sid              # subject/person/entity id (for grouping & trajectories)
+  pid: pid              # partner/opposing id (for bipartite links)
+  loc: location         # free-text location name (fallback if no lat/lon)
+  lat: lat
+  lon: lon
+  time: timestamp       # event timestamp
+  start: start_ts       # start time for ETA
+  end: end_ts           # end time for ETA
+
+graph:
+  heuristics: ["jaccard", "adamic_adar", "resource_allocation", "preferential_attachment"]
+  max_samples: 300      # edges sampled per split for link-pred evaluation
+  negatives_per_pos: 30
+
+query:
+  top_k: 10
+  # If you decide to store queries in the registry, set kind to "queries".
+  registry_kind: "queries"
