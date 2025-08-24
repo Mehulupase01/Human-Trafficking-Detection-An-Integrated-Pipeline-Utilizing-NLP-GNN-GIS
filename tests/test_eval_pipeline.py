@@ -18,3 +18,10 @@ def test_run_evaluations_end_to_end():
     report = run_evaluations([did], link_max_samples=50)
     assert "summary" in report and "tables" in report and "details" in report
     assert report["summary"]["victims"] == 2
+
+def test_ngram_shim_compatibility():
+    from backend.models.sequence_predictor import NgramSequenceModel
+    m = NgramSequenceModel(alpha=0.05)
+    m.fit([["A","B","C"], ["A","B","D"]])
+    dist = m.predict_next_dist("A", "B")   # legacy call
+    assert isinstance(dist, dict) and len(dist) >= 1

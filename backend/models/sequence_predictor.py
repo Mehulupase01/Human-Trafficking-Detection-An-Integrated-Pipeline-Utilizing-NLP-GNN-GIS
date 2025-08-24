@@ -1,250 +1,233 @@
-# backend/models/sequence_predictor.py
 from __future__ import annotations
-import pandas as pd
-import numpy as np
-from typing import List, Tuple, Dict, Iterable, Optional
-from collections import defaultdict, Counter
-import math
 
+"""
+backend/models/sequence_predictor.py
 
-if __name__ == "__main__":
-    
+Lightweight order-3 n-gram sequence model with backoff and Laplace smoothing.
+Designed for next-location prediction on trajectories (strings), with a
+backward-compatible shim `predict_next_dist(prev2, prev1)` used by older code.
 
-    def _clean_loc(v):
-        if isinstance(v, list) and v:
-            return str(v[0])
-        return "" if v is None else str(v)
+APIs
+----
+- NgramSequenceModel(alpha=0.05, weights=(0.6, 0.3, 0.1))
+    * fit(sequences)
+    * predict_next(history, topk=10) -> List[Tuple[str, float]]
+    * predict_path(history, steps=3) -> List[Tuple[str, float]]
+    * predict_next_dist(prev2, prev1, topk=50) -> Dict[str, float]   # legacy shim
+"""
 
-    sample_preds = [("Tripoli", 0.7), ("Libya", 0.3)]
-    rows = [
-        {"Rank": i + 1, "Predicted Location": _clean_loc(loc), "Score": round(float(p), 4)}
-        for i, (loc, p) in enumerate(sample_preds)
-    ]
-    print(pd.DataFrame(rows).to_string(index=False))
+from collections import Counter, defaultdict
+from typing import Dict, Iterable, List, Optional, Tuple
 
-
-
-def _first_token(val) -> Optional[str]:
-    """
-    Return the first token from a list/array-like value; otherwise a clean string; else None.
-    """
-    if isinstance(val, list) and val:
-        v = val[0]
-        return str(v).strip() if v is not None else None
-    try:
-        import numpy as np  # noqa
-        if hasattr(val, "size") and getattr(val, "size", 0) > 0:
-            v = val.tolist()[0]
-            return str(v).strip() if v is not None else None
-    except Exception:
-        pass
-    if pd.isna(val) or val is None:
-        return None
-    s = str(val).strip()
-    return s or None
-
-
-def _primary_loc_from_row(row: pd.Series) -> Optional[str]:
-    """
-    Pick the step's primary location:
-    - Prefer first token from 'Locations (NLP)'
-    - Fallback to raw 'Location'
-    Returns clean string or None.
-    """
-    loc = None
-    if "Locations (NLP)" in row:
-        loc = _first_token(row["Locations (NLP)"])
-    if not loc and "Location" in row:
-        loc = _first_token(row["Location"])
-    return loc
-
-
-def _sequence_from_group(grp: pd.DataFrame) -> List[str]:
-    """
-    Build a single victim's ordered location sequence:
-    - sort by Route_Order (numeric; coerced)
-    - derive primary_loc per row
-    - collapse consecutive duplicates
-    """
-    g = grp.copy()
-    if "Route_Order" in g.columns:
-        g["Route_Order"] = pd.to_numeric(g["Route_Order"], errors="coerce")
-        g = g.sort_values("Route_Order", kind="stable")
-    seq: List[str] = []
-    last = None
-    for _, row in g.iterrows():
-        loc = _primary_loc_from_row(row)
-        if not loc:
-            continue
-        if loc == last:
-            continue
-        seq.append(loc)
-        last = loc
-    return seq
-
-
-def build_sequences_from_df(df: pd.DataFrame) -> List[List[str]]:
-    """
-    Build sequences for ALL victims in the dataframe.
-    Uses 'Serialized ID' to group and the logic above to form paths.
-    """
-    if df is None or df.empty:
-        return []
-    d = df.copy()
-    if "Serialized ID" not in d.columns:
-        # try to tolerate older name
-        if "Victim ID" in d.columns:
-            d = d.rename(columns={"Victim ID": "Serialized ID"})
-        else:
-            return []
-    d["Serialized ID"] = d["Serialized ID"].astype(str)
-    sequences: List[List[str]] = []
-    for _, grp in d.groupby("Serialized ID"):
-        seq = _sequence_from_group(grp)
-        if seq:
-            sequences.append(seq)
-    return sequences
-
-
-def last_context_for_victim(df: pd.DataFrame, victim_sid: str, order: int = 2) -> List[str]:
-    """
-    Return the last `order` locations for a given victim (order=2 by default).
-    """
-    if df is None or df.empty:
-        return []
-    d = df[df["Serialized ID"].astype(str) == str(victim_sid)]
-    if d.empty:
-        return []
-    seq = _sequence_from_group(d)
-    if not seq:
-        return []
-    k = max(1, int(order))
-    return seq[-k:]
-
-
-# --------------------------- n-gram predictor ---------------------------
 
 class NgramSequenceModel:
     """
-    Order‑2 n-gram model with **backoff** to order‑1 and **unigram/global**,
-    plus simple additive (Laplace) smoothing controlled by `alpha`.
+    Order-3 (trigram) model with backoff to bigram and unigram.
+    Each conditional distribution uses Laplace smoothing with parameter `alpha`.
+    Final prediction is a convex combination of the three conditionals using
+    `weights = (w3, w2, w1)` for (tri, bi, uni).
 
-    API:
-        .fit(list_of_sequences)
-        .predict_next(history, topk=3) -> List[(location, prob)]
-        .predict_path(history, steps=3) -> List[(location, prob)]  # iterative top1 rollout
+    Notes
+    -----
+    - Inputs are sequences of hashable items; we cast to `str` for consistency.
+    - The model is intentionally small and dependency-free for easy embedding.
     """
 
-    def __init__(self, alpha: float = 0.1):
-        self.alpha = float(alpha)
-        # bigram[(prev2, prev1)] -> Counter(next)
-        self.bigram: Dict[Tuple[str, str], Counter] = defaultdict(Counter)
-        # unigram[prev1] -> Counter(next)
-        self.unigram: Dict[str, Counter] = defaultdict(Counter)
-        # global next counts (marginal)
-        self.global_counts: Counter = Counter()
-        self.vocab: set[str] = set()
-        self.fitted: bool = False
+    def __init__(
+        self,
+        alpha: float = 0.05,
+        weights: Tuple[float, float, float] = (0.6, 0.3, 0.1),
+    ) -> None:
+        if alpha <= 0:
+            raise ValueError("alpha must be > 0")
+        if len(weights) != 3 or any(w < 0 for w in weights) or sum(weights) <= 0:
+            raise ValueError("weights must be a 3-tuple of nonnegative numbers with a positive sum")
 
-    # ------------------------ training ------------------------
+        self.alpha: float = float(alpha)
+        self.weights: Tuple[float, float, float] = weights
 
-    def fit(self, sequences: Iterable[Iterable[str]]) -> None:
+        # counts
+        self.unigram: Counter[str] = Counter()
+        self.bigram: Dict[str, Counter[str]] = defaultdict(Counter)          # prev1 -> next counts
+        self.trigram: Dict[Tuple[str, str], Counter[str]] = defaultdict(Counter)  # (prev2, prev1) -> next counts
+
+        # cached totals
+        self.total_tokens: int = 0
+        self.bigram_totals: Dict[str, int] = defaultdict(int)
+        self.trigram_totals: Dict[Tuple[str, str], int] = defaultdict(int)
+
+        # vocab
+        self._vocab: set[str] = set()
+        self._fitted: bool = False
+
+    # ------------------------- Training -------------------------
+
+    def fit(self, sequences: Iterable[Iterable[str]]) -> "NgramSequenceModel":
         """
-        Train on a list of sequences (each is a list of location strings).
+        Fit counts from sequences.
+        Parameters
+        ----------
+        sequences : Iterable of sequences (iterables of tokens)
         """
+        # reset
+        self.unigram.clear()
+        self.bigram.clear()
+        self.trigram.clear()
+        self.bigram_totals.clear()
+        self.trigram_totals.clear()
+        self.total_tokens = 0
+        self._vocab.clear()
+
         for seq in sequences:
-            prev1 = None
-            prev2 = None
-            for loc in seq:
-                if not isinstance(loc, str) or not loc.strip():
-                    continue
-                loc = loc.strip()
-                self.vocab.add(loc)
-                self.global_counts[loc] += 1
+            # normalize tokens to non-empty strings
+            toks = [str(t).strip() for t in seq if str(t).strip()]
+            n = len(toks)
+            if n == 0:
+                continue
 
-                if prev1 is not None:
-                    self.unigram[prev1][loc] += 1
-                if prev1 is not None and prev2 is not None:
-                    self.bigram[(prev2, prev1)][loc] += 1
+            # unigrams
+            self.unigram.update(toks)
+            self.total_tokens += n
+            self._vocab.update(toks)
 
-                prev2, prev1 = prev1, loc
+            # bigrams
+            for i in range(1, n):
+                p1, nx = toks[i - 1], toks[i]
+                self.bigram[p1][nx] += 1
+                self.bigram_totals[p1] += 1
 
-        self.fitted = True
+            # trigrams
+            for i in range(2, n):
+                p2, p1, nx = toks[i - 2], toks[i - 1], toks[i]
+                ctx = (p2, p1)
+                self.trigram[ctx][nx] += 1
+                self.trigram_totals[ctx] += 1
 
-    # ------------------------ inference ------------------------
+        self._fitted = True
+        return self
 
-    def predict_next(self, history: List[str], topk: int = 3) -> List[Tuple[str, float]]:
+    # ------------------------- Helpers -------------------------
+
+    @property
+    def vocab(self) -> List[str]:
+        return sorted(self._vocab)
+
+    def _ensure_fitted(self) -> None:
+        if not self._fitted:
+            raise RuntimeError("Model is not fitted. Call fit(sequences) first.")
+
+    def _laplace_prob(self, count: int, denom: int, V: int) -> float:
+        # Laplace / add-alpha smoothing
+        return (count + self.alpha) / (denom + self.alpha * max(1, V))
+
+    # ------------------------- Prediction -------------------------
+
+    def predict_next(self, history: List[str] | Tuple[str, ...] | None, topk: int = 10) -> List[Tuple[str, float]]:
         """
-        Return a ranked list of next locations for the given history.
-        Backoff chain: P(x|h2,h1) → P(x|h1) → P(x) (global).
-        Laplace smoothing ensures probabilities exist even if sparse.
+        Predict next token distribution given a (possibly long) history.
+        We use only the last two items for trigram context.
+
+        Returns
+        -------
+        List of (token, probability) sorted descending, top-k truncated.
         """
-        if not self.fitted or not self.vocab:
+        self._ensure_fitted()
+        if not self._vocab:
             return []
 
-        # sanitize history
-        hist = [h.strip() for h in history if isinstance(h, str) and h.strip()]
-        if not hist:
-            return self._from_global(topk)
+        hist = [str(h).strip() for h in (history or []) if str(h).strip()]
+        prev1 = hist[-1] if len(hist) >= 1 else None
+        prev2 = hist[-2] if len(hist) >= 2 else None
+        V = len(self._vocab)
 
-        # try order-2
-        if len(hist) >= 2:
-            ctx = (hist[-2], hist[-1])
-            if ctx in self.bigram and self.bigram[ctx]:
-                return self._ranked(self.bigram[ctx], topk)
+        # Gather candidate set from contexts; fall back to whole vocab if tiny.
+        candidates: set[str] = set()
+        if prev1 is not None and prev1 in self.bigram:
+            candidates.update(self.bigram[prev1].keys())
+        if prev2 is not None and (prev2, prev1) in self.trigram:
+            candidates.update(self.trigram[(prev2, prev1)].keys())
+        if not candidates:
+            # fall back to frequent unigrams (still deterministic)
+            candidates.update(self.unigram.keys())
 
-        # try order-1
-        ctx1 = hist[-1]
-        if ctx1 in self.unigram and self.unigram[ctx1]:
-            return self._ranked(self.unigram[ctx1], topk)
+        # Precompute denominators
+        denom3 = self.trigram_totals.get((prev2, prev1), 0) if (prev2 is not None and prev1 is not None) else 0
+        denom2 = self.bigram_totals.get(prev1, 0) if prev1 is not None else 0
+        denom1 = self.total_tokens
 
-        # global
-        return self._from_global(topk)
+        # Select mixture weights only for available contexts
+        w3, w2, w1 = self.weights
+        active_weights = []
+        if denom3 > 0:
+            active_weights.append(("tri", w3))
+        if denom2 > 0:
+            active_weights.append(("bi", w2))
+        active_weights.append(("uni", w1))  # always available
 
-    def predict_path(self, history: List[str], steps: int = 3) -> List[Tuple[str, float]]:
+        # Normalize active weights to sum to 1
+        ws = sum(w for _, w in active_weights) or 1.0
+        weight_map = {name: (w / ws) for name, w in active_weights}
+
+        # Build distribution
+        probs: Dict[str, float] = {}
+        for tok in candidates:
+            p = 0.0
+            # trigram component
+            if denom3 > 0:
+                c3 = self.trigram[(prev2, prev1)].get(tok, 0)
+                p += weight_map.get("tri", 0.0) * self._laplace_prob(c3, denom3, V)
+            # bigram component
+            if denom2 > 0:
+                c2 = self.bigram[prev1].get(tok, 0)
+                p += weight_map.get("bi", 0.0) * self._laplace_prob(c2, denom2, V)
+            # unigram component (always)
+            c1 = self.unigram.get(tok, 0)
+            p += weight_map.get("uni", 0.0) * self._laplace_prob(c1, denom1, V)
+
+            probs[tok] = float(p)
+
+        # Normalize to sum to 1 across candidates (for neatness / determinism)
+        Z = sum(probs.values()) or 1.0
+        for k in list(probs.keys()):
+            probs[k] = probs[k] / Z
+
+        ranked = sorted(probs.items(), key=lambda kv: kv[1], reverse=True)
+        if topk is not None:
+            topk = max(1, int(topk))
+            ranked = ranked[:topk]
+        return ranked
+
+    def predict_path(self, history: List[str] | Tuple[str, ...] | None, steps: int = 3) -> List[Tuple[str, float]]:
         """
-        Roll out the model for `steps` moves, each time feeding back the top1 guess.
-        Returns a list of (next_location, probability_for_that_step).
+        Greedy roll-out of length `steps`, returning [(token, prob), ...].
         """
-        results: List[Tuple[str, float]] = []
-        hist = list(history)[:] if history else []
-        for _ in range(max(1, int(steps))):
-            cand = self.predict_next(hist, topk=1)
-            if not cand:
+        self._ensure_fitted()
+        hist: List[str] = [str(h).strip() for h in (history or []) if str(h).strip()]
+        out: List[Tuple[str, float]] = []
+        for _ in range(max(0, int(steps))):
+            dist = self.predict_next(hist, topk=1)
+            if not dist:
                 break
-            loc, p = cand[0]
-            results.append((loc, float(p)))
-            hist.append(loc)
-        return results
+            tok, p = dist[0]
+            out.append((tok, p))
+            hist.append(tok)
+        return out
 
-    # ------------------------ helpers ------------------------
+    # ------------------------- Legacy Shim -------------------------
 
-    def _ranked(self, counter: Counter, topk: int) -> List[Tuple[str, float]]:
-        alpha = self.alpha
-        V = max(1, len(self.vocab))
-        total = sum(counter.values())
-        denom = total + alpha * V
-        items = []
-        for loc, cnt in counter.most_common(topk):
-            num = cnt + alpha
-            items.append((loc, num / denom))
-        return items
+    def predict_next_dist(
+        self,
+        prev2: Optional[str] = None,
+        prev1: Optional[str] = None,
+        topk: int = 50,
+    ) -> Dict[str, float]:
+        """
+        Backward-compatible method used by older evaluation code:
 
+            model.predict_next_dist(prev2, prev1) -> {token: prob}
 
-    def _from_global(self, topk: int) -> List[Tuple[str, float]]:
-        total = sum(self.global_counts.values())
-        if total == 0:
-            return []
-        items = [(loc, cnt / total) for loc, cnt in self.global_counts.most_common(topk)]
-        # already normalized over all; if we cut to topk, renormalize:
-        s = sum(p for _, p in items) or 1.0
-        return [(loc, p / s) for loc, p in items]
-
-
-# ----------------------- convenience wrappers -----------------------
-
-def build_sequences_from_df_safe(df: pd.DataFrame) -> List[List[str]]:
-    """
-    (Deprecated shim) kept for compatibility if older imports refer to this name.
-    """
-    return build_sequences_from_df(df)
+        Internally forwards to `predict_next([prev2, prev1], topk)` and returns a dict.
+        """
+        hist = [x for x in [prev2, prev1] if isinstance(x, str) and x.strip()]
+        ranked = self.predict_next(hist, topk=max(1, int(topk)))
+        return {tok: float(p) for tok, p in ranked}

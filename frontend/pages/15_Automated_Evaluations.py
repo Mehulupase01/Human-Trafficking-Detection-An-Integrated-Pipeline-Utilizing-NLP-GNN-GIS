@@ -1,4 +1,3 @@
-# frontend/pages/15_Automated_Evaluations.py
 from __future__ import annotations
 import json
 import streamlit as st
@@ -14,132 +13,154 @@ st.title("🧪 Automated Evaluations & Benchmarks")
 
 st.markdown("""
 Run **end-to-end quality & performance checks** across your processed/merged data:
-- Data completeness & ID consistency
-- Duplicate suspicion (heuristic)
-- Location resolution rate (via gazetteer/overrides)
-- Network graph metrics
+
+- Data completeness & **ID consistency**
+- **Duplicate suspicion** (heuristic)
+- **Location** resolution rate
+- **Network graph** metrics
 - Predictive performance: **next location** (acc@1/3), **link prediction** (acc@1/3/5)
-- ETA error (**MAE days**)
-Export everything as a ZIP or save a versioned JSON report.
+- **ETA** error (MAE, days)
+
+You can **save** a versioned JSON report or **download** a ZIP (JSON + CSV tables).
 """)
 
-# ---------- Data selection ----------
+# -------------------- dataset picker --------------------
 st.subheader("1) Choose datasets (Processed or Merged)")
-processed = registry.list_datasets(kind="processed")
-merged = registry.list_datasets(kind="merged")
-queryable = processed + merged
-
-def _fmt(e: dict) -> str:
-    return f"{e.get('name')}  •  {e.get('kind')}  •  {e.get('id')}"
-
-if not queryable:
-    st.info("No processed or merged datasets available.")
+datasets = registry.list_datasets() or []
+processed = [d for d in datasets if d.get("kind") in {"processed", "merged"}]
+if not processed:
+    st.info("No processed or merged datasets are available yet.")
     st.stop()
 
-selected = st.multiselect("Datasets:", options=queryable, format_func=_fmt)
+def _fmt(opt):
+    return f"{opt.get('name','<unnamed>')} • {opt.get('id','?')} • {opt.get('kind','?')}"
+
+selected = st.multiselect("Datasets", options=processed, format_func=_fmt)
 if not selected:
-    st.warning("Select at least one dataset.")
+    st.warning("Select at least one dataset to evaluate.")
+    st.stop()
+ds_ids = [e["id"] for e in selected]
+
+owner_email = st.text_input("Owner email (optional)", value="")
+
+# -------------------- Predictive configuration + RUN (slider moved here) --------------------
+st.divider()
+st.subheader("Predictive Benchmarks (configure & run)")
+
+conf_col, run_col = st.columns([3,1])
+with conf_col:
+    # The slider is now right next to the predictive section where it is used.
+    link_max = st.slider(
+        "Max victim–perp edges to sample for link-prediction benchmark",
+        min_value=50, max_value=1000, value=300, step=50, help="Only used for the Link Prediction acc@k metric."
+    )
+with run_col:
+    if st.button("🚀 Run Evaluations", type="primary", use_container_width=True):
+        with st.spinner("Computing metrics, graph stats, and predictive benchmarks..."):
+            report = run_evaluations(ds_ids, link_max_samples=int(link_max))
+        st.session_state["_auto_eval_report"] = report
+        st.success("Evaluations complete.")
+
+# rehydrate report if already ran
+report = st.session_state.get("_auto_eval_report")
+if not report:
     st.stop()
 
-ds_ids = [e["id"] for e in selected]
-owner_email = st.text_input("Owner email (optional)", value="")
-link_max = st.slider("Max victim–perp edges to sample for link-pred benchmark", 50, 1000, 300, 50)
+summary = report.get("summary", {})
+details = report.get("details", {})
+tables = report.get("tables", {})
 
-# ---------- Run ----------
-if st.button("🚀 Run Evaluations", type="primary"):
-    with st.spinner("Computing metrics, graph stats, and predictive benchmarks..."):
-        report = run_evaluations(ds_ids, link_max_samples=int(link_max))
+# -------------------- KPIs --------------------
+kpi1, kpi2, kpi3, kpi4, kpi5, kpi6 = st.columns(6)
+kpi1.metric("Rows", f"{summary.get('rows',0):,}")
+kpi2.metric("Victims", f"{summary.get('victims',0):,}")
+kpi3.metric("Locations", f"{summary.get('locations',0):,}")
+kpi4.metric("Graph Nodes", f"{summary.get('graph_nodes',0):,}")
+kpi5.metric("NextLoc acc@1", f"{summary.get('nextloc_acc@1',0.0):.3f}")
+kpi6.metric("Link acc@3", f"{summary.get('link_acc@3',0.0):.3f}")
 
-    st.success("Evaluations complete.")
+kpi7, kpi8, kpi9, kpi10, kpi11, kpi12 = st.columns(6)
+kpi7.metric("NextLoc acc@3", f"{summary.get('nextloc_acc@3',0.0):.3f}")
+kpi8.metric("Link acc@1", f"{summary.get('link_acc@1',0.0):.3f}")
+kpi9.metric("Link acc@5", f"{summary.get('link_acc@5',0.0):.3f}")
+kpi10.metric("ETA MAE (days)", f"{summary.get('eta_mae_days',0) or 0}")
+kpi11.metric("Loc Resolution Rate", f"{summary.get('location_resolution_rate',0.0):.3f}")
+kpi12.metric("Components", f"{details.get('graph_metrics',{}).get('components',0)}")
 
-    # ---------- Summary KPIs ----------
-    st.subheader("2) Summary KPIs")
-    s = report["summary"]
-    c1,c2,c3,c4 = st.columns(4)
-    c1.metric("Rows", f"{s['rows']:,}")
-    c2.metric("Victims", f"{s['victims']:,}")
-    c3.metric("Locations", f"{s['locations']:,}")
-    c4.metric("Loc Resolution", f"{100*s['location_resolution_rate']:.1f}%")
-    d1,d2,d3 = st.columns(3)
-    d1.metric("NextLoc acc@1", f"{100*s['nextloc_acc@1']:.1f}%")
-    d2.metric("LinkPred acc@1", f"{100*s['link_acc@1']:.1f}%")
-    d3.metric("ETA MAE (days)", f"{s['eta_mae_days'] if s['eta_mae_days'] is not None else '—'}")
+st.divider()
 
-    # ---------- Completeness ----------
-    st.subheader("3) Data Completeness")
-    comp = report["tables"]["completeness"]
-    if not comp.empty:
-        chart = alt.Chart(comp).mark_bar().encode(
-            x=alt.X("Coverage:Q", axis=alt.Axis(format="%")),
-            y=alt.Y("Field:N", sort='-x'),
-            tooltip=["Field:N", alt.Tooltip("Coverage:Q", format=".1%"), "Non-null:Q", "Total Rows:Q"]
-        ).properties(height=360)
+# -------------------- Data completeness & ID consistency --------------------
+st.subheader("Data Completeness & ID Consistency")
+comp_df = tables.get("completeness")
+idc = details.get("id_consistency", {})
+
+left, right = st.columns([3,2], gap="large")
+with left:
+    if isinstance(comp_df, pd.DataFrame) and not comp_df.empty:
+        chart = alt.Chart(comp_df).mark_bar().encode(
+            x=alt.X('Field:N', sort='-y', title='Field'),
+            y=alt.Y('Completeness:Q', title='Completeness (0–1)'),
+            tooltip=['Field', alt.Tooltip('Completeness:Q', format='.2f'), 'NonNull', 'Total']
+        ).properties(height=260)
         st.altair_chart(chart, use_container_width=True)
-        st.dataframe(comp, use_container_width=True, hide_index=True, height=300)
     else:
-        st.info("No completeness data (unexpected).")
+        st.caption("No completeness table available.")
 
-    # ---------- Suspected duplicates ----------
-    st.subheader("4) Suspected Duplicates (heuristic)")
-    dup = report["tables"]["suspected_duplicates"]
-    if not dup.empty:
-        st.dataframe(dup, use_container_width=True, hide_index=True, height=260)
-        st.caption("Heuristic key: Nationality|Gender|FirstLoc|LastLoc|RouteLen — review manually.")
-    else:
-        st.caption("No duplicate groups flagged by the heuristic.")
+with right:
+    st.json(idc, expanded=False)
 
-    # ---------- Location resolution ----------
-    st.subheader("5) Location Resolution")
-    loc_det = report["details"]["location_resolution"]
-    left, right = st.columns([2,1])
-    with left:
-        st.metric("Unique Locations", f"{loc_det.get('unique_locations',0):,}")
-        st.metric("Resolved", f"{loc_det.get('resolved',0):,}")
-    with right:
-        st.metric("Resolution Rate", f"{100*loc_det.get('rate',0.0):.1f}%")
-    unresolved_tbl = report["tables"]["top_unresolved_locations_sample"]
-    if not unresolved_tbl.empty:
-        st.dataframe(unresolved_tbl, use_container_width=True, hide_index=True, height=220)
+# -------------------- Duplicate suspicion --------------------
+st.subheader("Duplicate Suspicion (Heuristic)")
+dup_df = tables.get("suspected_duplicates")
+if isinstance(dup_df, pd.DataFrame) and not dup_df.empty:
+    st.dataframe(dup_df, use_container_width=True, height=240)
+else:
+    st.caption("No high-likelihood duplicates found.")
 
-    # ---------- Graph metrics ----------
-    st.subheader("6) Graph Metrics")
-    g = report["details"]["graph"]
-    if "error" in g:
-        st.error(g["error"])
-    else:
-        g1,g2,g3,g4 = st.columns(4)
-        g1.metric("Nodes", g["nodes"])
-        g2.metric("Edges", g["edges"])
-        g3.metric("Components", g["components"])
-        g4.metric("Largest component", g["largest_component_size"])
-        st.json({"avg_degree": g.get("avg_degree"), "avg_clustering": g.get("avg_clustering"), "nodes_by_type": g.get("nodes_by_type", {})})
+# -------------------- Location resolution --------------------
+st.subheader("Location Resolution")
+st.json(details.get("location_resolution", {}), expanded=False)
 
-    # ---------- Predictive benchmarks ----------
-    st.subheader("7) Predictive Benchmarks")
-    b1,b2 = st.columns(2)
-    with b1:
-        nl = report["details"]["next_location"]
-        st.markdown("**Next Location (leave-last-step-out)**")
-        st.json(nl)
-    with b2:
-        lp = report["details"]["link_prediction"]
-        st.markdown("**Link Prediction (edge removal sampling)**")
-        st.json(lp)
+# -------------------- Graph metrics --------------------
+st.subheader("Network Graph Metrics")
+st.json(details.get("graph_metrics", {}), expanded=False)
 
-    # ---------- ETA benchmark ----------
-    st.subheader("8) ETA Benchmark")
-    st.json(report["details"]["eta"])
+# -------------------- Predictive Benchmarks (results) --------------------
+st.subheader("Predictive Benchmarks")
+cols = st.columns(3)
+with cols[0]:
+    st.metric("Next Location acc@1", f"{summary.get('nextloc_acc@1',0.0):.3f}")
+    st.metric("Next Location acc@3", f"{summary.get('nextloc_acc@3',0.0):.3f}")
+with cols[1]:
+    st.metric("Link Prediction acc@1", f"{summary.get('link_acc@1',0.0):.3f}")
+    st.metric("Link Prediction acc@3", f"{summary.get('link_acc@3',0.0):.3f}")
+with cols[2]:
+    st.metric("Link Prediction acc@5", f"{summary.get('link_acc@5',0.0):.3f}")
+    st.metric("ETA MAE (days)", f"{summary.get('eta_mae_days',0) or 0}")
 
-    # ---------- Export / Save ----------
-    st.subheader("9) Export")
-    zbytes = export_report_zip(report)
-    st.download_button("⬇️ Download Report (ZIP)", data=zbytes, file_name="evaluation_report.zip", mime="application/zip", use_container_width=True)
+# sample tables if available
+nl_table = tables.get("next_location_examples")
+lp_table = tables.get("link_prediction_examples")
+if isinstance(nl_table, pd.DataFrame) and not nl_table.empty:
+    st.markdown("**Next-location: sample predictions**")
+    st.dataframe(nl_table, use_container_width=True, height=230)
+if isinstance(lp_table, pd.DataFrame) and not lp_table.empty:
+    st.markdown("**Link-prediction: sample predictions**")
+    st.dataframe(lp_table, use_container_width=True, height=230)
 
+# -------------------- Save / Export --------------------
+st.divider()
+save_col, dl_col = st.columns([1,1])
+with save_col:
     if st.button("💾 Save Report", use_container_width=True):
         rid = save_evaluation_report("Automated Evaluation", report, owner=(owner_email or None), sources=ds_ids)
         st.success(f"Saved evaluation report id: {rid}")
+with dl_col:
+    if st.button("📦 Download ZIP (JSON + CSV)", use_container_width=True):
+        data = export_report_zip(report)
+        st.download_button("⬇️ Click to download", data=data, file_name="evaluation_report.zip", mime="application/zip", use_container_width=True)
 
-# Past reports
+# -------------------- Past reports --------------------
 st.divider()
 st.subheader("📜 Past Evaluation Reports")
 past = registry.list_datasets(kind="evaluation_report")
