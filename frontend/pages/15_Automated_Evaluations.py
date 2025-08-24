@@ -233,10 +233,11 @@ with tab_gis:
         tr = gis.get("trajectories", {})
         nxh = gis.get("nextloc", {}).get("holdout", {})
         eta = gis.get("eta", {}).get("holdout", {})
-        c1.metric("Geocode rate", f"{ge.get('rate',0):.3f}")
-        c2.metric("#Trajectories", f"{tr.get("trajectories",0):,}")
-        c3.metric("Next-loc acc@1", f"{nxh.get('acc@1',0):.3f}")
-        c4.metric("ETA MAE (days)", f"{eta.get('mae_days',0):.2f}")
+        c1.metric("Geocode rate", f"{ge.get('rate', 0):.3f}")
+        c2.metric("#Trajectories", f"{int(tr.get('trajectories', 0)):,}")
+        c3.metric("Next-loc acc@1", f"{nxh.get('acc@1', 0):.3f}")
+        c4.metric("ETA MAE (days)", f"{eta.get('mae_days', 0):.2f}")
+
 
         st.subheader("Map (heat + sample markers)")
         fmap = make_map(_df_proc)

@@ -1,296 +1,311 @@
 from __future__ import annotations
 """
-NLP evaluation (binary text classification) with:
-- Hold-out (30% test) + K-fold CV on the 70% pool
-- Threshold tuning by maximizing F1 on validation data
-- Metrics: Precision, Recall, F1 (micro), AP (PR AUC), ROC-AUC, Brier, ECE
-- Curves: PR, ROC, Calibration (reliability)
-- Confusion counts
+NLP Extraction Evaluation (no supervised label needed)
 
-This module prefers your existing inference if provided via `model_fn`.
-If no model_fn is given, it uses a TF-IDF + LogisticRegression baseline
-(when scikit-learn is available) or a tiny Multinomial Naive Bayes fallback.
+We score your extracted actors (from "Perpetrators (NLP)"/"Chiefs (NLP)")
+against the *reference* actor mentions embedded in raw text fields like:
+- "Name of the Perpetrators involved"
+- "Human traffickers/ Chief of places"
+- "Hierarchy of Perpetrators"
 
-Public entry points
--------------------
-detect_columns(df) -> dict
-eval_classification(df, splits, *, model_fn=None, seed=42) -> dict
+Method
+------
+- For each row, we build:
+    truth = set of reference names parsed from the raw fields
+    pred  = set of names from the NLP list columns
+- We match pred↔truth with greedy best-match (string similarity).
+- Similarity = RapidFuzz token_set_ratio if available; else difflib ratio.
+- We sweep thresholds T ∈ {0.60, 0.70, 0.80, 0.90, 0.95}
+  and compute micro P/R/F1; pick the T with max F1 for the "operating point".
+- We compute:
+    * Hold-out (30% test) metrics
+    * CV (K-fold) metrics (on the 70%) for stability
+
+Output structure (compatible with the page):
+{
+  "available": True,
+  "mode": "extraction",
+  "columns": {...},
+  "holdout": {
+      "precision": float,
+      "recall": float,
+      "f1": float,
+      "ap": float,           # area under PR across thresholds (approx)
+      "threshold": float,    # best-F1 threshold
+      "confusion": {"tp": int, "fp": int, "fn": int, "tn": 0, "n": int},
+      "curves": {"pr": {"precision": [...], "recall": [...], "thresholds": [...]}},
+      "n_rows": int,
+      "n_pred_mentions": int,
+      "n_true_mentions": int,
+  },
+  "cv": {
+      "folds": [{"fold": i, "precision":..., "recall":..., "f1":..., "ap":...}, ...],
+      "summary": {"precision":{"mean":...,"std":...}, ...}
+  }
+}
 """
 
-from dataclasses import dataclass
-from typing import Callable, Dict, Any, Optional, Sequence, Tuple, List
+from typing import Any, Dict, List, Optional, Sequence, Tuple
+import math
+import re
+
 import numpy as np
 import pandas as pd
 
-from ..metrics import (
-    precision_recall_f1,
-    ap_pr,
-    roc_auc,
-    brier_score,
-    expected_calibration_error,
-    pr_curve_points,
-    roc_curve_points,
-    confusion_counts,
-)
-from ..bootstrap import bootstrap_ci
+from eval_harness.column_resolver import resolve, parse_listish
 
-# ---------------- Column detection ----------------
 
-TEXT_COL_CANDIDATES = ["text", "content", "body", "desc", "description"]
-LABEL_COL_CANDIDATES = ["label", "labels", "y", "target", "class"]
+# ---------------------- similarity ----------------------
 
-def _pick_first(columns: Sequence[str], candidates: Sequence[str]) -> Optional[str]:
-    cols = set(columns)
-    for c in candidates:
-        if c in cols:
-            return c
-    return None
-
-def detect_columns(df: pd.DataFrame, overrides: Optional[Dict[str, str]] = None) -> Dict[str, Optional[str]]:
-    """Auto-detect text and label columns; allow overrides via dict."""
-    overrides = overrides or {}
-    text = overrides.get("text") or _pick_first(df.columns, TEXT_COL_CANDIDATES)
-    label = overrides.get("label") or _pick_first(df.columns, LABEL_COL_CANDIDATES)
-    return {"text": text, "label": label}
-
-# ---------------- Simple model baselines ----------------
-
-class _SklearnTFIDFLogReg:
-    """TF-IDF + Logistic Regression using scikit-learn (preferred)."""
-    def __init__(self, seed: int = 42):
-        from sklearn.feature_extraction.text import TfidfVectorizer  # type: ignore
-        from sklearn.linear_model import LogisticRegression  # type: ignore
-        self.vec = TfidfVectorizer(max_features=50000, ngram_range=(1,2), lowercase=True)
-        self.clf = LogisticRegression(
-            solver="liblinear", random_state=seed, max_iter=200, n_jobs=None
-        )
-
-    def fit(self, texts: Sequence[str], y: Sequence[int]) -> "._SklearnTFIDFLogReg":
-        X = self.vec.fit_transform(texts)
-        self.clf.fit(X, np.asarray(y).astype(int))
-        return self
-
-    def predict_proba(self, texts: Sequence[str]) -> np.ndarray:
-        X = self.vec.transform(texts)
-        # returns prob of positive class
-        p = self.clf.predict_proba(X)[:, 1]
-        return np.asarray(p, dtype=float)
-
-class _MiniMultinomialNB:
-    """Tiny dependency-free fallback (bag of words with Laplace smoothing)."""
-    def __init__(self):
-        self.vocab: Dict[str, int] = {}
-        self.cw_pos = 0
-        self.cw_neg = 0
-        self.counts_pos: Dict[int, int] = {}
-        self.counts_neg: Dict[int, int] = {}
-        self.p_pos = 0.5
-
-    @staticmethod
-    def _tok(s: str) -> List[str]:
-        return [t for t in "".join(ch.lower() if ch.isalnum() else " " for ch in str(s)).split() if t]
-
-    def _id(self, w: str) -> int:
-        if w not in self.vocab:
-            self.vocab[w] = len(self.vocab) + 1
-        return self.vocab[w]
-
-    def fit(self, texts: Sequence[str], y: Sequence[int]) -> "_MiniMultinomialNB":
-        y = np.asarray(y).astype(int)
-        self.p_pos = float(np.mean(y))
-        for s, yi in zip(texts, y):
-            ids = [self._id(w) for w in self._tok(s)]
-            if yi == 1:
-                for i in ids:
-                    self.counts_pos[i] = self.counts_pos.get(i, 0) + 1
-                    self.cw_pos += 1
-            else:
-                for i in ids:
-                    self.counts_neg[i] = self.counts_neg.get(i, 0) + 1
-                    self.cw_neg += 1
-        return self
-
-    def predict_proba(self, texts: Sequence[str]) -> np.ndarray:
-        V = max(1, len(self.vocab))
-        out = []
-        for s in texts:
-            ids = [self._id(w) for w in self._tok(s)]
-            lp_pos = np.log(self.p_pos + 1e-8)
-            lp_neg = np.log(1.0 - self.p_pos + 1e-8)
-            for i in ids:
-                cpos = self.counts_pos.get(i, 0)
-                cneg = self.counts_neg.get(i, 0)
-                lp_pos += np.log((cpos + 1) / (self.cw_pos + V))
-                lp_neg += np.log((cneg + 1) / (self.cw_neg + V))
-            # convert two-logits to prob
-            m = max(lp_pos, lp_neg)
-            p1 = np.exp(lp_pos - m)
-            p0 = np.exp(lp_neg - m)
-            out.append(float(p1 / (p1 + p0)))
-        return np.asarray(out, dtype=float)
-
-def _default_model(seed: int = 42):
-    """Return the best available baseline model."""
+def _sim(a: str, b: str) -> float:
+    """
+    Similarity in [0,1]. Prefer RapidFuzz if present; else difflib.
+    """
     try:
-        # Try sklearn first
-        import sklearn  # noqa: F401
-        return _SklearnTFIDFLogReg(seed=seed)
+        from rapidfuzz.fuzz import token_set_ratio  # type: ignore
+        return float(token_set_ratio(a, b)) / 100.0
     except Exception:
-        return _MiniMultinomialNB()
+        from difflib import SequenceMatcher
+        return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
-# ---------------- Threshold selection ----------------
 
-def _best_f1_threshold(y_true: np.ndarray, scores: np.ndarray) -> float:
-    """Choose a threshold that maximizes F1 on given labels/scores."""
-    order = np.argsort(-scores)
-    yt = y_true[order].astype(int)
-    ys = scores[order]
-    # Candidate thresholds: unique score values (plus 1.0)
-    candidates = np.r_[ys, [1.0]]
-    best_t = 0.5
-    best_f1 = -1.0
-    for t in candidates:
-        ypred = (scores >= t).astype(int)
-        _, _, f1 = precision_recall_f1(y_true, ypred)
-        if f1 > best_f1:
-            best_f1 = f1
-            best_t = float(t)
-    return best_t
+# ---------------------- reference parsing ----------------------
 
-# ---------------- Core evaluation ----------------
+# Trivial stopwords/titles likely present in raw text fields
+_REF_STOP = {
+    "mr", "mrs", "ms", "dr", "chief", "trafficker", "traffickers",
+    "human", "of", "and", "the", "unknown", "none", "n/a", "na"
+}
 
-def _prepare_xy(df: pd.DataFrame, text_col: str, label_col: str) -> Tuple[np.ndarray, np.ndarray]:
-    x = df[text_col].astype(str).to_numpy()
-    y = df[label_col].astype(int).to_numpy()
-    return x, y
+_SPLIT_RE = re.compile(r"[;,/|]| and | & |\n|\r", flags=re.IGNORECASE)
+_CAPSEQ_RE = re.compile(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3})\b")
 
-def _pack_curves(y_true: np.ndarray, scores: np.ndarray) -> Dict[str, Any]:
-    prec, rec = pr_curve_points(y_true, scores)
-    fpr, tpr = roc_curve_points(y_true, scores)
-    bins = 15
-    rel = expected_calibration_error(y_true, scores, n_bins=bins)  # returns scalar
-    # For plotting, we also need the raw bin stats:
-    b = _reliability_bins_data(y_true, scores, n_bins=bins)
+def _clean_name(s: str) -> str:
+    s = s.strip().strip("'\"")
+    s = re.sub(r"\s+", " ", s)
+    return s
+
+def _is_bad(token: str) -> bool:
+    t = token.lower().strip(" .")
+    return (not t) or (t in _REF_STOP) or (len(t) <= 1)
+
+def _names_from_text(cell: Any) -> List[str]:
+    """
+    Extract name-like strings from a raw text cell:
+    - If cell looks like a Python list string -> parse_listish
+    - Else: take quoted tokens, otherwise split on delimiters,
+            plus capture Capitalized Name sequences as a fallback.
+    """
+    if cell is None or (isinstance(cell, float) and not np.isfinite(cell)):
+        return []
+    s = str(cell).strip()
+    if not s:
+        return []
+
+    # If bracketed list -> parse like listish
+    if s.startswith("[") and ("]" in s):
+        return parse_listish(s)
+
+    out: List[str] = []
+
+    # Quoted tokens first
+    quoted = re.findall(r"""['"]([^'"]{2,})['"]""", s)
+    out += quoted
+
+    # Delimiter split
+    parts = _SPLIT_RE.split(s)
+    out += [p for p in parts if p and len(p.strip()) >= 2]
+
+    # Capitalized sequences (e.g., "Walid Medhanie")
+    caps = _CAPSEQ_RE.findall(s)
+    out += caps
+
+    # Clean + filter
+    cleaned = []
+    seen = set()
+    for cand in out:
+        cc = _clean_name(cand)
+        if _is_bad(cc):
+            continue
+        key = cc.lower()
+        if key not in seen:
+            cleaned.append(cc)
+            seen.add(key)
+    return cleaned
+
+
+def _truth_from_row(row: pd.Series, ref_cols: Sequence[str]) -> List[str]:
+    names: List[str] = []
+    for c in ref_cols:
+        if c in row and pd.notna(row[c]):
+            names += _names_from_text(row[c])
+    # uniquify
+    seen = set()
+    out = []
+    for n in names:
+        k = n.lower()
+        if k not in seen:
+            out.append(n)
+            seen.add(k)
+    return out
+
+
+# ---------------------- matching + metrics ----------------------
+
+def _greedy_match(preds: List[str], truths: List[str], thr: float) -> Tuple[int, int, int, List[Tuple[str,str,float]]]:
+    """
+    Greedy one-to-one match of preds to truths by best similarity >= thr.
+    Returns (tp, fp, fn, matches).
+    """
+    tp = 0
+    matches: List[Tuple[str,str,float]] = []
+    used_truth = set()
+    # sort preds by best-possible similarity to any truth (desc) to make greedy more stable
+    order = sorted(
+        [(p, max((_sim(p, t) for t in truths), default=0.0)) for p in preds],
+        key=lambda x: x[1], reverse=True,
+    )
+    for p, _ in order:
+        best_t = None
+        best_s = 0.0
+        for j, t in enumerate(truths):
+            if j in used_truth:
+                continue
+            s = _sim(p, t)
+            if s > best_s:
+                best_s, best_t = s, (j, t)
+        if best_t is not None and best_s >= thr:
+            used_truth.add(best_t[0])
+            tp += 1
+            matches.append((p, best_t[1], float(best_s)))
+    fp = len(preds) - tp
+    fn = len(truths) - tp
+    return tp, fp, fn, matches
+
+
+def _micro_scores(tp: int, fp: int, fn: int) -> Tuple[float,float,float]:
+    prec = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+    rec  = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+    f1   = (2 * prec * rec / (prec + rec)) if (prec + rec) > 0 else 0.0
+    return float(prec), float(rec), float(f1)
+
+
+def _evaluate_block(df: pd.DataFrame, pred_col: str, ref_cols: Sequence[str], thresholds: Sequence[float]) -> Dict[str, Any]:
+    """
+    Evaluate over all rows in df for all thresholds; return best operating point + PR curve + AP.
+    """
+    totals = {thr: {"tp":0, "fp":0, "fn":0} for thr in thresholds}
+    n_rows = 0
+    n_pred_mentions = 0
+    n_true_mentions = 0
+
+    for _, row in df.iterrows():
+        preds = row.get(pred_col) or []
+        truths = _truth_from_row(row, ref_cols)
+        if not isinstance(preds, (list, tuple, set)):
+            preds = []
+        preds = [str(x).strip() for x in preds if str(x).strip()]
+        n_rows += 1
+        n_pred_mentions += len(preds)
+        n_true_mentions += len(truths)
+        for thr in thresholds:
+            tp, fp, fn, _ = _greedy_match(preds, truths, thr)
+            totals[thr]["tp"] += tp
+            totals[thr]["fp"] += fp
+            totals[thr]["fn"] += fn
+
+    # PR curve, find best threshold by F1, approximate AP (area under PR vs recall)
+    curve = {"precision": [], "recall": [], "thresholds": []}
+    best = {"f1": -1.0, "thr": None, "precision": 0.0, "recall": 0.0, "tp":0, "fp":0, "fn":0}
+    for thr in thresholds:
+        tp, fp, fn = totals[thr]["tp"], totals[thr]["fp"], totals[thr]["fn"]
+        p, r, f1 = _micro_scores(tp, fp, fn)
+        curve["precision"].append(p)
+        curve["recall"].append(r)
+        curve["thresholds"].append(thr)
+        if f1 > best["f1"]:
+            best.update({"f1": f1, "thr": thr, "precision": p, "recall": r, "tp": tp, "fp": fp, "fn": fn})
+
+    # approximate AP with trapezoidal integration over recall
+    if len(curve["recall"]) >= 2:
+        # sort by recall
+        idx = np.argsort(curve["recall"])
+        rec = np.asarray(curve["recall"])[idx]
+        prec = np.asarray(curve["precision"])[idx]
+        ap = float(np.trapz(prec, rec))  # area
+    else:
+        ap = 0.0
+
     return {
-        "pr": {"precision": prec.tolist(), "recall": rec.tolist()},
-        "roc": {"fpr": fpr.tolist(), "tpr": tpr.tolist()},
-        "calibration": b,
-        "ece": rel,
+        "precision": float(best["precision"]),
+        "recall": float(best["recall"]),
+        "f1": float(best["f1"]),
+        "ap": float(ap),
+        "threshold": float(best["thr"] or 0.80),
+        "confusion": {"tp": int(best["tp"]), "fp": int(best["fp"]), "fn": int(best["fn"]), "tn": 0, "n": int(best["tp"]+best["fp"]+best["fn"])},
+        "curves": {"pr": curve},
+        "n_rows": int(n_rows),
+        "n_pred_mentions": int(n_pred_mentions),
+        "n_true_mentions": int(n_true_mentions),
     }
 
-def _reliability_bins_data(y_true: np.ndarray, scores: np.ndarray, n_bins: int = 15) -> Dict[str, List[float]]:
-    from ..metrics import reliability_bins
-    rb = reliability_bins(y_true, scores, n_bins=n_bins)
-    return {
-        "bin_centers": rb["bin_centers"].tolist(),
-        "confidence": rb["confidence"].tolist(),
-        "accuracy": rb["accuracy"].tolist(),
-        "sizes": [int(x) for x in rb["sizes"]],
-    }
 
-def eval_classification(
-    df: pd.DataFrame,
-    splits,
-    *,
-    model_fn: Optional[Callable[[], Any]] = None,
-    seed: int = 42,
-    column_overrides: Optional[Dict[str, str]] = None,
-) -> Dict[str, Any]:
+def eval_classification(df: pd.DataFrame, splits, seed: int = 42) -> Dict[str, Any]:
     """
-    Evaluate binary text classification with a hold-out test set and K-fold CV.
-
-    Parameters
-    ----------
-    df : DataFrame
-        Full dataset (before splitting).
-    splits : Splits
-        From eval_harness.split_manager.build_splits.
-    model_fn : callable returning model with .fit(texts, y) and .predict_proba(texts)
-    column_overrides : dict, optional
-        e.g., {"text": "my_text_col", "label": "is_positive"}.
+    We keep the name `eval_classification` so the runner doesn't need changes.
+    If no supervised label is present, we run the **extraction** evaluation.
     """
-    cols = detect_columns(df, overrides=column_overrides)
-    text_col, label_col = cols.get("text"), cols.get("label")
-    if text_col is None or label_col is None:
-        return {"available": False, "reason": "text/label columns not found", "columns": cols}
+    # Resolve to get predicted actors list and see what raw fields we have
+    res = resolve(df, registry=None)  # df here is already resolved by the runner, but resolve() is idempotent
+    dfr = res["df"]
+    C = res["columns"]
 
-    # ---- CV on train pool ----
-    cv_records = []
+    pred_col = C.get("actors")  # list[str]
+    if not pred_col or pred_col not in dfr.columns:
+        return {"available": False, "reason": "no NLP-extracted actors found (predictions list unavailable)"}
+
+    # Reference/raw text columns present in your processed CSV
+    candidate_refs = [
+        "Name of the Perpetrators involved",
+        "Human traffickers/ Chief of places",
+        "Hierarchy of Perpetrators",
+    ]
+    ref_cols = [c for c in candidate_refs if c in dfr.columns]
+    if not ref_cols:
+        return {"available": False, "reason": "no reference perpetrator text columns found (cannot score extraction)"}
+
+    # Build hold-out / CV frames using provided indices
+    test_df = dfr.iloc[splits.test_idx]
+    train_pool = dfr.iloc[splits.train_idx]  # not used for training, only for reporting CV
+
+    THRESHOLDS = [0.60, 0.70, 0.80, 0.90, 0.95]
+
+    # Hold-out
+    hold = _evaluate_block(test_df, pred_col, ref_cols, THRESHOLDS)
+
+    # CV over folds
+    folds: List[Dict[str, Any]] = []
     for i, (tr_idx, va_idx) in enumerate(splits.folds, start=1):
-        xtr, ytr = _prepare_xy(df.iloc[tr_idx], text_col, label_col)
-        xva, yva = _prepare_xy(df.iloc[va_idx], text_col, label_col)
+        va_df = dfr.iloc[va_idx]
+        met = _evaluate_block(va_df, pred_col, ref_cols, THRESHOLDS)
+        folds.append({"fold": i, **{k: met[k] for k in ("precision","recall","f1","ap","threshold","n_rows","n_pred_mentions","n_true_mentions")}})
 
-        model = (model_fn or (lambda: _default_model(seed=seed)))()
-        model.fit(xtr, ytr)
-        va_scores = model.predict_proba(xva)
-        thr = _best_f1_threshold(yva, va_scores)
-
-        ypred = (va_scores >= thr).astype(int)
-        p, r, f1 = precision_recall_f1(yva, ypred)
-        ap = ap_pr(yva, va_scores)
-        auc = roc_auc(yva, va_scores)
-        br = brier_score(yva, va_scores)
-
-        cv_records.append({
-            "fold": i, "threshold": float(thr),
-            "precision": float(p), "recall": float(r), "f1": float(f1),
-            "ap": float(ap), "roc_auc": float(auc), "brier": float(br),
-            "n": int(len(yva)),
-        })
-
-    # aggregate CV
-    def _agg(key: str) -> Dict[str, float]:
-        arr = np.asarray([r[key] for r in cv_records], dtype=float)
-        return {"mean": float(arr.mean()), "std": float(arr.std(ddof=1) if len(arr) > 1 else 0.0)}
-    cv_summary = {
-        "k": int(len(cv_records)),
-        "precision": _agg("precision"),
-        "recall": _agg("recall"),
-        "f1": _agg("f1"),
-        "ap": _agg("ap"),
-        "roc_auc": _agg("roc_auc"),
-        "brier": _agg("brier"),
-    }
-
-    # Choose a stable test threshold as the mean of per-fold optima (or refit on full train with inner tuning — mean works well here)
-    test_thr = float(np.mean([r["threshold"] for r in cv_records])) if cv_records else 0.5
-
-    # ---- Hold-out test ----
-    train_pool = df.iloc[splits.train_idx]
-    test_df = df.iloc[splits.test_idx]
-    xtr, ytr = _prepare_xy(train_pool, text_col, label_col)
-    xts, yts = _prepare_xy(test_df, text_col, label_col)
-
-    model = (model_fn or (lambda: _default_model(seed=seed)))()
-    model.fit(xtr, ytr)
-    ts_scores = model.predict_proba(xts)
-    ts_pred = (ts_scores >= test_thr).astype(int)
-
-    p, r, f1 = precision_recall_f1(yts, ts_pred)
-    ap = ap_pr(yts, ts_scores)
-    auc = roc_auc(yts, ts_scores)
-    br = brier_score(yts, ts_scores)
-
-    # bootstrap CI for F1 and AP on test set
-    f1_ci = bootstrap_ci(lambda yt, yp: precision_recall_f1(yt, yp)[2], (yts, ts_pred), seed=seed)
-    ap_ci = bootstrap_ci(lambda yt, ys: ap_pr(yt, ys), (yts, ts_scores), seed=seed)
-
-    curves = _pack_curves(yts, ts_scores)
-    cm = confusion_counts(yts, ts_pred)
-
-    holdout = {
-        "n": int(len(yts)),
-        "threshold": float(test_thr),
-        "precision": float(p), "recall": float(r), "f1": float(f1),
-        "ap": float(ap), "roc_auc": float(auc), "brier": float(br),
-        "f1_ci": f1_ci, "ap_ci": ap_ci,
-        "curves": curves,
-        "confusion": cm,
-    }
+    # Summaries
+    if folds:
+        dfm = pd.DataFrame(folds)
+        summary = {
+            "precision": {"mean": float(dfm["precision"].mean()), "std": float(dfm["precision"].std(ddof=1) if len(dfm)>1 else 0.0)},
+            "recall":    {"mean": float(dfm["recall"].mean()),    "std": float(dfm["recall"].std(ddof=1) if len(dfm)>1 else 0.0)},
+            "f1":        {"mean": float(dfm["f1"].mean()),        "std": float(dfm["f1"].std(ddof=1) if len(dfm)>1 else 0.0)},
+            "ap":        {"mean": float(dfm["ap"].mean()),        "std": float(dfm["ap"].std(ddof=1) if len(dfm)>1 else 0.0)},
+        }
+    else:
+        summary = {}
 
     return {
         "available": True,
-        "columns": cols,
-        "holdout": holdout,
-        "cv": {"folds": cv_records, "summary": cv_summary},
+        "mode": "extraction",
+        "columns": {"pred": pred_col, "ref": ref_cols},
+        "holdout": hold,
+        "cv": {"folds": folds, "summary": summary},
     }
