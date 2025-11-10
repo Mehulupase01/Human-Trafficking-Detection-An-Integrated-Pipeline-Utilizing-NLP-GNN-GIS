@@ -346,5 +346,3 @@ Special thanks to the faculty advisors and the **Human Trafficking Data Lab** fo
 > Built with ❤️ using **Python, PyTorch, Streamlit, spaCy, Folium, and science.**
 
 ```
-
-
