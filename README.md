@@ -118,9 +118,9 @@ Extract **key entities and relationships** from unstructured narratives describi
 
 ```json
 {
-  "Victim": "Amina Yusuf",
-  "Traffickers": ["Hassan Ali", "Fatou Keita"],
-  "Chiefs": ["Ibrahim Musa"],
+  "Victim": "---XYZ---",
+  "Traffickers": ["---HA---", "---FK---"],
+  "Chiefs": ["---IM---"],
   "Locations": ["Tripoli", "Agadez", "Sabha"],
   "Time Spent (days)": [5, 10, 3]
 }
