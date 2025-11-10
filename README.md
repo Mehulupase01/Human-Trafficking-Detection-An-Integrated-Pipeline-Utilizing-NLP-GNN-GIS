@@ -13,15 +13,15 @@
 
 ## 📘 Abstract  
 
-This repository implements a **multi-modal, end-to-end system** for detecting, analyzing, and visualizing human trafficking patterns through **textual narratives**, **network relationships**, and **spatial trajectories**.  
+This repository implements a **multi-modal, end-to-end system** for detecting, analyzing, and visualizing human trafficking patterns from narrative data.  
 
-It integrates three powerful analytical paradigms:  
+It integrates three major analytical paradigms:  
 
-1. **Natural Language Processing (NLP)** for entity and relation extraction from testimonies or case data.  
-2. **Graph Neural Networks (GNN)** for relational reasoning and community detection across trafficking networks.  
-3. **Geographic Information Systems (GIS)** for interactive visualization of spatio-temporal victim movement trajectories.  
+1. **Natural Language Processing (NLP)** – entity and relation extraction from testimonies or case documents.  
+2. **Graph Neural Networks (GNN)** – modeling relational structures and discovering trafficking hierarchies.  
+3. **Geospatial Information Systems (GIS)** – visualizing spatio-temporal trajectories and movement networks.  
 
-The goal is to provide a reproducible and extensible pipeline for **policy research, investigative analytics, and humanitarian data intelligence**.
+The objective is to create a reproducible, extensible analytical framework for **policy analysis**, **law enforcement**, and **research on human trafficking networks**.
 
 ---
 
@@ -33,40 +33,37 @@ Human-Trafficking-Detection-An-Integrated-Pipeline-Utilizing-NLP-GNN-GIS/
 ├── backend/
 │   ├── api/
 │   │   ├── gis_data.py                 # Geospatial data processing & trajectory building
-│   │   ├── graph_queries.py            # Graph API: query, merge, traversal, stats
-│   │   ├── nlp_pipeline.py             # Core NLP preprocessing, NER, and entity linking
+│   │   ├── graph_queries.py            # Graph API: query, merge, traversal, and network metrics
+│   │   ├── nlp_pipeline.py             # Entity extraction and relation detection
 │   │
 │   ├── core/
-│   │   ├── dataset_registry.py         # Unified dataset management and metadata storage
+│   │   ├── dataset_registry.py         # Dataset registration and management
 │   │
 │   ├── geo/
-│   │   ├── geo_utils.py                # Fuzzy geocoding, coordinate resolution, cache management
-│   │   ├── gazetteer.py                # Gazetteer ingestion, listing, and lookup services
-│   │   ├── build_custom_gazetteer.py   # Custom token-to-location gazetteer generator
+│   │   ├── geo_utils.py                # Fuzzy geocoding and coordinate resolution
+│   │   ├── gazetteer.py                # Gazetteer ingestion and active lookup
 │   │
 │   ├── gis/
-│   │   ├── gis_mapper.py               # Robust CSV/ZIP ingesters for GeoNames datasets
+│   │   ├── gis_mapper.py               # Custom CSV/GeoNames ingestion and mapping
 │   │
 │   └── gnn/
-│       ├── model.py                    # Graph Neural Network model (GCN/SAGE variant)
-│       ├── trainer.py                  # Training, evaluation, and inference logic
-│       ├── utils.py                    # Graph construction, edge indexing, normalization
+│       ├── model.py                    # Graph Neural Network model
+│       ├── trainer.py                  # Model training and evaluation
+│       ├── utils.py                    # Graph preprocessing utilities
 │
 ├── frontend/
-│   ├── streamlit_app.py                # Streamlit entry point for the UI
+│   ├── streamlit_app.py                # Streamlit main entry point
 │   ├── pages/
-│   │   ├── 5_NLP_Processing.py         # NLP interface: run entity extraction & classification
-│   │   ├── 6_Graph_Network_Analyzer.py # Interactive GNN-based network exploration
-│   │   ├── 8_Map_GIS_Visualizer.py     # Folium-based GIS visualizer with animation & clustering
-│   │   ├── 11_Admin_File_Manager.py    # Admin tools: dataset upload, merge, and delete
+│   │   ├── 5_NLP_Processing.py         # NLP interface for text extraction
+│   │   ├── 6_Graph_Network_Analyzer.py # GNN visualization and analysis
+│   │   ├── 8_Map_GIS_Visualizer.py     # GIS map rendering and trajectory animation
 │
 ├── data/
-│   ├── Africa Dataset.csv              # Core dataset (narratives + locations + metadata)
-│   ├── Gazetteer.txt                   # Custom token-based gazetteer
-│   ├── geonames-all-cities-with-a-population-1000.csv
+│   ├── Africa Dataset.csv              # Sample dataset
+│   ├── Gazetteer.txt                   # Custom gazetteer
 │
 ├── models/
-│   ├── trained_gnn.pt                  # Trained PyTorch model weights
+│   ├── trained_gnn.pt                  # Saved PyTorch GNN weights
 │
 ├── requirements.txt
 └── README.md
@@ -76,199 +73,176 @@ Human-Trafficking-Detection-An-Integrated-Pipeline-Utilizing-NLP-GNN-GIS/
 
 ## 🧩 System Architecture
 
-```mermaid
-flowchart TD
-    A[Raw Interview Data / Case Narratives] --> B[NLP Processing Layer]
-    B --> C[Entity Extraction (Victim, Perpetrator, Location, Role)]
-    C --> D[Relation Extraction (Victim–Trafficker–Location)]
-    D --> E[Graph Construction via NetworkX / PyTorch Geometric]
-    E --> F[GNN Model (Node Embeddings & Classification)]
-    E --> G[GIS Mapper (Trajectory Building)]
-    G --> H[Spatio-Temporal Visualization (Streamlit + Folium)]
-    F --> I[Insights Dashboard / Graph Metrics]
-    I --> J[Exportable Reports (CSV/JSON/HTML)]
+> ⚙️ This system processes narrative data → extracts entities → builds graph relationships → geocodes locations → visualizes trajectories.
+
+```text
+┌─────────────────────────────┐
+│  Raw Narrative Dataset      │
+│ (Interview / Report Data)   │
+└──────────────┬──────────────┘
+               │
+               ▼
+      ┌────────────────────┐
+      │ NLP Processing     │
+      │ • Entity Extraction│
+      │ • Relation Mapping │
+      └────────┬───────────┘
+               │
+               ▼
+     ┌───────────────────────┐
+     │ Graph Neural Network  │
+     │ • Graph Construction  │
+     │ • Node Classification │
+     └──────────┬────────────┘
+                │
+                ▼
+     ┌───────────────────────┐
+     │ GIS Visualizer (Map)  │
+     │ • Trajectories        │
+     │ • Heatmaps            │
+     └───────────────────────┘
 ```
 
 ---
 
-## ⚙️ Core Modules
+## 🧾 NLP Pipeline
 
-### 🧾 1. Natural Language Processing (NLP)
+| Step | Module                             | Description                                               |
+| ---- | ---------------------------------- | --------------------------------------------------------- |
+| 1    | **Preprocessing**                  | Tokenization, sentence segmentation, and normalization    |
+| 2    | **Named Entity Recognition (NER)** | Extract Victims, Traffickers, Chiefs, and Locations       |
+| 3    | **Coreference Resolution**         | Merge repeated mentions and pronouns                      |
+| 4    | **Relation Extraction**            | Identify links between entities (e.g., Victim–Trafficker) |
+| 5    | **Output Structuring**             | Export structured entity data to JSON                     |
 
-#### Objective:
-
-Extract **key entities and relationships** from unstructured narratives describing human trafficking incidents.
-
-#### Pipeline Steps:
-
-| Step | Component                          | Description                                                                   |
-| ---- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| 1    | **Preprocessing**                  | Text cleaning, sentence segmentation, tokenization                            |
-| 2    | **Named Entity Recognition (NER)** | Detect entities: *Victim, Trafficker, Chief, Location, Nationality*           |
-| 3    | **Entity Normalization**           | Standardize spellings & resolve aliases                                       |
-| 4    | **Relation Extraction**            | Identify “victim-of”, “located-in”, “moved-to”, “controlled-by” relationships |
-| 5    | **Coreference Resolution**         | Merge pronouns or indirect mentions into single entities                      |
-| 6    | **Output Structuring**             | Generate structured JSON per case                                             |
-
-#### Example NLP Output:
+**Example Output:**
 
 ```json
 {
-  "Victim": "---XYZ---",
-  "Traffickers": ["---HA---", "---FK---"],
-  "Chiefs": ["---IM---"],
+  "Victim": "Amina Yusuf",
+  "Traffickers": ["Hassan Ali", "Fatou Keita"],
   "Locations": ["Tripoli", "Agadez", "Sabha"],
+  "Chief": "Ibrahim Musa",
   "Time Spent (days)": [5, 10, 3]
 }
 ```
 
 ---
 
-### 🕸️ 2. Graph Neural Network (GNN)
+## 🧮 Graph Neural Network (GNN)
 
-#### Objective:
+| Concept   | Description                                       |
+| --------- | ------------------------------------------------- |
+| **Nodes** | Victims, Traffickers, Chiefs, Locations           |
+| **Edges** | Relationships or movements                        |
+| **Goal**  | Predict community affiliations or influence ranks |
 
-Model the **relational topology** of trafficking networks, identifying communities, key perpetrators, and central routes.
+### 📘 Model Equation
 
-#### Components:
-
-| Submodule          | Description                                                                |
-| ------------------ | -------------------------------------------------------------------------- |
-| `graph_queries.py` | Extracts edges and computes node metrics (degree, betweenness, modularity) |
-| `model.py`         | Implements a **Graph Convolutional Network (GCN)** for node classification |
-| `trainer.py`       | Trains the model on graph embeddings (PyTorch)                             |
-| `utils.py`         | Handles edge normalization, adjacency matrices, and graph construction     |
-
-#### Graph Structure:
-
-* **Nodes:** Victims, Traffickers, Chiefs, Locations
-* **Edges:** “interaction”, “movement”, or “hierarchical link”
-
-#### Mathematical Formulation:
-
-The GCN layer is defined as:
+The **Graph Convolutional Network (GCN)** layer is defined as:
 
 $$
-H^{(l+1)} = \sigma \left( \tilde{D}^{-\frac{1}{2}} \tilde{A} \tilde{D}^{-\frac{1}{2}} H^{(l)} W^{(l)} \right)
+H^{(l+1)} = \sigma \left( \tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2} H^{(l)} W^{(l)} \right)
 $$
 
 Where:
 
-* ( \tilde{A} = A + I_N ) is the adjacency matrix with self-loops
-* ( \tilde{D} ) is the degree matrix
-* ( H^{(l)} ) are node embeddings at layer ( l )
-* ( W^{(l)} ) are trainable weights
-* ( \sigma ) is a non-linear activation (ReLU)
-
-#### Node Classification Example:
-
-* Label 0 → Victim
-* Label 1 → Trafficker
-* Label 2 → Chief
-* Label 3 → Location
+* ( \tilde{A} = A + I ) is adjacency with self-loops
+* ( H^{(l)} ) is the node embedding matrix
+* ( W^{(l)} ) are learnable weights
+* ( \sigma ) is a ReLU activation
 
 ---
 
-### 🌍 3. GIS & Spatio-Temporal Visualization
+## 🌍 GIS Visualization
 
-#### Objective:
+**Purpose:** Map and animate victim movements based on extracted location sequences.
 
-Map and animate victim trajectories using **Folium** and **Leaflet**, integrating GeoNames gazetteers for geocoding.
+| Feature                  | Description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| **Gazetteer Matching**   | Integrates GeoNames and custom gazetteers                |
+| **Fuzzy Resolution**     | Handles misspelled / partial names                       |
+| **Heatmap Layer**        | Visualizes trafficking intensity                         |
+| **Trajectory Animation** | Uses `TimestampedGeoJson` to animate spatial transitions |
 
-#### Key Features:
-
-| Feature                   | Description                                                         |
-| ------------------------- | ------------------------------------------------------------------- |
-| **Gazetteer Integration** | Supports custom GeoNames `.zip` or `.csv` uploads                   |
-| **Fuzzy Matching**        | Approximate string matching for misspelled or regional variations   |
-| **Explicit Lookups**      | User-uploaded (location → lat/lon) mappings override auto geocoding |
-| **Heatmaps**              | Density visualization of high-traffic areas                         |
-| **Trajectory Animation**  | Temporal movement animation using `TimestampedGeoJson`              |
-
-#### Example:
-
-A victim’s trajectory:
+**Example Path:**
 `Eritrea → Ethiopia → Sudan → Libya → Italy`
-Animated across the timeline using **Time Spent (days)** as duration per hop.
+
+Each leg of the route is assigned a duration via the `Time Spent (days)` column.
 
 ---
 
-## 📊 Dataset Schema
+## 🗂️ Dataset Schema
 
-| Column                     | Description                                     |
-| -------------------------- | ----------------------------------------------- |
-| `Serialized ID`            | Unique identifier for each victim               |
-| `Unique ID`                | Case-level identifier                           |
-| `Location`                 | Primary location reference                      |
-| `City / Locations Crossed` | Path of movement (may contain list-like string) |
-| `Time Spent (days)`        | Duration at each stop                           |
-| `Perpetrators (NLP)`       | Extracted perpetrator names                     |
-| `Chiefs (NLP)`             | Extracted chief names                           |
-| `Gender of Victim`         | Gender metadata                                 |
-| `Nationality of Victim`    | Country of origin                               |
-| `Date of Interview`        | Date reference                                  |
-| `Borders Crossed`          | Number of country borders crossed               |
+| Column                   | Description                |
+| ------------------------ | -------------------------- |
+| Serialized ID            | Record ID                  |
+| Unique ID                | Case ID                    |
+| Location                 | Base location              |
+| City / Locations Crossed | Full migration route       |
+| Time Spent (days)        | Duration per stop          |
+| Perpetrators (NLP)       | Extracted perpetrators     |
+| Chiefs (NLP)             | Extracted chiefs           |
+| Gender of Victim         | Gender metadata            |
+| Nationality of Victim    | Country of origin          |
+| Borders Crossed          | Number of border crossings |
 
 ---
 
-## 🔢 Algorithms Implemented
+## 🧠 Algorithms Overview
 
-### 1. NLP Relation Extraction (Custom)
-
-```text
-For each text:
-  → Tokenize sentences
-  → Apply pretrained NER (spaCy transformer)
-  → Extract entities {Victim, Trafficker, Location, Chief}
-  → Detect co-occurrence pairs (Victim–Trafficker)
-  → Output edges for graph building
-```
-
-### 2. GNN Training Algorithm
+### NLP Relation Extraction
 
 ```python
-for epoch in range(num_epochs):
-    optimizer.zero_grad()
-    out = model(graph_data.x, graph_data.edge_index)
-    loss = F.cross_entropy(out[train_mask], labels[train_mask])
+for text in dataset:
+    entities = nlp_model(text)
+    victims = extract_victims(entities)
+    traffickers = extract_traffickers(entities)
+    relations = build_relations(victims, traffickers)
+```
+
+### GNN Training
+
+```python
+for epoch in range(epochs):
+    out = model(graph.x, graph.edge_index)
+    loss = criterion(out[train_mask], labels[train_mask])
     loss.backward()
     optimizer.step()
 ```
 
-### 3. GIS Trajectory Builder
+### GIS Trajectory Builder
 
 ```python
 def build_timestamped_geojson(df, place_col, time_col, default_days=7):
-    # 1. Group by Victim ID
-    # 2. Sort by Route_Order
-    # 3. Resolve lat/lon for each hop
-    # 4. Build temporal edges
-    # 5. Return Folium-ready GeoJSON
+    coords = resolve_locations(df[place_col])
+    for a, b in zip(coords[:-1], coords[1:]):
+        add_segment(a, b, duration=default_days)
 ```
 
 ---
 
-## 🖥️ Frontend Interface (Streamlit)
+## 💻 Frontend (Streamlit Interface)
 
-| Page                       | Description                                                  |
-| -------------------------- | ------------------------------------------------------------ |
-| **NLP Processing**         | Upload text dataset, extract entities, and visualize results |
-| **Graph Network Analyzer** | Build, train, and visualize trafficking network graphs       |
-| **Map & GIS Visualizer**   | Display interactive trajectories, heatmaps, and predictions  |
-| **Admin File Manager**     | Manage, rename, and delete datasets or gazetteers            |
+| Page                          | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| `5_NLP_Processing.py`         | Run entity extraction and display results      |
+| `6_Graph_Network_Analyzer.py` | Visualize and analyze trafficking graphs       |
+| `8_Map_GIS_Visualizer.py`     | Display geospatial trajectories and animations |
+| `Admin_File_Manager.py`       | Manage datasets and gazetteers                 |
 
 ---
 
-## 🧩 Installation & Usage
+## ⚙️ Installation & Execution
 
-### 1. Clone the Repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/Mehulupase01/Human-Trafficking-Detection-An-Integrated-Pipeline-Utilizing-NLP-GNN-GIS.git
 cd Human-Trafficking-Detection-An-Integrated-Pipeline-Utilizing-NLP-GNN-GIS
 ```
 
-### 2. Create Environment
+### 2️⃣ Create an Environment
 
 ```bash
 conda create -n trafficking python=3.10
@@ -276,7 +250,7 @@ conda activate trafficking
 pip install -r requirements.txt
 ```
 
-### 3. Launch Streamlit App
+### 3️⃣ Run the Streamlit App
 
 ```bash
 streamlit run frontend/streamlit_app.py
@@ -286,47 +260,37 @@ streamlit run frontend/streamlit_app.py
 
 ## 🧭 Typical Workflow
 
-| Stage      | Action                                               |
-| ---------- | ---------------------------------------------------- |
-| **Step 1** | Upload processed dataset under “Admin File Manager”  |
-| **Step 2** | Run “NLP Processing” to extract entities & locations |
-| **Step 3** | Build and train GNN on extracted entities            |
-| **Step 4** | Use “Map GIS Visualizer” to map trajectories         |
-| **Step 5** | Animate victim movement and generate heatmaps        |
-| **Step 6** | Export final results as HTML or CSV                  |
+| Step | Description                                 |
+| ---- | ------------------------------------------- |
+| 1    | Upload preprocessed dataset                 |
+| 2    | Run NLP pipeline for entity extraction      |
+| 3    | Build and train GNN                         |
+| 4    | Open GIS Visualizer to explore trajectories |
+| 5    | Export visualizations as HTML               |
 
 ---
 
-## 📈 Results & Insights
+## 📈 Results Snapshot
 
-| Metric                   | Description                                        | Example                         |
-| ------------------------ | -------------------------------------------------- | ------------------------------- |
-| **Nodes**                | Entities (victims, traffickers, chiefs, locations) | 3,241                           |
-| **Edges**                | Relations or movements                             | 7,835                           |
-| **Communities Detected** | Distinct trafficking groups                        | 12                              |
-| **Top Central Nodes**    | High betweenness centrality                        | `Tripoli`, `Agadez`, `Khartoum` |
-| **Trajectory Duration**  | Mean time from origin to destination               | 48.7 days                       |
-
----
-
-## 📚 Future Extensions
-
-* Integration with **OSINT** sources (news feeds, UN reports)
-* Real-time **network anomaly detection**
-* Advanced **spatio-temporal GNNs** (e.g., TGAT, EvolveGCN)
-* Cloud-hosted dashboard (Streamlit Cloud or Hugging Face Spaces)
+| Metric               | Example                         |
+| -------------------- | ------------------------------- |
+| Nodes                | 3,241                           |
+| Edges                | 7,835                           |
+| Communities          | 12                              |
+| Top Nodes            | `Tripoli`, `Khartoum`, `Agadez` |
+| Mean Travel Duration | 48.7 days                       |
 
 ---
 
 ## 🧾 Citation
 
-If you use this work, please cite:
+If you use this project, please cite:
 
 > **Upase, Mehul (2025).**
 > *Human Trafficking Detection: An Integrated Pipeline Utilizing NLP, Graph Neural Networks, and GIS Framework.*
 > Leiden University, Master’s Thesis Repository.
 
-```
+```bibtex
 @thesis{upase2025humantrafficking,
   author    = {Mehul Upase},
   title     = {Human Trafficking Detection: An Integrated Pipeline Utilizing NLP, GNN, and GIS Framework},
@@ -340,9 +304,9 @@ If you use this work, please cite:
 
 ## 🙌 Acknowledgments
 
-This research is part of the **Leiden University Master’s Thesis** program.
-Special thanks to the faculty advisors and the **Human Trafficking Data Lab** for dataset access and feedback.
+Developed as part of the **Master’s Thesis** at **Leiden University**.
+Gratitude to the **Human Trafficking Data Lab**, supervisors, and reviewers for their invaluable input.
 
-> Built with ❤️ using **Python, PyTorch, Streamlit, spaCy, Folium, and science.**
+> Built with ❤️ using **Python, PyTorch, Streamlit, spaCy, and Folium.**
 
 ```
