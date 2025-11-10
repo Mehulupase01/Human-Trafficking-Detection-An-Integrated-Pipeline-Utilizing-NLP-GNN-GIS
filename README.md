@@ -1,7 +1,3 @@
-Perfect — here’s a **complete, extremely detailed, developer-focused, and academically precise** `README.md` written in Markdown format for your repository:
-
----
-
 ````markdown
 # 🛰️ Human Trafficking Detection  
 ### An Integrated Pipeline Utilizing **Natural Language Processing (NLP)**, **Graph Neural Networks (GNNs)**, and **Geospatial Information Systems (GIS)**  
